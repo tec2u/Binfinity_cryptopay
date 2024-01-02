@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'my_information' => 'Meine Informationen',
+    'info' => 'Info',
+    'name' => 'Name',
+    'last_name' => 'Nachname',
+    'address1' => 'Adresse 1',
+    'address2' => 'Adresse 2',
+    'postcode' => 'Postleitzahl',
+    'state' => 'Staat',
+    'country' => 'Land',
+    'gender' => 'Geschlecht',
+    'female' => 'Weiblich',
+    'male' => 'Männlich',
+    'email' => 'E-Mail',
+    'telephone' => 'Telefon',
+    'cell' => 'Zelle',
+    'wallet' => 'Geldbörse',
+    'profile_picture' => 'Profilbild',
+    'change' => 'Ändern',
+    'change_password' => 'Passwort ändern',
+    'password' => 'Passwort',
+    'current_password' => 'Aktuelles Passwort',
+    'new_password' => 'Neues Passwort',
+    'confirm_password' => 'Passwort bestätigen',
+];
