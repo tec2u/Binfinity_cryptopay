@@ -1,0 +1,48 @@
+.results tr[visible="false"],
+.no-result {
+   display: none;
+}
+
+.results tr[visible="true"] {
+   display: table-row;
+}
+
+.counter {
+   padding: 8px;
+   color: #ccc;
+}
+
+.alignHeader {
+   display: inline-block;
+}
+
+.btnCharge {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.card-footer svg {
+   /* display: none; */
+   height: 14px;
+}
+
+.card-footer .flex-1 {
+   display: none;
+}
+
+.card-footer p {
+   margin-top: 12px;
+}
+
+.imgRank {
+   width: 30%;
+   height: 30%;
+}
+
+@media (max-width: 720px) {
+   .imgRank {
+      width: 100%;
+      height: 100%;
+   }
+}
