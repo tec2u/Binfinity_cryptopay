@@ -98,16 +98,23 @@ class PackageController extends Controller
 
         $result = $response->getBody()->getContents();
 
-        dd($result);
+        // dd($result);
 
-        $user = User::find(Auth::id());
+        $user   = User::find(Auth::id());
         $adesao = !$user->getAdessao($user->id) >= 1;
 
         $packages = Package::orderBy('id', 'DESC')->where('id', $packageid);
 
-        $orderpackage = OrderPackage::find($packageid);
+        $orderpackage  = OrderPackage::find($packageid);
+        $price_order   = $orderpackage->price;
 
-        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'btc'));
+        $bitcoin            = $result->bitcoin['usd']; // cotação atual em dolar americano
+        $porcent_btc_price  = $price_order * 100 / $bitcoin; // cálculo da porcentagem do preço baseado na cotação de 1 bitcoin
+        $porcnt_uni_satoshi = 0.000001;
+        $value_uni_satoshi  = $btc->usd / 100000000;
+        $value_btc          = $bitcoin / $price_order;
+
+        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'btc', 'value_btc'));
     }
     public function change_userpassword(Request $request, $packageid)
     {

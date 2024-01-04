@@ -28,7 +28,7 @@
                 </div>
                 </br>
                 <div class="col-6">
-                  Please do the payment of {{ $orderpackage->price }} USD IN BTC ({{ $btc ?? '' }})
+                  Please do the payment of {{ $orderpackage->price }} USD IN BTC ({{ $value_btc ?? '' }})
                   {{-- TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF --}}
                   {{-- <div class="card-body table-responsive p-0 col-6">
                                         <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF'>

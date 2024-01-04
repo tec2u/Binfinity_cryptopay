@@ -237,6 +237,7 @@ Route::prefix('packages')->middleware('auth')->name('packages')->group(function 
       Route::get('/packagesActivator', 'packagesActivator')->name('.packagesActivator');
       Route::get('/packageslog', 'package')->name('.packagelog');
       Route::get('/packagesprofit', 'packageprofit')->name('.packagesprofit');
+      Route::get('/packagesprofitbitcoins', 'packageprofitbitcons')->name('.packageprofitbitcons');
       Route::get('/packagesprofit/invoice/{id}', 'invoice')->name('.invoice');
       Route::post('/packagepay/crypto', 'payCrypto')->name('.payCrypto');
       Route::post('/change_userpassword/{id}', 'change_userpassword')->name('.change_userpassword');
