@@ -28,7 +28,7 @@
                 </div>
                 </br>
                 <div class="col-6">
-                  Please do the payment of {{ $orderpackage->price }} USDT TRC20 OR BTC
+                  Please do the payment of {{ $orderpackage->price }} USD IN BTC ({{ $btc ?? '' }})
                   {{-- TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF --}}
                   {{-- <div class="card-body table-responsive p-0 col-6">
                                         <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF'>
@@ -40,7 +40,7 @@
                     <input type="hidden" value="{{ $orderpackage->price }}" name="price">
                     <select class="form-select" aria-label="Default select example" name="method" required>
                       <option value="" selected>Choose method</option>
-                      {{-- <option value="BTC">BTC</option>--}}
+                      {{-- <option value="BTC">BTC</option> --}}
                       <option value="TRC20">USDT TRC20</option>
                     </select>
                     <button type="submit" class="btn btn-success" style="margin-top: 1rem">Pay</button>

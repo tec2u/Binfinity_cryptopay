@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomLog;
 use App\Models\Documents;
 use App\Models\Package;
 use App\Models\PaymentLog;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\OrderPackage;
 use App\Models\User;
@@ -77,6 +80,26 @@ class PackageController extends Controller
     }
     public function packagepay($packageid)
     {
+        // YZPVFNYyKjsoZKjR0kRCsQ==1kya9pQ2C4ykWAiM
+
+
+        $client = new Client();
+
+        $response = $client->request('GET', 'https://api.coingecko.com/api/v3/simple/price', [
+            'query' => [
+                'ids' => 'bitcoin',
+                'vs_currencies' => 'usd',
+                'include_last_updated_at' => true,
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        $result = $response->getBody()->getContents();
+
+        dd($result);
+
         $user = User::find(Auth::id());
         $adesao = !$user->getAdessao($user->id) >= 1;
 
@@ -84,7 +107,7 @@ class PackageController extends Controller
 
         $orderpackage = OrderPackage::find($packageid);
 
-        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage'));
+        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'btc'));
     }
     public function change_userpassword(Request $request, $packageid)
     {
@@ -195,14 +218,14 @@ class PackageController extends Controller
             return redirect()->back();
         }
 
-      /*   if (strlen($request->price) < 7) {
-            $price = floatval(str_replace(',', '.', $request->price));
-        } else {
-            $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
-            $price = str_replace(',', '.', $valorSemSeparadorMilhar);
-        } */
+        /*   if (strlen($request->price) < 7) {
+              $price = floatval(str_replace(',', '.', $request->price));
+          } else {
+              $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
+              $price = str_replace(',', '.', $valorSemSeparadorMilhar);
+          } */
 
-        $price =$request->price;
+        $price = $request->price;
 
         $payment = $this->genUrlCrypto($price, $request->method);
         // dd($payment);
@@ -232,10 +255,10 @@ class PackageController extends Controller
         } else if ($method == 'TRC20') {
             $paymentConfig = [
                 "api_url" => "https://coinremitter.com/api/v3/USDTTRC20/create-invoice",
-              //  "api_key" => '$2y$10$xvuOi9NUWBzpELE0he8/w.WKhTqHDuckVfkDz6/ZMR2RgVmPchWeS',
-               // "password" => "AI@NextLevel23",
-               "api_key"=>'$2y$10$WBnWO29RL.heTCySoIYDt.vBZC07zKSH.tJpIu4gHextS7ux.8e1q',
-               "password" => "RcBryv2ZQjS9S5@",
+                //  "api_key" => '$2y$10$xvuOi9NUWBzpELE0he8/w.WKhTqHDuckVfkDz6/ZMR2RgVmPchWeS',
+                // "password" => "AI@NextLevel23",
+                "api_key" => '$2y$10$WBnWO29RL.heTCySoIYDt.vBZC07zKSH.tJpIu4gHextS7ux.8e1q',
+                "password" => "RcBryv2ZQjS9S5@",
                 "currency" => "USD",
                 "expire_time" => "60"
             ];
@@ -273,16 +296,16 @@ class PackageController extends Controller
         );
 
         $raw = json_decode(curl_exec($curl));
-        
- /*        $log = new CustomLog;
-        $log->content = $raw;
-        $log->user_id = "-1";
-        $log->operation = "New Profit Order Pmt";
-        $log->controller = "app/controller/admin/PackageController";
-        $log->http_code = 200;
-        $log->route = "PackageController";
-        $log->status = "SUCCESS";
-        $log->save(); */
+
+        /*        $log = new CustomLog;
+               $log->content = $raw;
+               $log->user_id = "-1";
+               $log->operation = "New Profit Order Pmt";
+               $log->controller = "app/controller/admin/PackageController";
+               $log->http_code = 200;
+               $log->route = "PackageController";
+               $log->status = "SUCCESS";
+               $log->save(); */
 
         curl_close($curl);
 
