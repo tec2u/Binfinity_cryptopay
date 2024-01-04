@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\OrderPackage;
 use App\Models\User;
 use Exception;
+use App\Models\Wallet;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -227,16 +228,26 @@ class PackageController extends Controller
               $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
               $price = str_replace(',', '.', $valorSemSeparadorMilhar);
           } */
-
+        $id_user = Auth::id();
         $price = $request->price;
 
         $payment = $this->genUrlCrypto($price, $request->method);
         // dd($payment);
         if (isset($payment) and $payment != false) {
+
             $order = OrderPackage::where('id', $request->id)->first();
-            $order->transaction_code = $payment->invoice_id;
+            $order->transaction_code   = $payment->invoice_id;
             $order->transaction_wallet = $payment->id;
             $order->save();
+
+            $wallet = new Wallet;
+            $wallet->user_id     = $id_user;
+            $wallet->wallet      = "asd";
+            $wallet->description = "description";
+            $wallet->description = $request->coin;
+
+            $wallet->save();
+
             return redirect()->away($payment->url);
         } else {
             return redirect()->back();

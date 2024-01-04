@@ -38,6 +38,7 @@
                     @csrf
                     <input type="hidden" value="{{ $orderpackage->id }}" name="id">
                     <input type="hidden" value="{{ $orderpackage->price }}" name="price">
+                    <input type="hidden" value="{{ $value_btc }}" name="coin">
                     <select class="form-select" aria-label="Default select example" name="method" required>
                       <option value="" selected>Choose method</option>
                       {{-- <option value="BTC">BTC</option> --}}
