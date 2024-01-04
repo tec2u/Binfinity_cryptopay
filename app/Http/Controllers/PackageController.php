@@ -107,11 +107,10 @@ class PackageController extends Controller
 
         $orderpackage  = OrderPackage::find($packageid);
         $price_order   = $orderpackage->price;
-
         $bitcoin       = $result->bitcoin['usd'];
         $value_btc     = $price_order / $bitcoin;
 
-        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'btc', 'value_btc'));
+        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'value_btc'));
     }
     public function change_userpassword(Request $request, $packageid)
     {
