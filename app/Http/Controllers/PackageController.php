@@ -108,11 +108,8 @@ class PackageController extends Controller
         $orderpackage  = OrderPackage::find($packageid);
         $price_order   = $orderpackage->price;
 
-        $bitcoin            = $result->bitcoin['usd']; // cotação atual em dolar americano
-        $porcent_btc_price  = $price_order * 100 / $bitcoin; // cálculo da porcentagem do preço baseado na cotação de 1 bitcoin
-        $porcnt_uni_satoshi = 0.000001;
-        $value_uni_satoshi  = $btc->usd / 100000000;
-        $value_btc          = $bitcoin / $price_order;
+        $bitcoin       = $result->bitcoin['usd'];
+        $value_btc     = $price_order / $bitcoin;
 
         return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'btc', 'value_btc'));
     }
