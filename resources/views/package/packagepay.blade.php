@@ -27,25 +27,33 @@
                   </div>
                 </div>
                 </br>
-                <div class="col-6">
-                  Please do the payment of {{ $orderpackage->price }} USD IN BTC ({{ $value_btc ?? '' }})
+                <div class="col-12">
+                  Please do the payment of {{ $orderpackage->price }} USD IN <strong>BTC ({{ $value_btc ?? '' }})
+                  </strong>
                   {{-- TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF --}}
                   {{-- <div class="card-body table-responsive p-0 col-6">
                                         <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF'>
                                     </div> --}}
                   <br>
-                  <form action="{{ route('packages.payCrypto') }}" method="POST">
-                    @csrf
-                    <input type="hidden" value="{{ $orderpackage->id }}" name="id">
-                    <input type="hidden" value="{{ $orderpackage->price }}" name="price">
-                    <input type="hidden" value="{{ $value_btc }}" name="coin">
-                    <select class="form-select" aria-label="Default select example" name="method" required>
+                  <strong>Wallet address: {{ $wallet->address }}</strong>
+                  @if (!isset($orderpackage->price_crypto))
+                    <form action="{{ route('packages.payCrypto') }}" method="POST">
+                      @csrf
+                      <input type="hidden" value="{{ $orderpackage->id }}" name="id">
+                      <input type="hidden" value="{{ $wallet->id }}" name="wallet">
+                      <input type="hidden" value="{{ $value_btc ?? '' }}" name="btc">
+                      <input type="hidden" value="{{ $orderpackage->price }}" name="price">
+                      {{-- <select class="form-select" aria-label="Default select example" name="method" required>
                       <option value="" selected>Choose method</option>
-                      {{-- <option value="BTC">BTC</option> --}}
+                      <option value="BTC">BTC</option>
                       <option value="TRC20">USDT TRC20</option>
-                    </select>
-                    <button type="submit" class="btn btn-success" style="margin-top: 1rem">Pay</button>
-                  </form>
+                    </select> --}}
+                      <button type="submit" class="btn btn-success" style="margin-top: 1rem">Pay</button>
+                    </form>
+                  @else
+                    <br>
+                    <button type="button" class="btn btn-warning" style="margin-top: 1rem; color:white">Pending</button>
+                  @endif
                 </div>
                 </br></br>
 

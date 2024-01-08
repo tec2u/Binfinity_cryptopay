@@ -7,6 +7,7 @@ use App\Models\Documents;
 use App\Models\Package;
 use App\Models\PaymentLog;
 use GuzzleHttp\Client;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\OrderPackage;
@@ -79,39 +80,75 @@ class PackageController extends Controller
 
         return view('package.packageupdatelink', compact('packages', 'adesao', 'user', 'orderpackage'));
     }
+
+
     public function packagepay($packageid)
     {
-        // YZPVFNYyKjsoZKjR0kRCsQ==1kya9pQ2C4ykWAiM
-
-
-        $client = new Client();
-
-        $response = $client->request('GET', 'https://api.coingecko.com/api/v3/simple/price', [
-            'query' => [
-                'ids' => 'bitcoin',
-                'vs_currencies' => 'usd',
-                'include_last_updated_at' => true,
-            ],
-            'headers' => [
-                'Accept' => 'application/json',
-            ],
-        ]);
-
-        $result = $response->getBody()->getContents();
-
-        // dd($result);
-
-        $user   = User::find(Auth::id());
-        $adesao = !$user->getAdessao($user->id) >= 1;
 
         $packages = Package::orderBy('id', 'DESC')->where('id', $packageid);
 
-        $orderpackage  = OrderPackage::find($packageid);
-        $price_order   = $orderpackage->price;
-        $bitcoin       = $result->bitcoin['usd'];
-        $value_btc     = $price_order / $bitcoin;
+        $orderpackage = OrderPackage::find($packageid);
 
-        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'value_btc'));
+        // dd($orderpackage);
+
+        // YZPVFNYyKjsoZKjR0kRCsQ==1kya9pQ2C4ykWAiM
+
+        $myWallets = Wallet::where('user_id', Auth::id())->get();
+        $wallet = null;
+
+        if (count($myWallets) > 0) {
+            # code...
+            $ids = [];
+            foreach ($myWallets as $w) {
+                array_push($ids, $w->id);
+            }
+
+            $idSorteado = $ids[array_rand($ids)];
+
+            $wallet = Wallet::where('id', $idSorteado)->first();
+
+        }
+
+        if (isset($orderpackage->wallet)) {
+            $wallett = Wallet::where('id', $orderpackage->wallet)->first();
+            if (isset($wallett)) {
+                $wallet = $wallett;
+            }
+        }
+
+        if (isset($orderpackage->price_crypto)) {
+            $value_btc = $orderpackage->price_crypto;
+        } else {
+
+
+            $client = new Client();
+
+            $response = $client->request('GET', 'https://api.coingecko.com/api/v3/simple/price', [
+                'query' => [
+                    'ids' => 'bitcoin',
+                    'vs_currencies' => 'usd',
+                    'include_last_updated_at' => true,
+                ],
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+            ]);
+
+            $result = json_decode($response->getBody()->getContents());
+
+            // dd($result->bitcoin->usd);
+
+
+            $bitcoin = $result->bitcoin->usd;
+            $price_order = $orderpackage->price;
+            $value_btc = $price_order / $bitcoin;
+        }
+
+        $user = User::find(Auth::id());
+        $adesao = !$user->getAdessao($user->id) >= 1;
+
+
+        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'value_btc', 'wallet'));
     }
     public function change_userpassword(Request $request, $packageid)
     {
@@ -218,40 +255,26 @@ class PackageController extends Controller
 
     public function payCrypto(Request $request)
     {
-        if ($request->method != 'BTC' && $request->method != 'TRC20') {
-            return redirect()->back();
+        // dd($request);
+
+        if (strlen($request->price) < 7) {
+            $price = floatval(str_replace(',', '.', $request->price));
+        } else {
+            $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
+            $price = str_replace(',', '.', $valorSemSeparadorMilhar);
         }
 
-        /*   if (strlen($request->price) < 7) {
-              $price = floatval(str_replace(',', '.', $request->price));
-          } else {
-              $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
-              $price = str_replace(',', '.', $valorSemSeparadorMilhar);
-          } */
         $id_user = Auth::id();
         $price = $request->price;
 
-        $payment = $this->genUrlCrypto($price, $request->method);
-        // dd($payment);
-        if (isset($payment) and $payment != false) {
+        $order = OrderPackage::where('id', $request->id)->first();
+        $order->wallet = $request->wallet;
+        $order->price_crypto = $request->btc;
+        $order->save();
 
-            $order = OrderPackage::where('id', $request->id)->first();
-            $order->transaction_code   = $payment->invoice_id;
-            $order->transaction_wallet = $payment->id;
-            $order->save();
 
-            $wallet = new Wallet;
-            $wallet->user_id     = $id_user;
-            $wallet->wallet      = "asd";
-            $wallet->description = "description";
-            $wallet->description = $request->coin;
+        return redirect()->back();
 
-            $wallet->save();
-
-            return redirect()->away($payment->url);
-        } else {
-            return redirect()->back();
-        }
     }
 
     public function genUrlCrypto($price, $method)

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\UserRegisteredEmail;
 use App\Models\HistoricScore;
 use App\Models\Rede;
+use App\Models\Wallet;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use App\Traits\IpBlockTrait;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
@@ -208,8 +210,42 @@ class RegisterController extends Controller
       // ini_set('max_execution_time', '60');
 
       //Mail::to($user->email)->send(new UserRegisteredEmail($user));
+
+      try {
+         $this->geraCarteira($user->id);
+      } catch (\Throwable $th) {
+         //throw $th;
+      }
       return $user;
       // }
+   }
+
+   public function geraCarteira($user_id)
+   {
+      $a = 1;
+      while ($a <= 10) {
+         $client = new Client();
+
+         $response = $client->request('GET', "127.0.0.1:3000/api/create/wallet/btc", [
+            'headers' => [
+               'Accept' => 'application/json',
+            ],
+         ]);
+
+         $result = json_decode($response->getBody()->getContents());
+
+         $wallet = new Wallet;
+         $wallet->user_id = $user_id;
+         $wallet->wallet = $result->Address;
+         $wallet->description = 'wallet';
+         $wallet->address = $result->Address;
+         $wallet->key = $result->Key;
+         $wallet->mnemonic = $result->Mnemonic;
+         $wallet->coin = 'btc';
+         $wallet->save();
+
+         $a++;
+      }
    }
 
    function get_client_ip()
