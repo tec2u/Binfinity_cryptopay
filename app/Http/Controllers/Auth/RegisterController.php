@@ -226,7 +226,7 @@ class RegisterController extends Controller
       while ($a <= 10) {
          $client = new Client();
 
-         $response = $client->request('GET', "127.0.0.1:3000/api/create/wallet/btc", [
+         $response = $client->request('GET', "https://wallet-4lev.onrender.com/api/create/wallet/btc", [
             'headers' => [
                'Accept' => 'application/json',
             ],

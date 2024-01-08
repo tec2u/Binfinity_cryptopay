@@ -25,7 +25,7 @@ class CronPagamento extends Controller
                     if (isset($order->hash)) {
                         $client = new Client();
 
-                        $response = $client->request('GET', "127.0.0.1:3000/api/query/wallet/btc/hash/$order->hash", [
+                        $response = $client->request('GET', "https://wallet-4lev.onrender.com/api/query/wallet/btc/hash/$order->hash", [
                             'headers' => [
                                 'Accept' => 'application/json',
                             ],
@@ -60,7 +60,7 @@ class CronPagamento extends Controller
 
                     $client = new Client();
 
-                    $response = $client->request('GET', "127.0.0.1:3000/api/query/wallet/btc/balance/$wallet->address", [
+                    $response = $client->request('GET', "https://wallet-4lev.onrender.com/api/query/wallet/btc/balance/$wallet->address", [
                         'headers' => [
                             'Accept' => 'application/json',
                         ],
