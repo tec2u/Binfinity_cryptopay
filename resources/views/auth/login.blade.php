@@ -28,8 +28,7 @@
         <form class="login100-form validate-form" method="POST" action="{{ route('login') }}">
           @csrf
           <span class="login100-form-title p-b-48">
-            <img class="imagetest" style="filter: brightness(9);" src="{{ asset('/images/tigle_logo2.png') }}"
-              alt="">
+            <img class="imagetest" style=";" src="{{ asset('/images/tigle_logo2.png') }}" alt="">
           </span>
           <h4 class="title-login limpa-cor" style="color: #fff">{{ __('Login') }}</h4>
           <div class="wrap-input100 validate-input">

@@ -28,31 +28,54 @@
                 </div>
                 </br>
                 <div class="col-12">
-                  Please do the payment of {{ $orderpackage->price }} USD IN <strong>BTC ({{ $value_btc ?? '' }})
-                  </strong>
+                  @if ($orderpackage->payment_status == 1)
+                    Payed
+                  @else
+                    @if (!isset($orderpackage->price_crypto) && isset($moedas))
+                      Please do the payment of {{ $orderpackage->price }}
+                      <br>
+                      <br>
+                      @foreach ($moedas as $chave => $valor)
+                        USD IN <strong> {{ $chave }} ({{ $valor ?? '' }})</strong>
+                        <br>
+                      @endforeach
+                    @else
+                      Please do the payment of {{ $orderpackage->price }} USD IN <strong>{{ $wallet->coin }}
+                        ({{ $value_btc ?? '' }})</strong>
+                    @endif
+                  @endif
+
                   {{-- TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF --}}
                   {{-- <div class="card-body table-responsive p-0 col-6">
                                         <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TUxXULa6Gt3oAAFvE3v2eCEZZFyyqCojXF'>
                                     </div> --}}
                   <br>
-                  <strong>Wallet address: {{ $wallet->address }}</strong>
+
                   @if (!isset($orderpackage->price_crypto))
                     <form action="{{ route('packages.payCrypto') }}" method="POST">
                       @csrf
                       <input type="hidden" value="{{ $orderpackage->id }}" name="id">
-                      <input type="hidden" value="{{ $wallet->id }}" name="wallet">
-                      <input type="hidden" value="{{ $value_btc ?? '' }}" name="btc">
+                      @foreach ($moedas as $chave => $valor)
+                        <input type="hidden" value="{{ $valor }}" name="{{ $chave }}">
+                      @endforeach
                       <input type="hidden" value="{{ $orderpackage->price }}" name="price">
-                      {{-- <select class="form-select" aria-label="Default select example" name="method" required>
-                      <option value="" selected>Choose method</option>
-                      <option value="BTC">BTC</option>
-                      <option value="TRC20">USDT TRC20</option>
-                    </select> --}}
-                      <button type="submit" class="btn btn-success" style="margin-top: 1rem">Pay</button>
+                      <select class="form-select" aria-label="Default select example" name="method" required>
+                        <option value="" selected>Choose method</option>
+                        <option value="BITCOIN">BTC</option>
+                        <option value="USDT_ERC20">USDT ERC20</option>
+                        <option value="TRX">TRX</option>
+                        <option value="ETH">ETH</option>
+                        <option value="USDT_TRC20">USDT TRC20</option>
+                      </select>
+                      <button type="submit" class="btn btn-success" style="margin-top: 1rem">Choose</button>
                     </form>
                   @else
-                    <br>
-                    <button type="button" class="btn btn-warning" style="margin-top: 1rem; color:white">Pending</button>
+                    {{-- <br> --}}
+                    {{-- <button type="button" class="btn btn-warning" style="margin-top: 1rem; color:white">Pending</button> --}}
+                    <button type="button" class="btn btn-warning" style="color:white" data-bs-toggle="modal"
+                      data-bs-target="#exampleModal">
+                      See wallet
+                    </button>
                   @endif
                 </div>
                 </br></br>
@@ -65,4 +88,22 @@
       </div>
     </section>
   </main>
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Wallet coin {{ $wallet->coin }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <strong>Wallet address: {{ $wallet->address }}</strong>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection

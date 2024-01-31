@@ -212,7 +212,7 @@ class RegisterController extends Controller
       //Mail::to($user->email)->send(new UserRegisteredEmail($user));
 
       try {
-         $this->geraCarteira($user->id);
+         // $this->geraCarteira($user->id);
       } catch (\Throwable $th) {
          //throw $th;
       }

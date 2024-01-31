@@ -85,6 +85,12 @@ class PackageController extends Controller
     public function packagepay($packageid)
     {
 
+
+        // dd($data);
+
+        // $controller = new CronPagamento;
+        // $controller->index();
+
         $packages = Package::orderBy('id', 'DESC')->where('id', $packageid);
 
         $orderpackage = OrderPackage::find($packageid);
@@ -115,40 +121,47 @@ class PackageController extends Controller
                 $wallet = $wallett;
             }
         }
+        $moedas = null;
+        $value_btc = null;
 
         if (isset($orderpackage->price_crypto)) {
             $value_btc = $orderpackage->price_crypto;
         } else {
 
+            $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
 
-            $client = new Client();
+            $response = Http::withHeaders([
+                'X-CMC_PRO_API_KEY' => $api_key,
+                'Content-Type' => 'application/json',
+            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
 
-            $response = $client->request('GET', 'https://api.coingecko.com/api/v3/simple/price', [
-                'query' => [
-                    'ids' => 'bitcoin',
-                    'vs_currencies' => 'usd',
-                    'include_last_updated_at' => true,
-                ],
-                'headers' => [
-                    'Accept' => 'application/json',
-                ],
-            ]);
+            $data = $response->json();
 
-            $result = json_decode($response->getBody()->getContents());
-
-            // dd($result->bitcoin->usd);
-
-
-            $bitcoin = $result->bitcoin->usd;
+            // $bitcoin = $result->bitcoin->usd;
             $price_order = $orderpackage->price;
-            $value_btc = $price_order / $bitcoin;
+            // $value_btc = $price_order / $bitcoin;
+
+            $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
+            $erc20 = $data['data']['ERC20'][0]['quote']['USD']['price'];
+            $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
+            $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+            $trc20 = $data['data']['USDT'][0]['quote']['USD']['price'];
+
+            $moedas = [
+                "BITCOIN" => $price_order / $btc,
+                "USDT_ERC20" => $price_order / $erc20,
+                "TRX" => $price_order / $trx,
+                "ETH" => $price_order / $eth,
+                "USDT_TRC20" => $price_order / $trc20,
+            ];
+
         }
 
         $user = User::find(Auth::id());
         $adesao = !$user->getAdessao($user->id) >= 1;
 
 
-        return view('package.packagepay', compact('packages', 'adesao', 'user', 'orderpackage', 'value_btc', 'wallet'));
+        return view('package.packagepay', compact('moedas', 'packages', 'adesao', 'user', 'orderpackage', 'value_btc', 'wallet'));
     }
     public function change_userpassword(Request $request, $packageid)
     {
@@ -253,8 +266,67 @@ class PackageController extends Controller
         }
     }
 
+    function filterWallet($mt)
+    {
+        $urls = [
+            "USDT_TRC20" => "api/create/wallet/tron",
+            "BITCOIN" => "api/create/wallet/btc",
+            "USDT_ERC20" => "api/create/wallet/ethereum",
+            "TRX" => "api/create/wallet/tron",
+            "ETH" => "api/create/wallet/ethereum"
+        ];
+
+        $client = new Client();
+
+        $response = $client->request('GET', "http://127.0.0.1:3000/" . $urls[$mt], [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        $result = json_decode($response->getBody()->getContents());
+
+        if ($mt == "USDT_ERC20" || $mt == "ETH") {
+            return [
+                "privateKey" => $result->privateKey,
+                "address" => $result->address,
+                "mnemonic" => $result->mnemonic->phrase,
+            ];
+        }
+
+        if ($mt == "BITCOIN") {
+            return [
+                "privateKey" => $result->Key,
+                "address" => $result->Address,
+                "mnemonic" => $result->Mnemonic,
+            ];
+        }
+
+        if ($mt == "TRX" || $mt == "USDT_TRC20") {
+            return [
+                "privateKey" => $result->privateKey,
+                "address" => $result->address->base58,
+                "mnemonic" => "",
+            ];
+        }
+    }
+
     public function payCrypto(Request $request)
     {
+        $order = OrderPackage::where('id', $request->id)->first();
+
+        $walletGen = $this->filterWallet($request->method);
+
+        $wallet = new Wallet;
+        $wallet->user_id = Auth::id();
+        $wallet->wallet = $walletGen['address'];
+        $wallet->description = 'wallet';
+        $wallet->address = $walletGen['address'];
+        $wallet->key = $walletGen['privateKey'];
+        $wallet->mnemonic = $walletGen['mnemonic'];
+        $wallet->coin = $request->method;
+        $wallet->save();
+
         // dd($request);
 
         if (strlen($request->price) < 7) {
@@ -264,46 +336,38 @@ class PackageController extends Controller
             $price = str_replace(',', '.', $valorSemSeparadorMilhar);
         }
 
-        $id_user = Auth::id();
         $price = $request->price;
 
-        $order = OrderPackage::where('id', $request->id)->first();
-        $order->wallet = $request->wallet;
-        $order->price_crypto = $request->btc;
+
+        $order->wallet = $wallet->id;
+        $order->price_crypto = $request->{$request->method};
         $order->save();
 
+        $postNode = $this->genUrlCrypto($request->method, $order);
+
+
+        $order = OrderPackage::where('id', $request->id)->first();
+        $order->transaction_wallet = $postNode->merchant_id;
+        $order->save();
+
+        // dd($postNode);
 
         return redirect()->back();
 
     }
 
-    public function genUrlCrypto($price, $method)
+    public function genUrlCrypto($method, $order)
     {
-        $name = "AI-NEXT-LEVEL";
 
-        if ($method == 'BTC') {
-            $paymentConfig = [
-                "api_url" => "https://coinremitter.com/api/v3/BTC/create-invoice",
-                "api_key" => '$2y$10$Jn8TvSVsYN6mSJTIK/EieOKJyTzSM6ZxXUpq/WPMsIprA2eNApc8a',
-                "password" => "18102023",
-                "currency" => "USD",
-                "expire_time" => "60"
-            ];
-        } else if ($method == 'TRC20') {
-            $paymentConfig = [
-                "api_url" => "https://coinremitter.com/api/v3/USDTTRC20/create-invoice",
-                //  "api_key" => '$2y$10$xvuOi9NUWBzpELE0he8/w.WKhTqHDuckVfkDz6/ZMR2RgVmPchWeS',
-                // "password" => "AI@NextLevel23",
-                "api_key" => '$2y$10$WBnWO29RL.heTCySoIYDt.vBZC07zKSH.tJpIu4gHextS7ux.8e1q',
-                "password" => "RcBryv2ZQjS9S5@",
-                "currency" => "USD",
-                "expire_time" => "60"
-            ];
-        }
+        $paymentConfig = [
+            "api_url" => "https://wallet-4lev.onrender.com/api/create/order"
+        ];
+
+        // dd($order);
 
         $curl = curl_init();
 
-        $url = "https://ai-nextlevel.com/packages/packagepay/notify";
+        $url = url()->current() . "/packages/packagepay/notify";
 
         curl_setopt_array(
             $curl,
@@ -317,12 +381,11 @@ class PackageController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => '{
-                "api_key": "' . $paymentConfig['api_key'] . '",
-                "password": "' . $paymentConfig['password'] . '",
-                "amount": "' . $price . '",
-                "name": "' . $name . '",
-                "currency": "' . $paymentConfig['currency'] . '",
-                "expire_time": "' . $paymentConfig['expire_time'] . '",
+                "id_order": "' . $order->id . '",
+                "price_crypto": "' . $order->price_crypto . '",
+                "wallet": "' . $order->wallet . '",
+                "validity": "' . 60 . '",
+                "coin": "' . $method . '",
                 "notify_url" : "' . $url . '"
 
             }',
@@ -334,20 +397,10 @@ class PackageController extends Controller
 
         $raw = json_decode(curl_exec($curl));
 
-        /*        $log = new CustomLog;
-               $log->content = $raw;
-               $log->user_id = "-1";
-               $log->operation = "New Profit Order Pmt";
-               $log->controller = "app/controller/admin/PackageController";
-               $log->http_code = 200;
-               $log->route = "PackageController";
-               $log->status = "SUCCESS";
-               $log->save(); */
-
         curl_close($curl);
 
-        if ($raw->flag === 1) {
-            return $raw->data;
+        if ($raw) {
+            return $raw;
         } else {
             return false;
         }
