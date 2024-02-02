@@ -28,6 +28,7 @@ use App\Http\Controllers\StepByStepController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\VideosController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WithdrawController;
 use App\Mail\UserRegisteredEmail;
 use App\Models\ConfigBonusunilevel;
@@ -251,8 +252,15 @@ Route::prefix('packages')->middleware('auth')->name('packages')->group(function 
       Route::post('/process/buying/create', 'processBuyingCreate')->name('.processBuyingCreate');
       Route::get('/process/buying/pdf/{nome}', 'baixaPdf')->name('.baixaPdf');
    });
+
 });
 
+Route::prefix('wallets')->middleware('auth')->name('wallets')->group(function () {
+   Route::controller(WalletController::class)->group(function () {
+      Route::get('/wallets', 'index')->name('.index');
+      Route::post('/wallets', 'store')->name('.store');
+   });
+});
 
 Route::prefix('withdraws')->middleware('auth')->name('withdraws')->group(function () {
    Route::controller(WithdrawController::class)->group(function () {
