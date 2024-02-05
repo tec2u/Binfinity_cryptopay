@@ -30,6 +30,7 @@ class WalletController extends Controller
         $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
 
         if (count($wallets) >= 10) {
+            dd('cheio');
             return $this->index();
         }
 
@@ -50,6 +51,8 @@ class WalletController extends Controller
 
             $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
         }
+
+        dd(count($wallets));
 
         return $this->index();
     }
