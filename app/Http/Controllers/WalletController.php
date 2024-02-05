@@ -29,12 +29,11 @@ class WalletController extends Controller
 
         $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
 
-        if (count($wallets) >= 10) {
-            dd('cheio');
+        if (count($wallets) == 10) {
             return $this->index();
         }
 
-        while (count($wallets) == 10) {
+        while (count($wallets) < 11) {
             $controller = new PackageController;
 
             $walletGen = $controller->filterWallet($request->coin);
@@ -51,8 +50,6 @@ class WalletController extends Controller
 
             $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
         }
-
-        dd(count($wallets));
 
         return $this->index();
     }
