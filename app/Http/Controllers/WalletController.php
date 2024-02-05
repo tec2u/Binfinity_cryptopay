@@ -76,7 +76,7 @@ class WalletController extends Controller
             $userAprov = User::where('email', $requestFormated['login'])->orWhere('login', $requestFormated['login'])->first();
 
             if (!Hash::check($requestFormated['password'], $userAprov->password)) {
-                return false;
+                return "User Not Found";
             }
 
             // return $requestFormated;
@@ -96,7 +96,7 @@ class WalletController extends Controller
 
                 $wallet = Wallet::where('id', $idSorteado)->first();
             } else {
-                return false;
+                return "Wallet Not found";
             }
 
             // return $wallet;

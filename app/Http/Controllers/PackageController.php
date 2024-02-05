@@ -360,8 +360,8 @@ class PackageController extends Controller
     {
 
         $paymentConfig = [
-            "api_url" => "http://127.0.0.1:3000/api/create/order"
-            // "api_url" => "https://wallet-4lev.onrender.com/api/create/order"
+            // "api_url" => "http://127.0.0.1:3000/api/create/order"
+            "api_url" => "https://wallet-4lev.onrender.com/api/create/order"
         ];
 
         // dd($order);
