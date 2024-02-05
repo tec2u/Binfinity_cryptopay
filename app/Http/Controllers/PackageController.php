@@ -360,14 +360,19 @@ class PackageController extends Controller
     {
 
         $paymentConfig = [
-            "api_url" => "https://wallet-4lev.onrender.com/api/create/order"
+            "api_url" => "http://127.0.0.1:3000/api/create/order"
+            // "api_url" => "https://wallet-4lev.onrender.com/api/create/order"
         ];
 
         // dd($order);
 
         $curl = curl_init();
 
-        $url = url()->current() . "/packages/packagepay/notify";
+        if (isset($order->notify_url)) {
+            $url = $order->notify_url;
+        } else {
+            $url = url()->current() . "/packages/packagepay/notify";
+        }
 
         curl_setopt_array(
             $curl,
@@ -382,6 +387,7 @@ class PackageController extends Controller
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => '{
                 "id_order": "' . $order->id . '",
+                "id_user": "' . $order->id_user . '",
                 "price_crypto": "' . $order->price_crypto . '",
                 "wallet": "' . $order->wallet . '",
                 "validity": "' . 60 . '",

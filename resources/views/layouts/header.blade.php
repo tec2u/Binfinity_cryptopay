@@ -216,6 +216,13 @@
         </a>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link " href="{{ route('wallets.transactions') }}">
+          <i class="bi bi-clipboard2-minus"></i><span>Transactions</span>
+
+        </a>
+      </li>
+
       @if (auth()->user()->payFirstOrder())
 
         {{-- <!-- End Products Nav --> --}}

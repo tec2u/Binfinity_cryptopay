@@ -231,6 +231,7 @@ Route::prefix('home')->middleware('auth')->name('home')->group(function () {
 });
 
 Route::post('/packages/packagepay/notify', [PackageController::class, 'notify'])->name('notify.payment');
+Route::post('/packages/wallets/notify', [WalletController::class, 'notify'])->name('notify.wallet');
 
 Route::prefix('packages')->middleware('auth')->name('packages')->group(function () {
    Route::controller(PackageController::class)->group(function () {
@@ -258,6 +259,7 @@ Route::prefix('packages')->middleware('auth')->name('packages')->group(function 
 Route::prefix('wallets')->middleware('auth')->name('wallets')->group(function () {
    Route::controller(WalletController::class)->group(function () {
       Route::get('/wallets', 'index')->name('.index');
+      Route::get('/wallets/transactions', 'transactions')->name('.transactions');
       Route::post('/wallets', 'store')->name('.store');
    });
 });
