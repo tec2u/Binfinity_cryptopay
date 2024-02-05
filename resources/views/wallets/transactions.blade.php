@@ -29,7 +29,11 @@
                         <td>{{ $item->coin }}</td>
                         <td>{{ $item->status }}</td>
                         <td>{{ $item->price_crypto * 1 }}</td>
-                        <td>{{ $item->price_crypto_payed ?? 0 }}</td>
+                        @if (isset($item->price_crypto_payed))
+                          <td>{{ $item->price_crypto_payed * 1 }}</td>
+                        @else
+                          <td>{{ 0 }}</td>
+                        @endif
                       </tr>
                     @endforeach
 
