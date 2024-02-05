@@ -110,7 +110,7 @@ class WalletController extends Controller
             $order->wallet = $wallet->address;
             $order->notify_url = $requestFormated['notify_url'];
 
-            $postNode = $controller->genUrlCrypto('USDT_TRC20', $order);
+            $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
 
             return $postNode;
 
