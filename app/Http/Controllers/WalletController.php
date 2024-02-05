@@ -33,7 +33,7 @@ class WalletController extends Controller
             return $this->index();
         }
 
-        while (count($wallets) <= 10) {
+        while (count($wallets) == 10) {
             $controller = new PackageController;
 
             $walletGen = $controller->filterWallet($request->coin);
