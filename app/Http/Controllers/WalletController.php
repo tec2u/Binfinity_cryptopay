@@ -33,7 +33,7 @@ class WalletController extends Controller
             return $this->index();
         }
 
-        while (count($wallets) < 11) {
+        while (count($wallets) < 10) {
             $controller = new PackageController;
 
             $walletGen = $controller->filterWallet($request->coin);
@@ -106,6 +106,7 @@ class WalletController extends Controller
             $order = new stdClass();
             $order->id = $requestFormated['id_order'];
             $order->id_user = $userAprov->id;
+            $order->price = $requestFormated['price'];
             $order->price_crypto = $requestFormated['price_crypto'];
             $order->wallet = $wallet->address;
             $order->notify_url = $requestFormated['notify_url'];

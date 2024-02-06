@@ -388,6 +388,7 @@ class PackageController extends Controller
                 CURLOPT_POSTFIELDS => '{
                 "id_order": "' . $order->id . '",
                 "id_user": "' . $order->id_user . '",
+                "price": "' . $order->price . '",
                 "price_crypto": "' . $order->price_crypto . '",
                 "wallet": "' . $order->wallet . '",
                 "validity": "' . 60 . '",
