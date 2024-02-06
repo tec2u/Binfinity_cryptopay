@@ -78,8 +78,8 @@ class WalletController extends Controller
             if (!Hash::check($requestFormated['password'], $userAprov->password)) {
                 return "User Not Found";
             }
-
             // return $requestFormated;
+
 
             $myWallets = Wallet::where('user_id', $userAprov->id)->where('coin', $requestFormated['coin'])->get();
 
@@ -99,7 +99,6 @@ class WalletController extends Controller
                 return "Wallet Not found";
             }
 
-            // return $wallet;
 
             $controller = new PackageController;
 
@@ -110,6 +109,7 @@ class WalletController extends Controller
             $order->price_crypto = $requestFormated['price_crypto'];
             $order->wallet = $wallet->address;
             $order->notify_url = $requestFormated['notify_url'];
+            // return $order;
 
             $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
 
