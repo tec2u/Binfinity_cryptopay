@@ -7,6 +7,7 @@ use App\Models\OrderPackage;
 use App\Models\PaymentLog;
 use App\Models\User;
 use App\Models\Wallet;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -99,6 +100,30 @@ class WalletController extends Controller
                 return "Wallet Not found";
             }
 
+
+            $filteredWallets = $myWallets->filter(function ($wallet) {
+
+                $recentOrdersCount = NodeOrders::where('wallet', $wallet->address)
+                    ->where('coin', $wallet->coin)
+                    ->limit(9)
+                    ->count();
+
+
+                return $recentOrdersCount === 0;
+            });
+
+
+            if ($filteredWallets->isNotEmpty()) {
+
+                $selectedWallet = $filteredWallets->random();
+                $wallet = $selectedWallet;
+            } else {
+
+                return "Wallet Not found";
+            }
+
+
+            // return $wallet;
 
             $controller = new PackageController;
 
