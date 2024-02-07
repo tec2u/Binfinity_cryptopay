@@ -210,16 +210,20 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link " href="{{ route('wallets.WithdrawWallet') }}">
+          <i class="bi bi-clipboard2-minus"></i><span>Wallets Withdraw</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link " href="{{ route('wallets.index') }}">
           <i class="bi bi-clipboard2-minus"></i><span>Wallets</span>
-
         </a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link " href="{{ route('wallets.transactions') }}">
           <i class="bi bi-clipboard2-minus"></i><span>Transactions</span>
-
         </a>
       </li>
 

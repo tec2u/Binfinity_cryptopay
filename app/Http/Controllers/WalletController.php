@@ -7,6 +7,7 @@ use App\Models\OrderPackage;
 use App\Models\PaymentLog;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Models\WithdrawWallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -154,5 +155,46 @@ class WalletController extends Controller
         $transactions = NodeOrders::where('id_user', $user->id)->orderBy('id', 'DESC')->get();
 
         return view('wallets.transactions', compact('transactions'));
+    }
+
+    public function WithdrawWallet()
+    {
+        $user = User::find(Auth::id());
+
+        $wallets = WithdrawWallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+
+        $coins = ['USDT_TRC20', 'TRX', 'ETH', 'BITCOIN', 'USDT_ERC20'];
+
+        $walletbyCoin = [];
+
+        foreach ($coins as $coin) {
+            foreach ($wallets as $value) {
+                if ($coin == $value->crypto) {
+                    $walletbyCoin[$coin] = $value->wallet_address;
+                }
+            }
+        }
+
+        return view('wallets.WithdrawWallet', compact('wallets', 'coins', 'walletbyCoin'));
+
+    }
+    public function WithdrawWalletStore(Request $request)
+    {
+        $user = User::find(Auth::id());
+
+        $wallet = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
+
+        if (isset($wallet)) {
+            $wallet->wallet_address = $request->address;
+            $wallet->save();
+        } else {
+            $nwallet = new WithdrawWallet;
+            $nwallet->user_id = $user->id;
+            $nwallet->wallet_address = $request->address;
+            $nwallet->crypto = $request->coin;
+            $nwallet->save();
+        }
+
+        return $this->WithdrawWallet();
     }
 }
