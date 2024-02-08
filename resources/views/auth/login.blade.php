@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
   <video autoplay muted loop class="bg_video">
-    <source src="/videos/tigervideo.mp4" type="video/mp4">
+    <source src="/videos/tigervideo1.mp4" type="video/mp4">
   </video>
 
   @include('flash::message')
@@ -24,11 +24,11 @@
 
   <div id="loginform" class="limiter">
     <div class="container-login100">
-      <div class="wrap-login100" style="background-color: #2e869b">
+      <div class="wrap-login100" style="background-color: #000000">
         <form class="login100-form validate-form" method="POST" action="{{ route('login') }}">
           @csrf
           <span class="login100-form-title p-b-48">
-            <img class="imagetest" style=";" src="{{ asset('/images/tigle_logo2.png') }}" alt="">
+            <img class="imagetest" style="filter: brightness(0) invert(1);" src="{{ asset('/images/tigle_logo2.png') }}" alt="">
           </span>
           <h4 class="title-login limpa-cor" style="color: #fff">{{ __('Login') }}</h4>
           <div class="wrap-input100 validate-input">

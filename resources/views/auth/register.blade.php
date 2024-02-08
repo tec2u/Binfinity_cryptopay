@@ -43,7 +43,7 @@
     }
   </style>
   <video autoplay muted loop class="bg_video">
-    <source src="/videos/tigervideo.mp4" type="video/mp4">
+    <source src="/videos/tigervideo1.mp4" type="video/mp4">
   </video>
   @include('flash::message')
   <div class="limiter py-5">
@@ -52,7 +52,7 @@
         <form class="login100-form validate-form" method="POST" action="{{ route('register') }}">
           @csrf
           <span class="login100-form-title p-b-48">
-            <img class="imagetest2" style="" src="{{ asset('images/tigle_logo2.png') }}" alt="">
+            <img class="imagetest2" style="filter: brightness(0) invert(1);" src="{{ asset('images/tigle_logo2.png') }}" alt="">
           </span>
           @if (isset($id))
             <h4 class="title-login mb-5">{{ __('Register with ') . $user->login }}</h4>

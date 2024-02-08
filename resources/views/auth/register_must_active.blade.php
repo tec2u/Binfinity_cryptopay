@@ -33,7 +33,7 @@
     }
   </style>
   {{-- <video autoplay muted loop class="bg_video">
-    <source src="/videos/infinitylogvideo.mp4" type="video/mp4">
+    <source src="/videos/infinitylogvideo1.mp4" type="video/mp4">
   </video> --}}
   @include('flash::message')
   <div class="limiter">
