@@ -368,7 +368,7 @@ https://templatemo.com/tm-535-softy-pinko
                             </ul>
                         </div>
                         <div class="pricing-footer">
-                            <a href="#" class="main-button">Purchase Now</a>
+                            <a href="https://cryptopay.binfinitybank.com/register" class="main-button">Purchase Now</a>
                         </div>
                     </div>
                 </div>
@@ -396,7 +396,7 @@ https://templatemo.com/tm-535-softy-pinko
                             </ul>
                         </div>
                         <div class="pricing-footer">
-                            <a href="#" class="main-button">Purchase Now</a>
+                            <a href="https://cryptopay.binfinitybank.com/register" class="main-button">Purchase Now</a>
                         </div>
                     </div>
                 </div>
@@ -424,7 +424,7 @@ https://templatemo.com/tm-535-softy-pinko
                             </ul>
                         </div>
                         <div class="pricing-footer">
-                            <a href="#" class="main-button">Purchase Now</a>
+                            <a href="https://cryptopay.binfinitybank.com/register" class="main-button">Purchase Now</a>
                         </div>
                     </div>
                 </div>
