@@ -65,6 +65,12 @@ Route::controller(HomeController::class)->group(function () {
 Route::get('/blog', function () {
    return view('welcome.blog');
 });
+Route::get('/invoice_step1', function () {
+   return view('invoice.invoice_step1');
+});
+Route::get('/invoice_step2', function () {
+   return view('invoice.invoice_step2');
+});
 
 Route::controller(StepByStepController::class)->group(function () {
    Route::get('/create_new_bot_step/1', function () {
