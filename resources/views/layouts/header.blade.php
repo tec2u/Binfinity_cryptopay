@@ -8,7 +8,7 @@
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>AI Next Level Club</title>
+  <title>BInfinity CryptoPay</title>
   <link rel="icon" type="image/png" sizes="400x400" href="assetsWelcomeNew/images/icon.png">
 
   <!-- Fonts -->
@@ -80,11 +80,7 @@
 
       <ul class="d-flex align-items-center">
 
-        <li class=" pe-4"><a href="https://t.me/+CrAniOfZICU1MzI0" target="_blank" class=""><i
-              class="lab la-telegram iconhead" style="color: #ffffff;"></i> </a> </li>
-        <li class=" pe-4"><a href="https://t.me/+CrAniOfZICU1MzI0" target="_blank" class="">
-            <h6 class="text-dark-50 joinhead" style="color: #ffffff;">Join our </br>Telegram Channel</h6>
-          </a> </li>
+       
 
         <li class="nav-item dropdown pe-3">
           <div class="btn-group">
@@ -159,75 +155,37 @@
     </br></br>
 
     <ul class="sidebar-nav" id="sidebar-nav">
-      <a class="nav-link collapsed" href="{{ route('packages.processBuying') }}">
-        <i class="bi bi-clipboard2-minus"></i><span>Add New Account</span><i class="bi  ms-auto"></i>
-      </a>
-      </br>
-      @if (auth()->user()->payFirstOrder())
+     
+     
         <li class="nav-item">
           <a class="nav-link " href="{{ route('home.home') }}">
             <i class="bi bi-grid"></i>
             <span>Dashboard</span>
           </a>
         </li><!-- End Dashboard Nav -->
-      @endif
+    
 
-      <!--<li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#minting-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-clipboard2-minus"></i><span>@lang('header.purchase')</span><i
-            class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="minting-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{ route('packages.index') }}">
-              <i class="bi bi-circle"></i><span>@lang('header.products')</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('packages.packagelog') }}">
-              <i class="bi bi-circle"></i><span>BOT ORDERS</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('packages.packagesprofit') }}">
-              <i class="bi bi-circle"></i><span>PROFIT SHARE</span>
-            </a>
-          </li>
-        </ul>
-      </li><!-- End Components Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('packages.packagelog') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>My Acounts</span>
-
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('packages.packagesprofit') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>Profit Share</span>
-
-        </a>
-      </li>
+     
 
       <li class="nav-item">
         <a class="nav-link " href="{{ route('wallets.WithdrawWallet') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>Wallets Withdraw</span>
+          <i class="bi bi-clipboard2-minus"></i><span>WithDrawal Wallet</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link " href="{{ route('wallets.index') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>Wallets</span>
+          <i class="bi bi-clipboard2-minus"></i><span>All My Allocated Wallets</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link " href="{{ route('wallets.transactions') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>Transactions</span>
+          <i class="bi bi-clipboard2-minus"></i><span>Crypto Transactions</span>
         </a>
       </li>
 
-      @if (auth()->user()->payFirstOrder())
+    
 
         {{-- <!-- End Products Nav --> --}}
 
@@ -259,7 +217,7 @@
             </li>
             <li>
               <a href="{{ route('reports.transactions') }}">
-                <i class="bi bi-circle"></i><span>Transaction</span>
+                <i class="bi bi-circle"></i><span>Commissions Transactions</span>
               </a>
             </li>
             <!--<li>
@@ -277,93 +235,20 @@
           </a>
         </li>
 
-        {{-- <li class="nav-item">
-            <a class="nav-link " href="{{ url('/marketing') }}">
-        <i class="bi bi-bag"></i>
-        <span>@lang('header.marketing')</span>
-        </a>
-        </li> --}}
-        @if (auth()->user()->isAllowed())
+      
+       
           <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
-              <i class="bi bi-bar-chart"></i><span>@lang('header.report')</span><i class="bi bi-chevron-down ms-auto"></i>
+              <i class="bi bi-bar-chart"></i><span>Report</span><i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <!-- <li>
-               <a href="{{ route('reports.signupcommission') }}">
-                  <i class="bi bi-circle"></i><span>@lang('header.signup_commission')</span>
-               </a>
-            </li> -->
-              <!-- <li>
-               <a href="{{ route('reports.levelIncome') }}">
-                  <i class="bi bi-circle"></i><span>@lang('header.level_income')</span>
-               </a>
-            </li> -->
-              <!-- <li>
-                    <a href="{{ route('reports.signupcommission') }}">
-                        <i class="bi bi-circle"></i><span>@lang('header.referral_comission')</span>
-                    </a>
-                </li> -->
+    
 
-              <li>
-                <a href="{{ route('reports.bonusdaily') }}">
-                  <i class="bi bi-circle"></i><span>
-                    {{-- @lang('header.referral_comission') --}}
-                    DAILY PROFIT
-                  </span>
-                </a>
-              </li>
-              <!-- <li>
-                    <a href="{{ route('reports.poolcommission') }}">
-                        <i class="bi bi-circle"></i><span>@lang('header.pool_commission')</span>
-                    </a>
-                </li> -->
-
-
-
-
-              {{-- <li>
-               <a href="{{ route('reports.stakingRewards') }}">
-                <i class="bi bi-circle"></i><span>@lang('header.stacking_rewards')</span>
-                </a>
-        </li>
-        <li>
-            <a href="{{ route('reports.monthlyCoins') }}">
-                <i class="bi bi-circle"></i><span>@lang('header.monthly_coins')</span>
-            </a>
-        </li> --}}
-              <!-- <li>
-               <a href="{{ route('reports.rankReward') }}">
-                  <i class="bi bi-circle"></i><span>@lang('header.rank_reward')</span>
-               </a>
-            </li> -->
-              {{-- <li>
-                <a href="{{ route('reports.transactions') }}">
-                  <i class="bi bi-circle"></i><span>@lang('header.transaction')</span>
-                </a>
-              </li> --}}
+  
             </ul>
           </li>
-        @endif
-      @endif
-      <!--<li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#daily-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-calendar-day"></i><span>DAILY MAIN REPORT</span><i class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="daily-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="{{ route('documents.index') }}">
-                        <i class="bi bi-circle"></i><span>DOCUMENTS</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('videos.index') }}">
-                        <i class="bi bi-circle"></i><span>VIDEOS</span>
-                    </a>
-                </li>
-            </ul>
-        </li>-->
+    
+     
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#settings-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -382,14 +267,7 @@
           </li>
         </ul>
       </li>
-      {{-- @if (auth()->user()->rule === 'RULE_ADMIN' || 'RULE_SUPPORT')
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ route('admin.home') }}">
-        <i class="bi bi-lock-fill"></i>
-        <span>@lang('header.admin')</span>
-        </a>
-        </li>
-        @endif --}}
+ 
 
       <li class="nav-item">
 

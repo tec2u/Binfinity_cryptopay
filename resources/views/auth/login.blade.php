@@ -78,13 +78,13 @@
                 {{ __('Login') }}
               </button>
             </div>
-            <div class="text-center p-t-115 mt-40">
+           <!-- <div class="text-center p-t-115 mt-40">
               @if (Route::has('password.request'))
                 <a class="txt2" href="{{ route('password.request') }}" style="color: #fff">
                   {{ __('Forgot Your Password?') }}
                 </a>
               @endif
-            </div>
+            </div> -->
           </div>
           <div class="text-center p-t-115">
             <span class="txt1" style="color: #fff">

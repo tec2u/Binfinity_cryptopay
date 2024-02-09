@@ -8,7 +8,7 @@
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>AI Next Level Club</title>
+  <title>Binfinity CryptoPay</title>
   <link rel="icon" type="image/png" sizes="400x400" href="assetsWelcomeNew/images/icon.png">
 
   <!-- Fonts -->

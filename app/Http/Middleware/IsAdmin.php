@@ -18,12 +18,12 @@ class IsAdmin
     public function handle(Request $request, Closure $next)
     {
         if (auth()->user()->rule === 'RULE_USER') {
-            $user = User::find(auth()->user()->id);
-            if($user->getAdessao($user->id) >= 1){
+           // $user = User::find(auth()->user()->id);
+           // if($user->getAdessao($user->id) >= 1){
                return redirect()->route('home.home'); 
-            }else{
-                return redirect()->route('packages.index');
-            }
+           // }else{
+           //     return redirect()->route('packages.index');
+           // }
             
         }
         return $next($request);

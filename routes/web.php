@@ -26,6 +26,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\StepByStepController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\VideosController;
 use App\Http\Controllers\WalletController;
@@ -68,8 +69,10 @@ Route::get('/blog', function () {
 Route::get('/invoice_step1', function () {
    return view('invoice.invoice_step1');
 });
-Route::get('/invoice_step2', function () {
-   return view('invoice.invoice_step2');
+
+
+Route::controller(InvoiceController::class)->group(function () {
+   Route::get('invoice/{id}/', 'index')->name('.index');
 });
 
 Route::controller(StepByStepController::class)->group(function () {
