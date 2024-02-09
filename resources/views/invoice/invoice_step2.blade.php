@@ -56,6 +56,7 @@ if($order[0]['coin']=="USDT_ERC20"){
 
 @endphp
   <img class="logo" src='{{$img}}' style='height:100px;width:100px;margin:50px' >
+  
    
   <div class="email">
     <label for="email">QR CODE {{$order[0]['coin']}}</label>
