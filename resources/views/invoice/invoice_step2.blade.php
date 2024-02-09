@@ -31,6 +31,9 @@
 <body>
 <!-- partial:index.partial.html -->
 <div class="screen-1">
+
+
+
 @php
   $img='';
 
@@ -84,20 +87,25 @@ if($order[0]['coin']=="USDT_ERC20"){
   </div>
   <!-- COUNTDOWN -->
   
+  
+  @if ($order[0]['status']=='Paid')
+    <img src='https://www.freestock.com/450/freestock_567271525.jpg' style='width:100px'>
+  @else
   <div id="countdown">
-    
     <div id="timer">
      
-      <div>
-        <span id="minutes">0</span>
-        <span>Minutes</span>
-      </div>
-      <div>
-        <span id="seconds">0</span>
-        <span>Seconds</span>
-      </div>
-    </div>
-  </div>
+     <div>
+       <span id="minutes">0</span>
+       <span>Minutes</span>
+     </div>
+     <div>
+       <span id="seconds">0</span>
+       <span>Seconds</span>
+     </div>
+   </div>
+ </div>
+
+  @endif
 
   <!-- FIM COUNT -->
 
