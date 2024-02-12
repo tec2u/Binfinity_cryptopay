@@ -82,11 +82,11 @@ class PackageController extends Controller
     }
 
 
-    public function packagepay($packageid)
+    public function packagepay($id)
     {
 
-
-        // dd($data);
+        $packageid=$_GET['id'];
+         //dd($packageid);
 
         // $controller = new CronPagamento;
         // $controller->index();
