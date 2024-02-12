@@ -64,7 +64,7 @@
                               <span class="rounded-pill bg-success px-4 py-1">Paid</span>
                             @else
                               <span class="rounded-pill bg-danger px-4 py-1">
-                                <a href="{{ route('packages.payCrypto', ['id' => $orderpackage->id]) }}">
+                                <a href="{{ route('packages.packagepay', ['id' => $orderpackage->id]) }}">
                                   PAY</a></span>
                             @endif
                           </td>
