@@ -165,7 +165,16 @@
         </li><!-- End Dashboard Nav -->
     
 
-     
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('packages.index') }}">
+              <i class="bi bi-circle"></i><span>New Invoice</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/packages/packagesprofit">
+              <i class="bi bi-circle"></i><span>My Invoices</span>
+            </a>
+          </li>
 
       <li class="nav-item">
         <a class="nav-link " href="{{ route('wallets.WithdrawWallet') }}">

@@ -236,7 +236,7 @@ class PackageController extends Controller
         $id_user = Auth::id();
         $orderpackages = OrderPackage::orderBy('id', 'DESC')
             ->where('hide', false)
-            ->where('package_id', '<>', 20)
+            ->where('package_id', '=', 20)
             ->where('user_id', $id_user)->paginate(9);
 
         return view('userpackageinfo', compact('orderpackages'));

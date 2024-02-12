@@ -92,44 +92,27 @@ class PaymentController extends Controller
              flash(__('backoffice_alert.unable_to_process_your_order'))->error();
              return redirect()->route('packages.detail', ['id' => $package->id]);
          }
-     }
+     }*/
      public function indexBTC($package, $value)
      {
+        
          $package = Package::find($package);
-         $price = ($value < $package->price) ? $package->price : $value;
+         $package->price = $value;
          $name = substr(str_replace(' ', '', $package->name), 0, 15);
-         //$wallet = Wallet::where('user_id',auth()->user()->id)->first();
-         // if(empty($wallet)){
-         //     flash("Please register your wallet to complete the order")->warning();
-         //     return redirect()->route('packages.detail', ['id' => $package->id]);
-         // }
-         try {
-             $paymentConfig = [
-                 "api_url" => "https://coinremitter.com/api/v3/BTC/create-invoice",
-                 "api_key" => '',
-                 "password" => "",
-                 "currency" => "USD",
-                 "expire_time" => "30"
-             ];
-            
-             $codepayment = '0'; //$raw->data->id;
-             $invoiceid = '0'; //$raw->data->invoice_id;
-             $wallet_OP = '0'; //$raw->data->address;
-             $this->createOrder($package, $codepayment, $invoiceid, $wallet_OP, '0');
-             $coin = '0'; //$raw->data->coin;
-             $paymentInfo = [
-                 "coin" => '0', //$raw->data->coin,
-                 "value" => '0', //strval($raw->data->total_amount->$coin),
-                 "USD" => '0', //strval($raw->data->total_amount->USD),
-                 "address" => '0', //$raw->data->address
-             ];
-             return view('payment', compact('paymentInfo'));
-         } catch (Exception $e) {
-             $this->errorCatch($e->getMessage(), auth()->user()->id);
-             flash(__('backoffice_alert.unable_to_process_your_order'))->error();
-             return redirect()->route('packages.detail', ['id' => $package->id]);
-         }
+        
+       
+       
+        $user = User::find(auth()->user()->id);
+
+
+        $this->createOrder($package, '1', '2', '3', '4');
+
+        flash(__('ORDER CREATED SUCCESFULLY'))->success();
+        return redirect('/packages/packagesprofit');
+        //return view('userpackageprofitinfo', compact('orderpackages'));
+        // return view('userpackageprofitinfo');
      }
+     /*
      public function indexPost(Request $request)
      {
          $paymentConfig = [
