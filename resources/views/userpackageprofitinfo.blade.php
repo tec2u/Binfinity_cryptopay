@@ -61,10 +61,10 @@
                           <td>{{ date('d/m/Y', strtotime($orderpackage->created_at)) }}</td>
                           <td>
                             @if ($orderpackage->payment_status == 1)
-                              <span class="rounded-pill bg-success px-4 py-1">ACTIVATED</span>
+                              <span class="rounded-pill bg-success px-4 py-1">Paid</span>
                             @else
                               <span class="rounded-pill bg-danger px-4 py-1">
-                                <a href="{{ route('packages.packagepay', ['id' => $orderpackage->id]) }}">
+                                <a href="{{ route('packages.packagepay.crypto', ['id' => $orderpackage->id]) }}">
                                   PAY</a></span>
                             @endif
                           </td>
