@@ -10,8 +10,7 @@ use App\Models\User;
 use App\Models\OrderPackage;
 use Illuminate\Support\Facades\Auth;
 use Alert;
-use App\Models\Career;
-use App\Models\CareerUser;
+
 
 class HomeController extends Controller
 {
@@ -39,13 +38,7 @@ class HomeController extends Controller
       
       $current_package = OrderPackage::where('user_id', $id_user)->first();
       $pacote = $user->orderPackage->first();
-      $career = CareerUser::where('user_id', $user->id)->max('career_id');
-      //dd($career);
-      if (isset($career)) {
-         $carrer = Career::find($career);
-      } else {
-         $carrer = Career::find(1);
-      }
+     
 
       $recomendation = User::where('recommendation_user_id', $user->id)->where('activated', 0)->get();
 
@@ -174,7 +167,7 @@ class HomeController extends Controller
       }
 
 
-      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'carrer', 'inactiverights', 'url_image_popup', 'images'));
+      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque',  'inactiverights', 'url_image_popup', 'images'));
    }
 
    public function welcome()
