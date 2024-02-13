@@ -56,7 +56,8 @@ https://templatemo.com/tm-535-softy-pinko
                             <li><a href="#testimonials">Testimonials</a></li>
                             <li><a href="#pricing-plans">Pricing Tables</a></li>
                             <li><a href="#contact-us">Contact Us</a></li>
-                            <li><a href="https://cryptopay.binfinitybank.com/login">Log In</a></li>
+                            <li><a href="/login">Log In</a></li>
+                            <li><a href="/register">Register</a></li>
                         </ul>
                         <a class='menu-trigger'>
                             <span>Menu</span>

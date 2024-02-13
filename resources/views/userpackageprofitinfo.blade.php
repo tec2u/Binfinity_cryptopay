@@ -70,16 +70,10 @@
                           </td>
                           <td>
                             <span class="rounded-pill bg-warning px-4 py-1">
-                              <a href="{{ route('packages.packageupdatelink', ['id' => $orderpackage->id]) }}">
-                                UPDATE LINK</a></span>
+                              <a href="/invoice/{{$orderpackage->id}}">
+                                INVOICE LINK</a></span>
                           </td>
-                          @if ($orderpackage->payment_status == 1)
-                            <td>
-                              <span class="rounded-pill bg-warning px-3 py-1">
-                                <a href="{{ route('packages.invoice', ['id' => $orderpackage->id]) }}">
-                                  INVOICE</a></span>
-                            </td>
-                          @endif
+                       
                         </tr>
                       @empty
                         <p>@lang('package.any_packages_registered')</p>
