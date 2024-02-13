@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banco;
-use App\Models\HistoricScore;
+
 use App\Models\Package;
 use App\Models\User;
-use App\Models\DailyImages;
+
 use App\Models\OrderPackage;
 use Illuminate\Support\Facades\Auth;
 use Alert;
@@ -36,7 +36,7 @@ class HomeController extends Controller
       $packages = OrderPackage::where('user_id', $id_user)->where('payment_status', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
       $orderpackages = OrderPackage::where('user_id', $id_user)->orderBy('id', 'DESC')->limit(5)->get();
       $user = User::where('id', $id_user)->first();
-      $images = DailyImages::all();
+      
       $current_package = OrderPackage::where('user_id', $id_user)->first();
       $pacote = $user->orderPackage->first();
       $career = CareerUser::where('user_id', $user->id)->max('career_id');
@@ -88,18 +88,7 @@ class HomeController extends Controller
          $bonusdaily = $bonusdaily->total;
       }
 
-      $pontos = HistoricScore::where('user_id', $user->id)
-         ->where('created_at', '>=', "$to 00:00:00")
-         ->where('created_at', '<=', "$from 23:59:59")
-         ->selectRaw('sum(score) as total')
-         ->first();
-
-      if (empty($pontos)) {
-         $pontos = 0;
-      } else {
-         $pontos = $pontos->total;
-      }
-
+     
       $data = array();
       $datasaida = array();
       $label = array();
@@ -185,7 +174,7 @@ class HomeController extends Controller
       }
 
 
-      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'pontos', 'saque', 'carrer', 'inactiverights', 'url_image_popup', 'images'));
+      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'carrer', 'inactiverights', 'url_image_popup', 'images'));
    }
 
    public function welcome()
