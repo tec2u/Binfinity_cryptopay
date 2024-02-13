@@ -16,7 +16,7 @@ class InvoiceController extends Controller
     {
 
         //dd($id);
-        $order = NodeOrders::where('id', $id)->get();;
+        $order = NodeOrders::where('id_order', $id)->get();;
 
         
         
