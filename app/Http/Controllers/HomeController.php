@@ -167,7 +167,7 @@ class HomeController extends Controller
       }
 
 
-      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque',  'inactiverights', 'url_image_popup', 'images'));
+      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque',  'inactiverights'));
    }
 
    public function welcome()
