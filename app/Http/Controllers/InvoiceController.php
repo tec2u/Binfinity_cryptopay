@@ -11,16 +11,18 @@ use stdClass;
 
 class InvoiceController extends Controller
 {
-    
+
     public function index($id)
     {
 
         //dd($id);
-        $order = NodeOrders::where('id_order', $id)->get();;
+        $order = NodeOrders::where('id_order', $id)->get();
+        if (count($order) > 0) {
+            return view('invoice.invoice_step2', compact('order'));
+        } else {
+            abort(404);
+        }
 
-        
-        
-        return view('invoice.invoice_step2', compact('order'));
     }
 
 }
