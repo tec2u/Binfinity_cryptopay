@@ -3,7 +3,7 @@
 }
 
 body {
-    /* -webkit-user-select: none;
+    -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -12,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     background: #dde5f4;
-    height: 100vh; */
+    height: 100vh;
 }
 
 .screen-1 {

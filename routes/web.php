@@ -72,7 +72,9 @@ Route::get('/invoice_step1', function () {
 
 
 Route::controller(InvoiceController::class)->group(function () {
-   Route::get('invoice/{id}/', 'index')->name('.index');
+   Route::post('invoice/store', 'store')->name('invoice.store.post');
+   Route::get('invoice/create/', 'create')->name('invoice.create');
+   Route::get('invoice/{id}/', 'index')->name('invoice.index');
 });
 
 Route::controller(StepByStepController::class)->group(function () {

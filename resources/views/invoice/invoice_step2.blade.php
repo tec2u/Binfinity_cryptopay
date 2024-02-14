@@ -169,7 +169,7 @@
       </div>
     @endif
 
-    <button class="login">BACK </button>
+    <button class="login"> <a href="{{ route('invoice.create') }}" style="color:white">BACK</a> </button>
   </div>
 
 </body>
