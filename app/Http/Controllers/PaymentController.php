@@ -10,6 +10,7 @@ use App\Traits\CustomLogTrait;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ClubSwanController;
+use Alert;
 
 class PaymentController extends Controller
 {
@@ -93,16 +94,19 @@ class PaymentController extends Controller
              return redirect()->route('packages.detail', ['id' => $package->id]);
          }
      }*/
-     public function indexBTC($package, $value)
-     {
-        
-         $package = Package::find($package);
-         $package->price = $value;
-         $name = substr(str_replace(' ', '', $package->name), 0, 15);
-        
-       
-       
+    public function indexBTC($package, $value)
+    {
         $user = User::find(auth()->user()->id);
+        $myWallets = Wallet::where('user_id', $user->id)->count();
+
+        if ($myWallets < 10) {
+            Alert::success('Walltes not found, please create in menu > All My Allocated Wallets ');
+            return redirect()->back();
+        }
+
+        $package = Package::find($package);
+        $package->price = $value;
+        $name = substr(str_replace(' ', '', $package->name), 0, 15);
 
 
         $this->createOrder($package, '1', '2', '3', '4');
@@ -111,47 +115,47 @@ class PaymentController extends Controller
         return redirect('/packages/packagesprofit');
         //return view('userpackageprofitinfo', compact('orderpackages'));
         // return view('userpackageprofitinfo');
-     }
-     /*
-     public function indexPost(Request $request)
-     {
-         $paymentConfig = [
-             "api_url" => "https://coinremitter.com/api/v3/BTC/create-invoice",
-             "api_key" => '',
-             "password" => ""
-         ];
-         $curl = curl_init();
-         curl_setopt_array($curl, array(
-             CURLOPT_URL => $paymentConfig['api_url'],
-             CURLOPT_RETURNTRANSFER => true,
-             CURLOPT_ENCODING => '',
-             CURLOPT_MAXREDIRS => 10,
-             CURLOPT_TIMEOUT => 0,
-             CURLOPT_FOLLOWLOCATION => true,
-             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-             CURLOPT_CUSTOMREQUEST => 'POST',
-             CURLOPT_POSTFIELDS => '{
-                 "api_key": "' . $paymentConfig['api_key'] . '",
-                 "password": "' . $paymentConfig['password'] . '",
-                 "amount": "' . $request->value . '",
-                 "name": "' . $request->package . '",
-                 "currency": "' . $request->currency . '",
-                 "expire_time": "' . $request->expire_time . '"
-             }',
-             CURLOPT_HTTPHEADER => array(
-                 'Content-Type: application/json'
-             ),
-         ));
-         $raw = json_decode(curl_exec($curl));
-         curl_close($curl);
-         $paymentInfo = [
-             "USD" => '0', //strval($raw->data->total_amount->USD),
-             "BTC" => '0', //strval($raw->data->total_amount->BTC),
-             "EUR" => '0', //strval($raw->data->total_amount->EUR),
-             "address" => '0', //$raw->data->address
-         ];
-         return view('payment', compact('paymentInfo'));
-     }*/
+    }
+    /*
+    public function indexPost(Request $request)
+    {
+        $paymentConfig = [
+            "api_url" => "https://coinremitter.com/api/v3/BTC/create-invoice",
+            "api_key" => '',
+            "password" => ""
+        ];
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $paymentConfig['api_url'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                "api_key": "' . $paymentConfig['api_key'] . '",
+                "password": "' . $paymentConfig['password'] . '",
+                "amount": "' . $request->value . '",
+                "name": "' . $request->package . '",
+                "currency": "' . $request->currency . '",
+                "expire_time": "' . $request->expire_time . '"
+            }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+        $raw = json_decode(curl_exec($curl));
+        curl_close($curl);
+        $paymentInfo = [
+            "USD" => '0', //strval($raw->data->total_amount->USD),
+            "BTC" => '0', //strval($raw->data->total_amount->BTC),
+            "EUR" => '0', //strval($raw->data->total_amount->EUR),
+            "address" => '0', //$raw->data->address
+        ];
+        return view('payment', compact('paymentInfo'));
+    }*/
     public function subscriptionClub($package)
     {
 

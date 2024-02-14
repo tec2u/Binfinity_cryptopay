@@ -28,6 +28,12 @@
                 </div>
                 </br>
                 <div class="col-12">
+                  @if (session('error'))
+                    <div class="alert alert-warning">
+                      {{ session('error') }}, create in <a style="color:blue" href="{{ route('wallets.index') }}">LINK</a>
+                    </div>
+                  @endif
+
                   @if ($orderpackage->payment_status == 1)
                     Payed
                   @else
@@ -40,7 +46,7 @@
                         <br>
                       @endforeach
                     @else
-                      Please do the payment of {{ $orderpackage->price }} USD IN <strong>{{ $wallet->coin }}
+                      Please do the payment of {{ $orderpackage->price }} USD IN <strong>{{ $wallet->coin ?? '' }}
                         ({{ $value_btc ?? '' }})</strong>
                     @endif
                   @endif
@@ -61,10 +67,10 @@
                       <input type="hidden" value="{{ $orderpackage->price }}" name="price">
                       <select class="form-select" aria-label="Default select example" name="method" required>
                         <option value="" selected>Choose method</option>
-                        <option value="BITCOIN">BTC</option>
-                        <option value="USDT_ERC20">USDT ERC20</option>
+                        {{-- <option value="BITCOIN">BTC</option> --}}
+                        {{-- <option value="USDT_ERC20">USDT ERC20</option> --}}
                         <option value="TRX">TRX</option>
-                        <option value="ETH">ETH</option>
+                        {{-- <option value="ETH">ETH</option> --}}
                         <option value="USDT_TRC20">USDT TRC20</option>
                       </select>
                       <button type="submit" class="btn btn-success" style="margin-top: 1rem">Choose</button>
@@ -93,11 +99,11 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Wallet coin {{ $wallet->coin }}</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Wallet coin {{ $wallet->coin ?? '' }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <strong>Wallet address: {{ $wallet->address }}</strong>
+          <strong>Wallet address: {{ $wallet->address ?? '' }}</strong>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

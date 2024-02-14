@@ -83,23 +83,7 @@ class WalletController extends Controller
 
 
 
-            $myWallets = Wallet::where('user_id', $userAprov->id)->where('coin', $requestFormated['coin'])->get();
 
-            $wallet = null;
-
-            if (count($myWallets) > 0) {
-                # code...
-                $ids = [];
-                foreach ($myWallets as $w) {
-                    array_push($ids, $w->id);
-                }
-
-                $idSorteado = $ids[array_rand($ids)];
-
-                $wallet = Wallet::where('id', $idSorteado)->first();
-            } else {
-                return "Wallet Not found";
-            }
 
 
             $orders9 = NodeOrders::where('coin', $requestFormated['coin'])
@@ -108,22 +92,45 @@ class WalletController extends Controller
                 ->limit(9)
                 ->get();
 
-
-            $usedWallets = $orders9->pluck('wallet')->toArray();
-
-            $unusedWallets = Wallet::where('user_id', $userAprov->id)
-                ->where('coin', $requestFormated['coin'])
-                ->whereNotIn('address', $usedWallets)
-                ->get();
+            if (count($orders9) > 0) {
 
 
-            if ($unusedWallets->isNotEmpty()) {
 
-                $selectedWallet = $unusedWallets->random();
-                $wallet = $selectedWallet;
+                $usedWallets = $orders9->pluck('wallet')->toArray();
+
+                $unusedWallets = Wallet::where('user_id', $userAprov->id)
+                    ->where('coin', $requestFormated['coin'])
+                    ->whereNotIn('address', $usedWallets)
+                    ->get();
+
+
+                if ($unusedWallets->isNotEmpty()) {
+
+                    $selectedWallet = $unusedWallets->random();
+                    $wallet = $selectedWallet;
+                } else {
+
+                    return "Wallet Not found";
+                }
+
             } else {
+                $myWallets = Wallet::where('user_id', $userAprov->id)->where('coin', $requestFormated['coin'])->get();
 
-                return "Wallet Not found";
+                $wallet = null;
+
+                if (count($myWallets) > 0) {
+                    # code...
+                    $ids = [];
+                    foreach ($myWallets as $w) {
+                        array_push($ids, $w->id);
+                    }
+
+                    $idSorteado = $ids[array_rand($ids)];
+
+                    $wallet = Wallet::where('id', $idSorteado)->first();
+                } else {
+                    return "Wallet Not found";
+                }
             }
 
 

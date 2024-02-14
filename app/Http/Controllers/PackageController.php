@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CustomLog;
 use App\Models\Documents;
+use App\Models\NodeOrders;
 use App\Models\Package;
 use App\Models\PaymentLog;
 use GuzzleHttp\Client;
@@ -16,6 +17,7 @@ use Exception;
 use App\Models\Wallet;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 
 class PackageController extends Controller
 {
@@ -86,7 +88,7 @@ class PackageController extends Controller
     {
 
         //$packageid=$_GET['id'];
-         //dd($packageid);
+        //dd($packageid);
 
         // $controller = new CronPagamento;
         // $controller->index();
@@ -142,17 +144,19 @@ class PackageController extends Controller
             // $value_btc = $price_order / $bitcoin;
 
             $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
-            $erc20 = $data['data']['ERC20'][0]['quote']['USD']['price'];
+            // $erc20 = $data['data']['ERC20'][0]['quote']['USD']['price'];
+            // $trc20 = $data['data']['USDT'][0]['quote']['USD']['price'];
+            $trc20 = 1;
+            $erc20 = 1;
             $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
             $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
-            $trc20 = $data['data']['USDT'][0]['quote']['USD']['price'];
 
             $moedas = [
-                "BITCOIN" => $price_order / $btc,
-                "USDT_ERC20" => $price_order / $erc20,
-                "TRX" => $price_order / $trx,
-                "ETH" => $price_order / $eth,
-                "USDT_TRC20" => $price_order / $trc20,
+                // "BITCOIN" => number_format($price_order / $btc, 5),
+                // "ETH" => number_format($price_order / $eth, 4),
+                // "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                "TRX" => number_format($price_order / $trx, 2),
+                "USDT_TRC20" => number_format($price_order / $trc20, 2),
             ];
 
         }
@@ -315,19 +319,62 @@ class PackageController extends Controller
     {
         $order = OrderPackage::where('id', $request->id)->first();
 
-        $walletGen = $this->filterWallet($request->method);
+        // $walletGen = $this->filterWallet($request->method);
 
-        $wallet = new Wallet;
-        $wallet->user_id = Auth::id();
-        $wallet->wallet = $walletGen['address'];
-        $wallet->description = 'wallet';
-        $wallet->address = $walletGen['address'];
-        $wallet->key = $walletGen['privateKey'];
-        $wallet->mnemonic = $walletGen['mnemonic'];
-        $wallet->coin = $request->method;
-        $wallet->save();
+        // $wallet = new Wallet;
+        // $wallet->user_id = Auth::id();
+        // $wallet->wallet = $walletGen['address'];
+        // $wallet->description = 'wallet';
+        // $wallet->address = $walletGen['address'];
+        // $wallet->key = $walletGen['privateKey'];
+        // $wallet->mnemonic = $walletGen['mnemonic'];
+        // $wallet->coin = $request->method;
+        // $wallet->save();
 
-        // dd($request);
+        $orders9 = NodeOrders::where('coin', $request->method)
+            ->where('id_user', Auth::id())
+            ->orderBy('id', 'desc')
+            ->limit(9)
+            ->get();
+
+
+        if (count($orders9) > 0) {
+            // dd($orders9);
+            $usedWallets = $orders9->pluck('wallet')->toArray();
+
+            $unusedWallets = Wallet::where('user_id', Auth::id())
+                ->where('coin', $request->method)
+                ->whereNotIn('address', $usedWallets)
+                ->get();
+
+
+            if ($unusedWallets->isNotEmpty()) {
+
+                $selectedWallet = $unusedWallets->random();
+                $wallet = $selectedWallet;
+            } else {
+                return redirect()->back()->with('error', "Wallet Not found");
+            }
+        } else {
+            $myWallets = Wallet::where('user_id', Auth::id())->where('coin', $request->method)->get();
+
+            $wallet = null;
+
+            if (count($myWallets) > 0) {
+                # code...
+                $ids = [];
+                foreach ($myWallets as $w) {
+                    array_push($ids, $w->id);
+                }
+
+                $idSorteado = $ids[array_rand($ids)];
+
+                $wallet = Wallet::where('id', $idSorteado)->first();
+            } else {
+                return redirect()->back()->with('error', "Wallet Not found");
+            }
+        }
+
 
         if (strlen($request->price) < 7) {
             $price = floatval(str_replace(',', '.', $request->price));
@@ -343,7 +390,15 @@ class PackageController extends Controller
         $order->price_crypto = $request->{$request->method};
         $order->save();
 
-        $postNode = $this->genUrlCrypto($request->method, $order);
+        $orderr = new stdClass();
+        $orderr->id = $order->id;
+        $orderr->id_user = $order->user_id;
+        $orderr->price = $order->price;
+        $orderr->price_crypto = $order->price_crypto;
+        $orderr->wallet = $wallet->address;
+        $orderr->notify_url = route('notify.payment');
+
+        $postNode = $this->genUrlCrypto($request->method, $orderr);
 
 
         $order = OrderPackage::where('id', $request->id)->first();
@@ -371,7 +426,7 @@ class PackageController extends Controller
         if (isset($order->notify_url)) {
             $url = $order->notify_url;
         } else {
-            $url = url()->current() . "/packages/packagepay/notify";
+            $url = route('notify.payment');
         }
 
         curl_setopt_array(
@@ -418,7 +473,7 @@ class PackageController extends Controller
         $requestFormated = $request->all();
 
         // crypto
-        if (isset($requestFormated["id"])) {
+        if (isset($requestFormated["id"]) && !isset($requestFormated["node"])) {
 
             $payment = OrderPackage::where('transaction_wallet', $requestFormated["id"])
                 ->orWhere('transaction_wallet', $requestFormated["merchant_id"])
@@ -455,7 +510,50 @@ class PackageController extends Controller
             $log->json = json_encode($request->all());
             $log->save();
 
+        } else if (isset($requestFormated["node"])) {
+            $payment = OrderPackage::where('transaction_wallet', $requestFormated["id"])
+                ->orWhere('transaction_wallet', $requestFormated["merchant_id"])
+                ->Where('id', $requestFormated["id_order"])
+                ->first();
+
+            if (!isset($payment) || $payment->id != $requestFormated["id_order"]) {
+                return false;
+            }
+
+            if (
+                strtolower($requestFormated["status"]) == 'paid'
+                || strtolower($requestFormated["status"]) == 'overpaid'
+                || strtolower($requestFormated["status"]) == 'underpaid'
+            ) {
+                $payment->payment = $requestFormated["status"];
+                $payment->payment_status = 1;
+                $payment->status = 1;
+            }
+
+            if (strtolower($requestFormated["status"]) == 'cancelled' || strtolower($requestFormated["status"]) == 'expired') {
+                $payment->payment = $requestFormated["status"];
+                $payment->payment_status = 2;
+                $payment->status = 0;
+            }
+
+            $payment->save();
+
+            if ($payment->package_id == 20 && strtolower($requestFormated["status"]) == 'paid' || strtolower($requestFormated["status"]) == 'overpaid') {
+                // $this->sendPostPayOrder($payment->id);
+            }
+
+            $log = new PaymentLog;
+            $log->content = $requestFormated["status"];
+            $log->order_package_id = $payment->id;
+            $log->operation = "payment package";
+            $log->controller = "packageController";
+            $log->http_code = "200";
+            $log->route = "/packages/packagepay/notify";
+            $log->status = "success";
+            $log->json = json_encode($request->all());
+            $log->save();
         }
+
 
         if (isset($requestFormated["teste"])) {
             if (isset($requestFormated["idpedido"])) {
