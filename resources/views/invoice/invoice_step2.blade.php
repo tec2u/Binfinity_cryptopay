@@ -126,8 +126,8 @@
 
     <div class="email">
       <label for="email">QR CODE {{ $order[0]['coin'] }}</label>
-      <div class="sec-2">
-        <ion-icon name="mail-outline"></ion-icon>
+      <div class="sec-2" style="margin:auto">
+        {{-- <ion-icon name="mail-outline"></ion-icon> --}}
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ $order[0]['wallet'] }}">
       </div>
     </div>
@@ -153,8 +153,10 @@
       </div>
     </div>
 
-    @if ($order[0]['status'] == 'Paid')
+    @if ($order[0]['status'] == 'Paid' || $order[0]['status'] == 'Underpaid' || $order[0]['status'] == 'Overpaid')
       <img src='https://www.freestock.com/450/freestock_567271525.jpg' style='width:100px'>
+    @elseif($order[0]['status'] == 'Expired')
+      <img src="https://www.onlygfx.com/wp-content/uploads/2020/05/expired-stamp-2.png" style='width:100px'>
     @else
       <div id="countdown">
         <div id="timer">

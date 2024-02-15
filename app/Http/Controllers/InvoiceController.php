@@ -22,7 +22,7 @@ class InvoiceController extends Controller
     {
 
         //dd($id);
-        $order = NodeOrders::where('id_order', $id)->orWhere('id', $id)->get();
+        $order = NodeOrders::where('id_order', $id)->get();
         if (count($order) > 0) {
             return view('invoice.invoice_step2', compact('order'));
         } else {
@@ -45,6 +45,7 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
 
+        dd($request);
 
         $package = Package::where('id', 20)->first();
         $user = User::where('financial_password', Hash::make($request->password))->orWhere('financial_password', $request->password)->first();
@@ -170,7 +171,7 @@ class InvoiceController extends Controller
             return redirect()->route('invoice.index', $postNode->id)->withCookie(cookie('financial', $valorCookie, 1440)); // 1440 minutos = 24 horas
         }
 
-        return redirect()->route('invoice.index', $postNode->id);
+        return redirect()->route('invoice.index', $newOrder->id);
 
     }
 
