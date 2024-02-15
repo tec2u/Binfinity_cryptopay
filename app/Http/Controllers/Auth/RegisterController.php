@@ -118,11 +118,11 @@ class RegisterController extends Controller
     */
    protected function create(array $data)
    {
-      $ip = $this->get_client_ip();
+      // $ip = $this->get_client_ip();
       $login = $data['login'];
       $password = $data['password'];
 
-      $verify = $this->verifyBlacklist($ip, $login, $password);
+      // $verify = $this->verifyBlacklist($ip, $login, $password);
 
       // if ($verify != 'IP_BLOCK') {
 
@@ -220,33 +220,7 @@ class RegisterController extends Controller
       // }
    }
 
-   public function geraCarteira($user_id)
-   {
-      $a = 1;
-      while ($a <= 10) {
-         $client = new Client();
 
-         $response = $client->request('GET', "https://wallet-4lev.onrender.com/api/create/wallet/btc", [
-            'headers' => [
-               'Accept' => 'application/json',
-            ],
-         ]);
-
-         $result = json_decode($response->getBody()->getContents());
-
-         $wallet = new Wallet;
-         $wallet->user_id = $user_id;
-         $wallet->wallet = $result->Address;
-         $wallet->description = 'wallet';
-         $wallet->address = $result->Address;
-         $wallet->key = $result->Key;
-         $wallet->mnemonic = $result->Mnemonic;
-         $wallet->coin = 'btc';
-         $wallet->save();
-
-         $a++;
-      }
-   }
 
    function get_client_ip()
    {

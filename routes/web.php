@@ -61,6 +61,7 @@ Route::get('setlocale/{locale}', function ($locale) {
 Route::controller(HomeController::class)->group(function () {
    Route::get('/', 'welcome')->name('.welcome');
    Route::get('/fees', 'fees')->name('.fees');
+   Route::post('/send/email', 'sendEmailContact')->name('sendEmailContact');
 });
 
 Route::get('/blog', function () {

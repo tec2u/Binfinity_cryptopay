@@ -8,6 +8,8 @@ use App\Models\Package;
 use App\Models\User;
 
 use App\Models\OrderPackage;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Alert;
 
@@ -35,10 +37,10 @@ class HomeController extends Controller
       $packages = OrderPackage::where('user_id', $id_user)->where('payment_status', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
       $orderpackages = OrderPackage::where('user_id', $id_user)->orderBy('id', 'DESC')->limit(5)->get();
       $user = User::where('id', $id_user)->first();
-      
+
       $current_package = OrderPackage::where('user_id', $id_user)->first();
       $pacote = $user->orderPackage->first();
-     
+
 
       $recomendation = User::where('recommendation_user_id', $user->id)->where('activated', 0)->get();
 
@@ -81,7 +83,7 @@ class HomeController extends Controller
          $bonusdaily = $bonusdaily->total;
       }
 
-     
+
       $data = array();
       $datasaida = array();
       $label = array();
@@ -167,7 +169,7 @@ class HomeController extends Controller
       }
 
 
-      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque',  'inactiverights'));
+      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'inactiverights'));
    }
 
    public function welcome()
@@ -181,5 +183,68 @@ class HomeController extends Controller
    {
       $packages = Package::where('type', 'packages')->where('activated', 1)->orderBy('price')->get();
       return view('welcome.fees', compact('packages'));
+   }
+
+   public function sendEmailContact(Request $request)
+   {
+      dd($request);
+   }
+
+   public function sendEmailRecover($nome, $email, $user_id, $code)
+   {
+      $client = new Client();
+
+      $url = 'https://api.brevo.com/v3/smtp/email';
+
+      $headers = [
+         'Accept' => 'application/json',
+         'api-key' => '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',
+         'Content-Type' => 'application/json',
+      ];
+
+      $data = [
+         'sender' => [
+            'name' => 'Lifeprosper',
+            'email' => 'info@lifeprosper.eu',
+         ],
+         'to' => [
+            [
+               'email' => "$email",
+               'name' => "$nome",
+            ],
+         ],
+         'subject' => 'Contact binfinitybank',
+         'htmlContent' => "<html>
+                              <head>
+                              </head>
+                              <body>
+                                 <div style='background-color:#480D54;width:100%;'>
+                                 <img src='https://lifeprosper.eu/img/Logo_AuraWay.png' alt='Lifeprosper Logo' width='300'
+                                    style='height:auto;display:block;' />
+                                 </div>
+                                 <p>
+                                    Hello, $nome
+                                    <br>
+                                    Thank you for registering with us.
+                                    <br>
+                                    <br>
+                                    Enter the code below on the password recovery page to reset your access:
+                                    <br>
+                                    $code
+                                 </p>
+                              </body>
+                           </html>",
+      ];
+
+      try {
+         $response = $client->post($url, [
+            'headers' => $headers,
+            'json' => $data,
+         ]);
+
+         return $response;
+      } catch (\Throwable $th) {
+
+      }
    }
 }
