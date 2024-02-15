@@ -2,14 +2,8 @@
     font-family: "Poppins";
 }
 
-@property --rotate {
-    syntax: "<angle>";
-    initial-value: 132deg;
-    inherits: false;
-}
-
 :root {
-    --card-height: 80vh;
+    --card-height: 70vh;
     --card-width: calc(var(--card-height) / 1.5);
 }
 
@@ -19,10 +13,11 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    box-sizing: border-box;
+    /* padding-top: 2rem; */
+    /* padding-bottom: 2rem; */
+    /* box-sizing: border-box; */
     font-size: 0.7em;
+    overflow: auto;
 }
 
 .card {
@@ -30,7 +25,7 @@ body {
     width: var(--card-width);
     max-width: 500px !important;
     width: 90%;
-    height: max-content !important;
+    height: fit-content !important;
     /* height: var(--card-height); */
     padding: 3px;
     position: relative;
@@ -48,7 +43,7 @@ body {
     flex-direction: column;
 
     text-align: left;
-    gap: 0.1rem;
+    gap: 0.5rem;
 }
 
 /* .card:hover {
@@ -213,8 +208,8 @@ button {
     cursor: pointer;
 }
 
-@media only screen and (max-width: 500px) {
-    * {
-        background-color: #5e5e5e;
-    }
+.logo {
+    height: 100px;
+    display: block;
+    margin: 50px;
 }
