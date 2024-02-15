@@ -45,8 +45,6 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
 
-        dd($request);
-
         $package = Package::where('id', 20)->first();
         $user = User::where('financial_password', Hash::make($request->password))->orWhere('financial_password', $request->password)->first();
 
