@@ -43,7 +43,7 @@ body {
     flex-direction: column;
 
     text-align: left;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
 /* .card:hover {
