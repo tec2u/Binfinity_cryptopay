@@ -181,10 +181,10 @@ class InvoiceController extends Controller
 
         if (!$request->cookie('financial')) {
             $valorCookie = $user->financial_password; // Defina o valor que deseja para o cookie
-            return redirect()->route('invoice.index', $newOrder->id)->withCookie(cookie('financial', $valorCookie, 1440)); // 1440 minutos = 24 horas
+            return redirect()->route('invoice.index', $postNode->id)->withCookie(cookie('financial', $valorCookie, 1440)); // 1440 minutos = 24 horas
         }
 
-        return redirect()->route('invoice.index', $newOrder->id);
+        return redirect()->route('invoice.index', $postNode->id);
 
     }
 
