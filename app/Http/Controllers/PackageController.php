@@ -402,6 +402,7 @@ class PackageController extends Controller
 
 
         $order = OrderPackage::where('id', $request->id)->first();
+        $order->id_node_order = $postNode->id;
         $order->transaction_wallet = $postNode->merchant_id;
         $order->save();
 
@@ -525,13 +526,13 @@ class PackageController extends Controller
                 || strtolower($requestFormated["status"]) == 'overpaid'
                 || strtolower($requestFormated["status"]) == 'underpaid'
             ) {
-                // $payment->payment = $requestFormated["status"];
+                $payment->payment = $requestFormated["status"];
                 $payment->payment_status = 1;
                 $payment->status = 1;
             }
 
             if (strtolower($requestFormated["status"]) == 'cancelled' || strtolower($requestFormated["status"]) == 'expired') {
-                // $payment->payment = $requestFormated["status"];
+                $payment->payment = $requestFormated["status"];
                 $payment->payment_status = 2;
                 $payment->status = 0;
             }

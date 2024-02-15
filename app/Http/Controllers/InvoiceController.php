@@ -18,11 +18,25 @@ use stdClass;
 class InvoiceController extends Controller
 {
 
-    public function index($id)
+
+    public function orderId($id)
     {
 
         //dd($id);
         $order = NodeOrders::where('id_order', $id)->get();
+        if (count($order) > 0) {
+            return view('invoice.invoice_step2', compact('order'));
+        } else {
+            abort(404);
+        }
+
+    }
+
+    public function index($id)
+    {
+
+        //dd($id);
+        $order = NodeOrders::where('id', $id)->get();
         if (count($order) > 0) {
             return view('invoice.invoice_step2', compact('order'));
         } else {
@@ -162,6 +176,7 @@ class InvoiceController extends Controller
 
         $ord = OrderPackage::where('id', $newOrder->id)->first();
         $ord->transaction_wallet = $postNode->merchant_id;
+        $ord->id_node_order = $postNode->id;
         $ord->save();
 
         if (!$request->cookie('financial')) {
