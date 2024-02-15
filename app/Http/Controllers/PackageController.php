@@ -154,7 +154,7 @@ class PackageController extends Controller
             $moedas = [
                 // "BITCOIN" => number_format($price_order / $btc, 5),
                 // "ETH" => number_format($price_order / $eth, 4),
-                // "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                "USDT_ERC20" => number_format($price_order / $erc20, 2),
                 "TRX" => number_format($price_order / $trx, 2),
                 "USDT_TRC20" => number_format($price_order / $trc20, 2),
             ];

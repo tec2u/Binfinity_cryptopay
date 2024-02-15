@@ -68,7 +68,7 @@
                       <select class="form-select" aria-label="Default select example" name="method" required>
                         <option value="" selected>Choose method</option>
                         {{-- <option value="BITCOIN">BTC</option> --}}
-                        {{-- <option value="USDT_ERC20">USDT ERC20</option> --}}
+                        <option value="USDT_ERC20">USDT ERC20</option>
                         <option value="TRX">TRX</option>
                         {{-- <option value="ETH">ETH</option> --}}
                         <option value="USDT_TRC20">USDT TRC20</option>
