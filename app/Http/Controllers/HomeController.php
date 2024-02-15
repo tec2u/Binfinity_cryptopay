@@ -187,10 +187,14 @@ class HomeController extends Controller
 
    public function sendEmailContact(Request $request)
    {
-      dd($request);
+      if (isset($request->name) && isset($request->email) && isset($request->message)) {
+         $this->sendEmailBrevo($request->name, $request->email, $request->message, "gabriel.almeiidda@gmail.com");
+      }
+
+      return redirect()->back();
    }
 
-   public function sendEmailRecover($nome, $email, $user_id, $code)
+   public function sendEmailBrevo($nome, $email, $message, $receiver)
    {
       $client = new Client();
 
@@ -198,19 +202,19 @@ class HomeController extends Controller
 
       $headers = [
          'Accept' => 'application/json',
-         'api-key' => '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',
+         'api-key' => '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',
          'Content-Type' => 'application/json',
       ];
 
       $data = [
          'sender' => [
-            'name' => 'Lifeprosper',
-            'email' => 'info@lifeprosper.eu',
+            'name' => "$nome",
+            'email' => "$email",
          ],
          'to' => [
             [
-               'email' => "$email",
-               'name' => "$nome",
+               'email' => "$receiver",
+               'name' => "Binfinitybank",
             ],
          ],
          'subject' => 'Contact binfinitybank',
@@ -218,19 +222,23 @@ class HomeController extends Controller
                               <head>
                               </head>
                               <body>
-                                 <div style='background-color:#480D54;width:100%;'>
-                                 <img src='https://lifeprosper.eu/img/Logo_AuraWay.png' alt='Lifeprosper Logo' width='300'
+                                 <div style='background-color:transparent;width:100%;'>
+                                 <img src='https://cryptopay.binfinitybank.com.br/assetsWelcomeNew/images/logo2.png' alt='Binfinitybank Logo' width='300'
                                     style='height:auto;display:block;' />
                                  </div>
+                                 <strong>Name:</strong>
                                  <p>
-                                    Hello, $nome
-                                    <br>
-                                    Thank you for registering with us.
-                                    <br>
-                                    <br>
-                                    Enter the code below on the password recovery page to reset your access:
-                                    <br>
-                                    $code
+                                    $nome
+                                 </p>
+                                 <br/>
+                                 <strong>Email:</strong>
+                                 <p> 
+                                    $email
+                                 </p>
+                                 <br/>
+                                 <strong>Message:</strong>
+                                 <p>
+                                    $message
                                  </p>
                               </body>
                            </html>",

@@ -588,6 +588,9 @@ https://templatemo.com/tm-535-softy-pinko
 
   <!-- jQuery -->
   <script src="assetsWelcomeNew/js/jquery-2.1.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+    integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <!-- Bootstrap -->
   <script src="assetsWelcomeNew/js/popper.js"></script>
@@ -602,6 +605,31 @@ https://templatemo.com/tm-535-softy-pinko
   <!-- Global Init -->
   <script src="assetsWelcomeNew/js/custom.js"></script>
 
+  <script>
+    const formulario = document.getElementById('contact');
+
+    // Adicione um ouvinte de evento de envio ao formulário
+    formulario.addEventListener('submit', function(event) {
+      document.getElementById('form-submit').textContent = "Sende Message";
+      // Impedir o envio padrão do formulário
+      event.preventDefault();
+
+      // Obter os dados do formulário
+      const formData = new FormData(formulario);
+      const url = "{!! route('sendEmailContact') !!}";
+
+      // Enviar os dados usando Axios
+      axios.post(url, formData)
+        .then(function(response) {
+          document.getElementById('form-submit').textContent = "Sended";
+        })
+        .catch(function(error) {
+          document.getElementById('form-submit').textContent = "Failed";
+          //   console.error(error);
+          // Trate erros, se houver
+        });
+    });
+  </script>
 </body>
 
 </html>
