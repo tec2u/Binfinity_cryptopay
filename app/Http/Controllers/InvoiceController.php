@@ -40,7 +40,7 @@ class InvoiceController extends Controller
         if (count($order) > 0) {
             return view('invoice.invoice_step2', compact('order'));
         } else {
-            abort(404);
+            return $this->orderId($id);
         }
 
     }

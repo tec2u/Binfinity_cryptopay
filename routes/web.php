@@ -75,7 +75,7 @@ Route::get('/invoice_step1', function () {
 Route::controller(InvoiceController::class)->group(function () {
    Route::post('invoice/store', 'store')->name('invoice.store.post');
    Route::get('invoice/create/', 'create')->name('invoice.create');
-   Route::get('invoice/order/{id}/', 'orderId')->name('invoice.index');
+   Route::get('invoice/order/{id}/', 'orderId')->name('invoice.index.order');
    Route::get('invoice/{id}/', 'index')->name('invoice.index');
 });
 
