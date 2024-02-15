@@ -14,8 +14,8 @@
                 </div>
                 <div class="card-header py-3">
                   <!-- <button type="button" class="btn btn-info btn-sm rounded-pill" style="width: 80px;">CSV</button>
-                                                                <button type="button" class="btn btn-success btn-sm rounded-pill" style="width: 80px;">Excel</button>
-                                                                <button type="button" class="btn btn-danger btn-sm rounded-pill" style="width: 80px;">PDF</button> -->
+                                                        <button type="button" class="btn btn-success btn-sm rounded-pill" style="width: 80px;">Excel</button>
+                                                        <button type="button" class="btn btn-danger btn-sm rounded-pill" style="width: 80px;">PDF</button> -->
                   <div class="card-tools">
                     <div class="input-group input-group-sm my-1" style="width: 250px;">
                       <input type="text" name="table_search" class="form-control float-right rounded-pill pl-3"
@@ -77,25 +77,23 @@
                                 <a href="/invoice/order/{{ $orderpackage->id }}">
                                   INVOICE LINK</a>
                               @endif
-                            </span>
-                      @endif
-                      </td>
+                          </td>
 
-                      </tr>
+                        </tr>
                       @empty
                         <p>@lang('package.any_packages_registered')</p>
-                        @endforelse
-                      </tbody>
-                    </table>
-                  </div>
-                  <div class="card-footer clearfix py-3">
-                    {{ $orderpackages->links() }}
-                  </div>
+                      @endforelse
+                    </tbody>
+                  </table>
+                </div>
+                <div class="card-footer clearfix py-3">
+                  {{ $orderpackages->links() }}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
-  @endsection
+      </div>
+    </section>
+  </main>
+@endsection
