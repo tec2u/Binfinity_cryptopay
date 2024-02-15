@@ -115,7 +115,7 @@
             @if (!empty(auth()->user()->image_path))
               <img src="{{ asset('storage/' . auth()->user()->image_path) }}" alt="Profile" class="rounded-circle">
             @else
-              <img src="assetsWelcomeNew/images/icon.png" alt="Profile" class="rounded-circle">
+              <img src="{{ asset('assetsWelcomeNew/images/icon.png') }}" alt="Profile" class="rounded-circle">
             @endif
 
             <span class="d-none d-md-block dropdown-toggle ps-2"
