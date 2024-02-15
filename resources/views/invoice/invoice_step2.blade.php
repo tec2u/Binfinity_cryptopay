@@ -176,9 +176,21 @@
 
 </body>
 <script>
-  const date1 = new Date();
-  console.log(date1);
+  const dateParts = '{{ $order[0]['createdAt'] }}'.split(' ');
+  const datePart = dateParts[0].split('-');
+  const timePart = dateParts[1].split(':');
+
+  // Construa um novo objeto de data com as partes da data e hora
+  const date1 = new Date(
+    parseInt(datePart[0]), // ano
+    parseInt(datePart[1]) - 1, // mês (0-11)
+    parseInt(datePart[2]), // dia
+    parseInt(timePart[0]), // hora
+    parseInt(timePart[1]), // minutos
+    parseInt(timePart[2]) // segundos
+  );
   const date2 = addHours(date1, 1);
+  console.log(date2);
 
   const targetDate = date2.getTime();
 
@@ -218,5 +230,61 @@
     return date;
   }
 </script>
+
+
+{{-- <script>
+  // Obtenha a data do PHP e converta-a em um objeto Date do JavaScript
+  const dateParts = '2024-02-05 10:03:13'.split(' '); // Use um espaço para dividir a string
+  const datePart = dateParts[0].split('-');
+  const timePart = dateParts[1].split(':');
+
+  // Construa um novo objeto de data com as partes da data e hora
+  const date1 = new Date(
+    parseInt(datePart[0]), // ano
+    parseInt(datePart[1]) - 1, // mês (0-11)
+    parseInt(datePart[2]), // dia
+    parseInt(timePart[0]), // hora
+    parseInt(timePart[1]), // minutos
+    parseInt(timePart[2]) // segundos
+  );
+
+  console.log(date1);
+
+  // Adicione uma hora à data
+  const date2 = addHours(date1, 1);
+
+  // Obtenha o valor de data e hora da data atual
+  const targetDate = date2.getTime();
+
+  // Atualize o contador a cada segundo
+  const countdownInterval = setInterval(() => {
+    const now = new Date().getTime(); // Obtenha a data e hora atual
+
+    const timeDifference = targetDate - now; // Calcule a diferença de tempo entre as datas
+
+    // Calcule dias, horas, minutos e segundos
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+    // Atualize os elementos HTML com os valores calculados
+    document.getElementById("days").textContent = days;
+    document.getElementById("hours").textContent = hours;
+    document.getElementById("minutes").textContent = minutes;
+    document.getElementById("seconds").textContent = seconds;
+
+    // Verifique se o contador expirou
+    if (timeDifference < 0) {
+      clearInterval(countdownInterval);
+      document.getElementById("timer").innerHTML = "Contagem regressiva expirada";
+    }
+  }, 1000);
+
+  // Função para adicionar horas a uma data
+  function addHours(date, hours) {
+    return new Date(date.getTime() + hours * 60 * 60 * 1000);
+  }
+</script> --}}
 
 </html>
