@@ -417,6 +417,8 @@ class User extends Authenticatable
 
       $getpackages = $this->getPackages($id);
 
+      $tag = '';
+
       if (!$pay) {
          $tag = "Inactive";
       }
@@ -433,27 +435,27 @@ class User extends Authenticatable
    public function getRedeAdessao($id)
    {
       $count = DB::table('orders_package')
-                  ->join('users', 'orders_package.user_id', 'users.id')
-                  ->join('packages', 'orders_package.package_id', '=', 'packages.id')
-                  ->where("recommendation_user_id", $id)
-                  ->where('type', 'activator')
-                  ->where("status", 1)
-                  ->where("payment_status", 1)
-                  ->count(DB::raw('DISTINCT user_id'));
+         ->join('users', 'orders_package.user_id', 'users.id')
+         ->join('packages', 'orders_package.package_id', '=', 'packages.id')
+         ->where("recommendation_user_id", $id)
+         ->where('type', 'activator')
+         ->where("status", 1)
+         ->where("payment_status", 1)
+         ->count(DB::raw('DISTINCT user_id'));
       return $count;
    }
 
    public function getRedePackages($id)
    {
       $count =
-      DB::table('orders_package')
-                  ->join('users', 'orders_package.user_id', 'users.id')
-                  ->join('packages', 'orders_package.package_id', '=', 'packages.id')
-                  ->where("recommendation_user_id", $id)
-                  ->where('type', 'packages')
-                  ->where("status", 1)
-                  ->where("payment_status", 1)
-                  ->count(DB::raw('DISTINCT user_id'));
+         DB::table('orders_package')
+            ->join('users', 'orders_package.user_id', 'users.id')
+            ->join('packages', 'orders_package.package_id', '=', 'packages.id')
+            ->where("recommendation_user_id", $id)
+            ->where('type', 'packages')
+            ->where("status", 1)
+            ->where("payment_status", 1)
+            ->count(DB::raw('DISTINCT user_id'));
       return $count;
    }
 }
