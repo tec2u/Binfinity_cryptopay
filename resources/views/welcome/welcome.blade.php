@@ -610,7 +610,7 @@ https://templatemo.com/tm-535-softy-pinko
 
     // Adicione um ouvinte de evento de envio ao formulário
     formulario.addEventListener('submit', function(event) {
-      document.getElementById('form-submit').textContent = "Sende Message";
+      document.getElementById('form-submit').textContent = "Send Message";
       // Impedir o envio padrão do formulário
       event.preventDefault();
 

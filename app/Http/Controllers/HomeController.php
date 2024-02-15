@@ -188,7 +188,7 @@ class HomeController extends Controller
    public function sendEmailContact(Request $request)
    {
       if (isset($request->name) && isset($request->email) && isset($request->message)) {
-         $this->sendEmailBrevo($request->name, $request->email, $request->message, "gabriel.almeiidda@gmail.com");
+         $this->sendEmailBrevo($request->name, $request->email, $request->message, "flavio@binfinitybank.com");
       }
 
       return redirect()->back();
