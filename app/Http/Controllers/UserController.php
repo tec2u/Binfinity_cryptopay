@@ -177,6 +177,38 @@ class UserController extends Controller
       }
    }
 
+   public function changeFinancialPassword(Request $request)
+   {
+      $data = $request->only([
+         'password',
+         'old_password'
+      ]);
+
+      try {
+         $id = auth()->user()->id;
+
+         $user = User::find($id);
+         if (!Hash::check($data['old_password'], $user->financial_password)) {
+            Alert::error(__('backoffice_alert.current_password_is_not_correct'));
+            return redirect()->back();
+         }
+
+         $password = Hash::make($data['password']);
+
+         $user->update([
+            'financial_password' => $password
+         ]);
+         $this->createLog('Password updated successfully', 200, 'success', auth()->user()->id);
+         Alert::success(__('backoffice_alert.password_changed'));
+         return redirect()->route('users.index');
+      } catch (Exception $e) {
+         $this->errorCatch($e->getMessage(), auth()->user()->id);
+         Alert::error(__('backoffice_alert.password_not_changed'));
+
+         return redirect()->route('users.index');
+      }
+   }
+
    public function register($id)
    {
       Auth::logout();

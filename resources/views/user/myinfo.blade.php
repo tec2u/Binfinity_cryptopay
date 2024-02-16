@@ -640,12 +640,12 @@
                     <input type="text" class="form-control" id="cell" required name="cell" placeholder=""
                       value="{{ $user->cell }}">
                   </div>
-                {{--  --}}
-                  <div class="col-md-12">
+                  {{--  --}}
+                  {{-- <div class="col-md-12">
                     <label for="walltet" class="form-label">Wallet - USDT TRC20</label>
                     <input type="text" class="form-control" id="wallet" name="wallet"
                       value="{{ empty($user->wallet->first()) ? '' : $user->wallet->first()->wallet }}">
-                  </div>
+                  </div> --}}
                   {{-- <div class="col-md-6">
                         <label for="image" class="form-label">@lang('user.profile_picture')</label>
                         <input type="file" required name="image" id="image" class="form-control">
@@ -665,6 +665,36 @@
                     </div>
                   </div>
                 </form>
+
+                <div class="card-header bbcolorp">
+                  <h3 class="card-title up font">Financial Password</h3>
+                </div>
+                <form class="row gx-3 gy-2 align-items-center p-5" onsubmit="submitPass()"
+                  action="{{ route('users.change.financial.password') }}" method="POST">
+                  @csrf
+                  @method('PUT')
+                  <div class="col-md-4">
+                    <input type="password" class="form-control" id="old_password" name="old_password"
+                      placeholder="@lang('user.current_password')">
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <input type="password" class="form-control" id="password" name="password"
+                        placeholder="@lang('user.new_password')">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <input type="password" class="form-control" id="password" name="password"
+                        placeholder="@lang('user.confirm_password')">
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-5">
+                    <button type="submit" class="btn btn-primary rounded-pill up font" id="btnPass">
+                      @lang('user.change_password')
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -677,6 +707,10 @@
       document.querySelector('#password').style.display = 'block';
       document.querySelector('#confirm_password').style.display = 'block';
       document.querySelector('#change_bt').style.display = 'none';
+    }
+
+    function submitPass() {
+      document.getElementById('btnPass').disabled = true;
     }
   </script>
 @endsection

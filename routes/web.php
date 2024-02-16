@@ -351,6 +351,7 @@ Route::prefix('users')->middleware('auth')->name('users')->group(function () {
       Route::put('/{id}/update', 'update')->name('.update');
       Route::get('/password', 'password')->name('.password');
       Route::put('/password/change', 'changePassword')->name('.change.password');
+      Route::put('/financial/password/change', 'changeFinancialPassword')->name('.change.financial.password');
       Route::get('/{id}/register', 'register')->name('.register');
    });
 });

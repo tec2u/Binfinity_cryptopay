@@ -48,53 +48,72 @@ class InvoiceController extends Controller
     public function create(Request $request)
     {
         $valorCookie = null;
+        $userCookie = null;
         if ($request->cookie('financial')) {
             $valorCookie = $request->cookie('financial');
+            $userCookie = User::where('id', $valorCookie)->first();
         }
 
-        return view('invoice.invoice_step1', compact('valorCookie'));
+        return view('invoice.invoice_step1', compact('userCookie'));
 
     }
 
     public function store(Request $request)
     {
-
         $package = Package::where('id', 20)->first();
-        $user = User::where('financial_password', Hash::make($request->password))->orWhere('financial_password', $request->password)->first();
 
-        if (!isset($user) || !isset($package)) {
-            return redirect()->back();
+        $user = User::where('login', $request->login)->first();
+
+
+        if (!isset($user) || !Hash::check($request->password, $user->financial_password) && !$request->cookie('financial')) {
+            return redirect()->back()->with('error', "User Not found");
         }
 
+        if (!isset($package)) {
+            return redirect()->back()->with('error', "Invoice Not Available");
 
-        $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
+        }
 
-        $response = Http::withHeaders([
-            'X-CMC_PRO_API_KEY' => $api_key,
-            'Content-Type' => 'application/json',
-        ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+        if ($request->method == 'USDT_TRC20' || $request->method == 'USDT_ERC20') {
+            $trc20 = 1;
+            $erc20 = 1;
 
-        $data = $response->json();
+            $price_order = $request->value;
 
-        // $bitcoin = $result->bitcoin->usd;
-        $price_order = $request->value;
-        // $value_btc = $price_order / $bitcoin;
+            $moedas = [
+                "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                "USDT_TRC20" => number_format($price_order / $trc20, 2),
+            ];
+        } else {
+            $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
 
-        $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
-        // $erc20 = $data['data']['ERC20'][0]['quote']['USD']['price'];
-        // $trc20 = $data['data']['USDT'][0]['quote']['USD']['price'];
-        $trc20 = 1;
-        $erc20 = 1;
-        $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
-        $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+            $response = Http::withHeaders([
+                'X-CMC_PRO_API_KEY' => $api_key,
+                'Content-Type' => 'application/json',
+            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
 
-        $moedas = [
-            "BITCOIN" => number_format($price_order / $btc, 5),
-            "ETH" => number_format($price_order / $eth, 4),
-            "USDT_ERC20" => number_format($price_order / $erc20, 2),
-            "TRX" => number_format($price_order / $trx, 2),
-            "USDT_TRC20" => number_format($price_order / $trc20, 2),
-        ];
+            $data = $response->json();
+
+            // $bitcoin = $result->bitcoin->usd;
+            $price_order = $request->value;
+            // $value_btc = $price_order / $bitcoin;
+
+            $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
+            // $erc20 = $data['data']['ERC20'][0]['quote']['USD']['price'];
+            // $trc20 = $data['data']['USDT'][0]['quote']['USD']['price'];
+            $trc20 = 1;
+            $erc20 = 1;
+            $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
+            $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+
+            $moedas = [
+                "BITCOIN" => number_format($price_order / $btc, 5),
+                "ETH" => number_format($price_order / $eth, 4),
+                "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                "TRX" => number_format($price_order / $trx, 2),
+                "USDT_TRC20" => number_format($price_order / $trc20, 2),
+            ];
+        }
 
         // dd($moedas);
 
@@ -138,7 +157,7 @@ class InvoiceController extends Controller
 
                 $wallet = Wallet::where('id', $idSorteado)->first();
             } else {
-                return redirect()->back()->with('error', "Wallet Not found");
+                return redirect()->back()->with('wallet', "Wallet Not found");
             }
         }
 
@@ -180,7 +199,7 @@ class InvoiceController extends Controller
         $ord->save();
 
         if (!$request->cookie('financial')) {
-            $valorCookie = $user->financial_password; // Defina o valor que deseja para o cookie
+            $valorCookie = $user->id;
             return redirect()->route('invoice.index', $postNode->id)->withCookie(cookie('financial', $valorCookie, 1440)); // 1440 minutos = 24 horas
         }
 

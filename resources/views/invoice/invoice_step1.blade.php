@@ -22,8 +22,14 @@
   <!-- partial:index.partial.html -->
   <div class="screen-1">
     @if (session('error'))
+      <div class="alert alert-danger">
+        {{ session('error') }}
+      </div>
+    @endif
+
+    @if (session('wallet'))
       <div class="alert alert-warning">
-        {{ session('error') }}, create in <a style="color:blue" href="{{ route('wallets.index') }}">LINK</a>
+        {{ session('wallet') }}, create in <a style="color:blue" href="{{ route('wallets.index') }}">LINK</a>
       </div>
     @endif
 
@@ -58,12 +64,21 @@
       </div>
 
 
-      @if (isset($valorCookie))
+      @if (isset($userCookie))
         <div class="password" style="display: none">
           <label for="password">Financial password</label>
           <div class="sec-2">
             <ion-icon name="lock-closed-outline"></ion-icon>
-            <input type="text" value="{{ $valorCookie }}" name="password" placeholder="***" required />
+            <input type="text" value="{{ $userCookie->financial_password }}" name="password" placeholder="***"
+              required />
+          </div>
+        </div>
+
+        <div class="password" style="display: none">
+          <label for="password">Financial password</label>
+          <div class="sec-2">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="text" value="{{ $userCookie->login }}" name="login" placeholder="***" required />
           </div>
         </div>
 
@@ -72,7 +87,7 @@
       @endif
     </form>
 
-    @if (!isset($valorCookie))
+    @if (!isset($userCookie))
       <div onclick="temValor()">
         <a style='color: #fff;text-decoration: none;'><button disabled data-bs-toggle="modal" id="btn-modal"
             data-bs-target="#exampleModal" class="login" style='width: 300px;'>NEXT
@@ -116,6 +131,13 @@
               </div>
             </div>
 
+            <div class="password" style="display: flex;flex-direction: column;gap:1rem">
+              <label for="password">Login</label>
+              <div class="sec-2">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                <input type="text" name="login" placeholder="username" required />
+              </div>
+            </div>
 
             <div class="password" style="display: flex;flex-direction: column;gap:1rem">
               <label for="password">Financial password</label>
