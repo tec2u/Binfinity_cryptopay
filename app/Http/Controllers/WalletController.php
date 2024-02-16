@@ -29,6 +29,14 @@ class WalletController extends Controller
     {
         $user = User::find(Auth::id());
 
+        $WithDrawal = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
+
+        if (!isset($WithDrawal)) {
+            \Alert::error("Add your wallet in > WithDrawal Wallet (" . $request->coin . ")");
+            return redirect()->back();
+        }
+
+
         $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
 
         if (count($wallets) == 10) {
