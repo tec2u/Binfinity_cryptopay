@@ -134,7 +134,7 @@
     </div>
     <div class="password">
       <label for="password">ADDRESS</label>
-      <div class="sec-2">
+      <div class="sec-2" style="overflow-x: auto">
         <ion-icon name="lock-closed-outline"></ion-icon>
         {{ $order[0]['wallet'] }}
       </div>

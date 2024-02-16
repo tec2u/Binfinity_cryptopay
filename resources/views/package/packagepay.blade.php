@@ -103,7 +103,18 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <strong>Wallet address: {{ $wallet->address ?? '' }}</strong>
+          <strong>Wallet address:
+            <p style="overflow-x: auto">
+              {{ $wallet->address ?? '' }}
+            </p>
+          </strong>
+          <br>
+          <div class="card-body table-responsive p-0 col-6">
+            <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ $wallet->address ?? '' }}'>
+          </div>
+          <br>
+          <strong>Price in crypto ({{ $wallet->coin ?? '' }}): {{ $orderpackage->price_crypto ?? '' }}</strong>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

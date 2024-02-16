@@ -8,7 +8,7 @@
           <div class="row">
             <div class="col-12">
               <h1>Transactions</h1>
-              <div class="card shadow my-3">
+              <div class="card shadow my-3" style="overflow-x: auto">
 
                 <table class="table">
                   <thead>
