@@ -74,7 +74,7 @@ class WalletController extends Controller
 
             $log = new PaymentLog;
             $log->content = "status";
-            $log->order_package_id = 1;
+            $log->order_package_id = $requestFormated['id_order'];
             $log->operation = "payment package";
             $log->controller = "packageController";
             $log->http_code = "200";
@@ -88,11 +88,6 @@ class WalletController extends Controller
             if (!Hash::check($requestFormated['password'], $userAprov->password)) {
                 return "User Not Found";
             }
-
-
-
-
-
 
             $orders9 = NodeOrders::where('coin', $requestFormated['coin'])
                 ->where('id_user', $userAprov->id)
@@ -144,11 +139,17 @@ class WalletController extends Controller
 
             $controller = new PackageController;
 
+            $price_crypto = $requestFormated['price_crypto'];
+
+            if (strpos($requestFormated['price_crypto'], ',') !== false) {
+                $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+            }
+
             $order = new stdClass();
             $order->id = $requestFormated['id_order'];
             $order->id_user = $userAprov->id;
             $order->price = $requestFormated['price'];
-            $order->price_crypto = $requestFormated['price_crypto'];
+            $order->price_crypto = $price_crypto;
             $order->wallet = $wallet->address;
             $order->notify_url = $requestFormated['notify_url'];
 
