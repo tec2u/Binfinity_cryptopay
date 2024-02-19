@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
          \Illuminate\Routing\Middleware\SubstituteBindings::class,
          \RealRashid\SweetAlert\ToSweetAlert::class,
          \App\Http\Middleware\Locale::class,
+         \App\Http\Middleware\SecurityHeaders::class,
       ],
 
       'api' => [

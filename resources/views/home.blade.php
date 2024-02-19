@@ -17,38 +17,36 @@
       max-height: 300px !important;
     }
   </style>
-  
+
 
 
   @php
 
-   
-
     $user_id = ucwords(auth()->user()->id);
 
-    $diretos_qr = Illuminate\Support\Facades\DB::select("SELECT count(distinct(user_id_from)) as total FROM historic_score where user_id=$user_id and level_from=1;");
+    $diretos_qr = Illuminate\Support\Facades\DB::select('SELECT count(distinct(user_id_from)) as total FROM historic_score where user_id=? and level_from=1;', [$user_id]);
     $diretos = isset($diretos_qr[0]->{'total'}) ? $diretos_qr[0]->{'total'} : 0;
 
-    $indiretos_qr = Illuminate\Support\Facades\DB::select("SELECT count(distinct(user_id_from)) as total FROM historic_score where user_id=$user_id and level_from>1 and level_from<'6';");
+    $indiretos_qr = Illuminate\Support\Facades\DB::select("SELECT count(distinct(user_id_from)) as total FROM historic_score where user_id=? and level_from>1 and level_from<'6';", [$user_id]);
     $indiretos = isset($indiretos_qr[0]->{'total'}) ? $indiretos_qr[0]->{'total'} : 0;
 
-    $totalMembros = $diretos ;
+    $totalMembros = $diretos;
 
-    $directVolume = Illuminate\Support\Facades\DB::select("SELECT sum(score) as total FROM historic_score where user_id=$user_id and level_from=1");
+    $directVolume = Illuminate\Support\Facades\DB::select('SELECT sum(score) as total FROM historic_score where user_id=? and level_from=1', [$user_id]);
     $directVolume = isset($directVolume[0]->{'total'}) ? $directVolume[0]->{'total'} : 0;
 
-    $indirectVolume = Illuminate\Support\Facades\DB::select("SELECT sum(score) as total FROM historic_score where user_id=$user_id and level_from>1 and level_from<'6'   ");
+    $indirectVolume = Illuminate\Support\Facades\DB::select("SELECT sum(score) as total FROM historic_score where user_id=? and level_from>1 and level_from<'6'", [$user_id]);
     $indirectVolume = isset($indirectVolume[0]->{'total'}) ? $indirectVolume[0]->{'total'} : 0;
 
-    $totalVolume =  $directVolume;
+    $totalVolume = $directVolume;
 
-    $personalVolume = Illuminate\Support\Facades\DB::select("SELECT sum(score) as total FROM historic_score where user_id=$user_id and level_from=0");
+    $personalVolume = Illuminate\Support\Facades\DB::select('SELECT sum(score) as total FROM historic_score where user_id=? and level_from=0', [$user_id]);
     $personalVolume = isset($personalVolume[0]->{'total'}) ? $personalVolume[0]->{'total'} : 0;
 
-    $totalComission = Illuminate\Support\Facades\DB::select("SELECT sum(price) FROM node_orders where id_user=$user_id and type=1");
+    $totalComission = Illuminate\Support\Facades\DB::select('SELECT sum(price) FROM node_orders where id_user=? and type=1', [$user_id]);
     $totalComission = isset($totalComission[0]->{'sum(price)'}) ? $totalComission[0]->{'sum(price)'} : 0;
 
-    $availableComission = Illuminate\Support\Facades\DB::select("select sum(price) from banco where user_id=$user_id");
+    $availableComission = Illuminate\Support\Facades\DB::select('select sum(price) from banco where user_id=?', [$user_id]);
     $availableComission = isset($availableComission[0]->{'sum(price)'}) ? $availableComission[0]->{'sum(price)'} : 0;
 
   @endphp
@@ -254,9 +252,9 @@
 
 
     <section id="home" class="content">
-      
 
-    
+
+
 
       <div class="container-fluid">
         <div class="row mb-3">
@@ -288,35 +286,35 @@
             </div>
           </div>
           <div class="row align-items-center">
-          <div class="col-12">
-        <div class="info-box mb-4 shadow c1">
-          <span class="info-box-icon"><i class="bi bi-star-fill"></i></span>
-          <div class="info-box-content font">
-            <span class="info-box-text up font">@lang('home.referral_link')</span>
-            <div class="row">
-              <div class="col-10">
-                <div class="input-group mb-3 font">
-                  <input type="text" class="form-control" id="referral"
-                    value="https://cryptopay.binfinitybank.com/indication/{{ auth()->user()->login }}/register">
-                  <button class="up btn btn-dark orderbtn linkcopy px-4" type="button"
-                    onclick=" FunctionCopy2()">Copy</button>
+            <div class="col-12">
+              <div class="info-box mb-4 shadow c1">
+                <span class="info-box-icon"><i class="bi bi-star-fill"></i></span>
+                <div class="info-box-content font">
+                  <span class="info-box-text up font">@lang('home.referral_link')</span>
+                  <div class="row">
+                    <div class="col-10">
+                      <div class="input-group mb-3 font">
+                        <input type="text" class="form-control" id="referral"
+                          value="https://cryptopay.binfinitybank.com/indication/{{ auth()->user()->login }}/register">
+                        <button class="up btn btn-dark orderbtn linkcopy px-4" type="button"
+                          onclick=" FunctionCopy2()">Copy</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-           
-
-       
-         
 
 
 
-          <div class="col-12 col-sm-6 col-md-3">
-            <div style="width: 100%;" id="quotesWidgetChart"></div>
-            <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
+
+
+
+
+
+            <div class="col-12 col-sm-6 col-md-3">
+              <div style="width: 100%;" id="quotesWidgetChart"></div>
+              <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
                             {
                                 "type": "chart",
                                 "filter": "EURGBP",
@@ -326,10 +324,10 @@
                                 "id": "quotesWidgetChart"
                             }
                         </script>
-          </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div style="width: 100%;" id="quotesWidgetChart1"></div>
-            <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <div style="width: 100%;" id="quotesWidgetChart1"></div>
+              <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
                             {
                                 "type": "chart",
                                 "filter": "EURJPY",
@@ -339,10 +337,10 @@
                                 "id": "quotesWidgetChart1"
                             }
                         </script>
-          </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div style="width: 100%;" id="quotesWidgetChart2"></div>
-            <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <div style="width: 100%;" id="quotesWidgetChart2"></div>
+              <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
                             {
                                 "type": "chart",
                                 "filter": "XAUUSD",
@@ -352,10 +350,10 @@
                                 "id": "quotesWidgetChart2"
                             }
                         </script>
-          </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div style="width: 100%;" id="quotesWidgetChart3"></div>
-            <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <div style="width: 100%;" id="quotesWidgetChart3"></div>
+              <script async type="text/javascript" data-type="quotes-widget" src="https://c.mql5.com/js/widgets/quotes/widget.js?v=1">
                             {
                                 "type": "chart",
                                 "filter": "GBPUSD",
@@ -365,55 +363,54 @@
                                 "id": "quotesWidgetChart3"
                             }
                         </script>
+            </div>
+
+
           </div>
 
-         
-        </div>
-      
-        <div class="container-fluid" style="display: none;">
-          <section class="bg-white">
-            <!-- Start: 1 Row 2 Columns  -->
-            <div class="container-fluid px-0">
-              <div class="row m-0">
-                 <div class="col-12 px-0 mb-3 ">
-                            <img src="../../assetsWelcome/images/bghome.png" class="w-100" />
-                        </div> 
+          <div class="container-fluid" style="display: none;">
+            <section class="bg-white">
+              <!-- Start: 1 Row 2 Columns  -->
+              <div class="container-fluid px-0">
+                <div class="row m-0">
+                  <div class="col-12 px-0 mb-3 ">
+                    <img src="../../assetsWelcome/images/bghome.png" class="w-100" />
+                  </div>
 
-             
-               
-              </div>
-              <div class="row mt-5 align-items-center">
-           
-              
-              </div>
-            </div>
-            <!-- End: 1 Row 2 Columns  -->
-          </section>
-          <section class="bg-white">
-            <!-- Start: 1 Row 2 Columns  -->
-            <div class="container-fluid">
-              <div class="row py-3 align-items-center">
-                <div class="col-md-6 order-md-last" style="text-align: center; min-height: 400px align-middle">
-              
+
+
                 </div>
-             
+                <div class="row mt-5 align-items-center">
+
+
+                </div>
               </div>
-            </div>
-            <!-- End: 1 Row 2 Columns   -->
-          </section>
+              <!-- End: 1 Row 2 Columns  -->
+            </section>
+            <section class="bg-white">
+              <!-- Start: 1 Row 2 Columns  -->
+              <div class="container-fluid">
+                <div class="row py-3 align-items-center">
+                  <div class="col-md-6 order-md-last" style="text-align: center; min-height: 400px align-middle">
+
+                  </div>
+
+                </div>
+              </div>
+              <!-- End: 1 Row 2 Columns   -->
+            </section>
+          </div>
+
+
+
         </div>
-       
-
-
-      </div>
       </div>
       </div>
     </section>
     <!-- Modal para exibir a imagem em tela cheia -->
-    
+
   </main>
   <script>
-   
     $('.image-modal').click(function() {
       var imageUrl = $(this).attr('src');
       $('#modalImage').attr('src', imageUrl);
@@ -429,11 +426,4 @@
       var heightImage = screen.width / 1.787;
     }
   </script>
-
-
-
-
-
-
-
 @endsection

@@ -68,6 +68,12 @@ class WalletController extends Controller
     {
         $requestFormated = $request->all();
 
+        if (strpos($requestFormated['price_crypto'], ',') !== false) {
+            $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+            return ($price_crypto);
+        }
+        // return ($request);
+
         // crypto
         if (isset($requestFormated["login"])) {
 
