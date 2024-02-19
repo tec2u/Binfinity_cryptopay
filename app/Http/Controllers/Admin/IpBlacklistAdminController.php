@@ -24,7 +24,7 @@ class IpBlacklistAdminController extends Controller
         return view('admin.blacklist.blacklist', compact('whitelist'));
     }
 
-       /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -35,9 +35,11 @@ class IpBlacklistAdminController extends Controller
 
         $ipblack = IpBlacklist::findOrFail($id);
         $ippool = IpBlacklist::where('ip', $ipblack->ip)->get();
-        DB::table('ip_pool')->whereIn('ip', $ippool->pluck('ip'))->delete();
+        $ipsParaExcluir = $ippool->pluck('ip')->toArray();
+        IpPool::whereIn('ip', $ipsParaExcluir)->delete();
+        // DB::table('ip_pool')->whereIn('ip', $ippool->pluck('ip'))->delete();
         IpBlacklist::where('ip', $ipblack->ip)->delete();
         flash(__('admin_alert.ipblackdelete'))->success();
         return redirect()->back();
-        }
+    }
 }

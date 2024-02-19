@@ -40,11 +40,14 @@ class ReportsAdminController extends Controller
 
       try {
          $data = $request->search;
+
          $scores = DB::table('banco')
             ->join('users', 'banco.user_id', '=', 'users.id')
             ->join('config_bonus', 'banco.description', '=', 'config_bonus.id')
-            ->where('banco.description', 1)
-            ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
+            ->where('banco.description', '=', 1)
+            ->where('users.name', 'like', '%' . $data . '%')
+            ->paginate(9);
+
          flash(__('admin_alert.userfound'))->success();
          return view('admin.reports.signupCommission', compact('scores'));
       } catch (Exception $e) {
@@ -73,7 +76,7 @@ class ReportsAdminController extends Controller
    public function levelIncome()
    {
 
-      $scores =  Banco::where('description', 2)->paginate(9);
+      $scores = Banco::where('description', 2)->paginate(9);
 
       return view('admin.reports.levelIncome', compact('scores'));
    }
@@ -86,8 +89,9 @@ class ReportsAdminController extends Controller
          $scores = DB::table('banco')
             ->join('users', 'banco.user_id', '=', 'users.id')
             ->join('config_bonus', 'banco.description', '=', 'config_bonus.id')
-            ->where('banco.description', 2)
-            ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
+            ->where('banco.description', '=', 2)
+            ->where('users.name', 'like', '%' . $data . '%')
+            ->paginate(9);
 
          return view('admin.reports.levelIncome', compact('scores'));
       } catch (Exception $e) {
@@ -124,46 +128,49 @@ class ReportsAdminController extends Controller
    {
 
 
-      $scores = HistoricScore::orderBy('id', 'desc')->where('description',7)->paginate(9);
+      $scores = HistoricScore::orderBy('id', 'desc')->where('description', 7)->paginate(9);
 
       return view('admin.reports.stakingRewards', compact('scores'));
    }
 
    public function searchstakingRewards(SearchRequest $request)
    {
-      
+
       try {
          $data = $request->search;
          $scores = DB::table('historic_score')
-                  ->join('users','historic_score.user_id','=', 'users.id')
-                  ->where('users.name', 'like', '%' . $data . '%')->where('historic_score.description',7)->paginate(9);
-            flash(__('admin_alert.userfound'))->success();
-            return view('admin.reports.stakingRewards', compact('scores'));
+            ->join('users', 'historic_score.user_id', '=', 'users.id')
+            ->where('users.name', 'like', '%' . $data . '%')
+            ->where('historic_score.description', '=', 7)
+            ->paginate(9);
+
+         flash(__('admin_alert.userfound'))->success();
+         return view('admin.reports.stakingRewards', compact('scores'));
       } catch (Exception $e) {
-            $this->errorCatch($e->getMessage(), auth()->user()->id);
-            flash(__('admin_alert.usernotfound'))->error();
-            return redirect()->back();
+         $this->errorCatch($e->getMessage(), auth()->user()->id);
+         flash(__('admin_alert.usernotfound'))->error();
+         return redirect()->back();
       }
    }
 
    public function getstakingRewards(Request $request)
    {
 
-   $fdate = $request->get('fdate') . " 00:00:00";
-   $sdate = $request->get('sdate') . " 23:59:59";
+      $fdate = $request->get('fdate') . " 00:00:00";
+      $sdate = $request->get('sdate') . " 23:59:59";
 
-   $scores = HistoricScore::where('created_at', '>=', $fdate)->where('created_at', '<=', $sdate)->where('description',7)->paginate(9);
+      $scores = HistoricScore::where('created_at', '>=', $fdate)->where('created_at', '<=', $sdate)->where('description', 7)->paginate(9);
 
-   return view('admin.reports.stakingRewards', compact('scores'));
+      return view('admin.reports.stakingRewards', compact('scores'));
    }
 
-     /**
-      * Show the form for creating a new resource.
-      *
-      * @return \Illuminate\Http\Response
-      */
-      public function rankReward()
-      {
+   /**
+    * Show the form for creating a new resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+   public function rankReward()
+   {
 
       $career_users = CareerUser::orderBy('id', 'desc')->paginate(9);
 
@@ -179,7 +186,10 @@ class ReportsAdminController extends Controller
             ->join('users', 'career_users.user_id', '=', 'users.id')
             ->join('career', 'career_users.career_id', '=', 'career.id')
             ->where('career.name', 'like', '%' . $data . '%')
-            ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
+            ->orWhere('users.name', 'like', "%$data%")
+            ->paginate(9);
+
+
          flash(__('admin_alert.userfound'))->success();
          return view('admin.reports.rankReward', compact('career_users'));
       } catch (Exception $e) {
@@ -206,7 +216,7 @@ class ReportsAdminController extends Controller
     */
    public function monthlyCoins()
    {
-      $monthly_coins = Banco::where('description', 3,)->paginate(9);
+      $monthly_coins = Banco::where('description', 3, )->paginate(9);
 
 
       return view('admin.reports.monthlyCoins', compact('monthly_coins'));
@@ -220,8 +230,11 @@ class ReportsAdminController extends Controller
          $monthly_coins = DB::table('banco')
             ->join('users', 'banco.user_id', '=', 'users.id')
             ->join('config_bonus', 'banco.description', '=', 'config_bonus.id')
-            ->where('banco.description', 3)
-            ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
+            ->where('banco.description', '=', 3)
+            ->where('users.name', 'like', "%$data%")
+            ->paginate(9);
+
+
          flash(__('admin_alert.userfound'))->success();
          return view('admin.reports.monthlyCoins', compact('monthly_coins'));
       } catch (Exception) {
@@ -258,10 +271,10 @@ class ReportsAdminController extends Controller
 
       try {
          $data = $request->search;
-         $transactions  = DB::table('banco')
+         $transactions = DB::table('banco')
             ->join('users', 'banco.user_id', '=', 'users.id')
             ->join('config_bonus', 'banco.description', '=', 'config_bonus.id')
-            ->where('banco.description','<>', 3)
+            ->where('banco.description', '<>', 3)
             ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
 
          return view('admin.reports.transactions', compact('transactions'));
@@ -283,49 +296,49 @@ class ReportsAdminController extends Controller
       return view('admin.reports.transactions', compact('transactions'));
    }
 
-     /**
+   /**
     * Display a listing of the resource.
     *
     * @return \Illuminate\Http\Response
     */
-    public function poolcommission()
-    {
-       $scores = Banco::where('description', 5)->paginate(9);
- 
-       //dd($scores);
- 
-       return view('admin.reports.poolCommission', compact('scores'));
-    }
+   public function poolcommission()
+   {
+      $scores = Banco::where('description', 5)->paginate(9);
 
-    public function searchPool(SearchRequest $request)
-    {
- 
-       try {
-          $data = $request->search;
-          $scores = DB::table('banco')
-             ->join('users', 'banco.user_id', '=', 'users.id')
-             ->join('config_bonus', 'banco.description', '=', 'config_bonus.id')
-             ->where('banco.description', 5)
-             ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
-          flash(__('admin_alert.userfound'))->success();
-          return view('admin.reports.signupCommission', compact('scores'));
-       } catch (Exception $e) {
-          $this->errorCatch($e->getMessage(), auth()->user()->id);
-          flash(__('admin_alert.usernotfound'))->error();
-          return redirect()->back();
-       }
-    }
- 
-    public function getDatePool(Request $request)
-    {
- 
-       $fdate = $request->get('fdate') . " 00:00:00";
-       $sdate = $request->get('sdate') . " 23:59:59";
- 
-       $scores = Banco::where('description', 5)->where('created_at', '>=', $fdate)->where('created_at', '<=', $sdate)->paginate(9);
- 
-       return view('admin.reports.signupCommission', compact('scores'));
-    }
+      //dd($scores);
+
+      return view('admin.reports.poolCommission', compact('scores'));
+   }
+
+   public function searchPool(SearchRequest $request)
+   {
+
+      try {
+         $data = $request->search;
+         $scores = DB::table('banco')
+            ->join('users', 'banco.user_id', '=', 'users.id')
+            ->join('config_bonus', 'banco.description', '=', 'config_bonus.id')
+            ->where('banco.description', 5)
+            ->where('users.name', 'like', '%' . $data . '%')->paginate(9);
+         flash(__('admin_alert.userfound'))->success();
+         return view('admin.reports.signupCommission', compact('scores'));
+      } catch (Exception $e) {
+         $this->errorCatch($e->getMessage(), auth()->user()->id);
+         flash(__('admin_alert.usernotfound'))->error();
+         return redirect()->back();
+      }
+   }
+
+   public function getDatePool(Request $request)
+   {
+
+      $fdate = $request->get('fdate') . " 00:00:00";
+      $sdate = $request->get('sdate') . " 23:59:59";
+
+      $scores = Banco::where('description', 5)->where('created_at', '>=', $fdate)->where('created_at', '<=', $sdate)->paginate(9);
+
+      return view('admin.reports.signupCommission', compact('scores'));
+   }
 
 
    /**

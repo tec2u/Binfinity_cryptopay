@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\WithdrawRequest;
 use App\Traits\CustomLogTrait;
 use App\Traits\OrderBonusTrait;
 use App\Traits\PaymentLogTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PayWithdrawAdminController extends Controller
 {
@@ -19,8 +21,10 @@ class PayWithdrawAdminController extends Controller
         $withdraw = DB::table('withdraw_requests')
             ->join('wallets', 'withdraw_requests.user_id', '=', 'wallets.user_id')
             ->select('withdraw_requests.value', 'wallets.wallet')
-            ->where('withdraw_requests.id', '=', $id)
+            ->where('withdraw_requests.id', '=', '?')
+            ->setBindings([$id]) // Define o valor do placeholder
             ->first();
+
 
         $token_CC = DB::table('token_value')
             ->select('value_usd')
@@ -50,23 +54,26 @@ class PayWithdrawAdminController extends Controller
 
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $paymentConfig['api_url'],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $requestBody,
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'CB-ACCESS-SIGN: ' . $sig,
-                'CB-ACCESS-TIMESTAMP: ' . $paymentConfig["timestamp"],
-                'CB-ACCESS-KEY: ' . $paymentConfig["api_key"],
-            ),
-        ));
+        curl_setopt_array(
+            $curl,
+            array(
+                CURLOPT_URL => $paymentConfig['api_url'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => $requestBody,
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'CB-ACCESS-SIGN: ' . $sig,
+                    'CB-ACCESS-TIMESTAMP: ' . $paymentConfig["timestamp"],
+                    'CB-ACCESS-KEY: ' . $paymentConfig["api_key"],
+                ),
+            )
+        );
 
         $raw = json_decode(curl_exec($curl));
 
@@ -81,11 +88,31 @@ class PayWithdrawAdminController extends Controller
         } else {
             if ($raw->data->status == "pending") {
                 $this->createLog('Update Request: ID ' . $withdraw->id . ' - STATUS ' . $raw->data->status . ' - PROCESSING USER ' . auth()->user()->id, 201, 'success', auth()->user()->id);
-                DB::table('withdraw_requests')->where("id", $id)->update(['status' => 1, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+
+                WithdrawRequest::where('id', $id)
+                    ->update([
+                        'status' => 1,
+                        'processing_user' => auth()->user()->id,
+                        'payment_code' => $raw->data->resource_path,
+                        'date_payment' => now(), // Usando a função now() para obter a data atual
+                        'updated_at' => now()
+                    ]);
+                // DB::table('withdraw_requests')->where("id", $id)->update(['status' => 1, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+
                 flash(__("admin_alert.transactioncreate"))->success();
             } else if ($raw->data->status == "completed") {
                 $this->createLog('Update Request: ID ' . $withdraw->id . ' - STATUS ' . $raw->data->status . ' - PROCESSING USER ' . auth()->user()->id, 201, 'success', auth()->user()->id);
-                DB::table('withdraw_requests')->where("id", $id)->update(['status' => 2, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+
+                WithdrawRequest::where('id', $id)
+                    ->update([
+                        'status' => 2,
+                        'processing_user' => auth()->user()->id,
+                        'payment_code' => $raw->data->resource_path,
+                        'date_payment' => now(), // Usando a função now() para obter a data atual
+                        'updated_at' => now()
+                    ]);
+                // DB::table('withdraw_requests')->where("id", $id)->update(['status' => 2, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+
                 flash(__("admin_alert.paymentsucess"))->success();
             }
         }
@@ -95,10 +122,22 @@ class PayWithdrawAdminController extends Controller
 
     public function index($id)
     {
+        $rules = [
+            'id' => 'required|numeric|exists:withdraw_requests,id'
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules);
+
+        if ($validator->fails()) {
+            return redirect()->back();
+        }
+
+
         $withdraw = DB::table('withdraw_requests')
             ->join('wallets', 'withdraw_requests.user_id', '=', 'wallets.user_id')
             ->select('withdraw_requests.value', 'wallets.wallet')
-            ->where('withdraw_requests.id', '=', $id)
+            ->where('withdraw_requests.id', '=', '?')
+            ->setBindings([$id])
             ->first();
 
         $amount = $withdraw->value;
@@ -125,23 +164,26 @@ class PayWithdrawAdminController extends Controller
         // die(var_dump($paymentConfig).$sig);
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $paymentConfig['api_url'],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $requestBody,
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'CB-ACCESS-SIGN: ' . $sig,
-                'CB-ACCESS-TIMESTAMP: ' . $paymentConfig["timestamp"],
-                'CB-ACCESS-KEY: ' . $paymentConfig["api_key"],
-            ),
-        ));
+        curl_setopt_array(
+            $curl,
+            array(
+                CURLOPT_URL => $paymentConfig['api_url'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => $requestBody,
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'CB-ACCESS-SIGN: ' . $sig,
+                    'CB-ACCESS-TIMESTAMP: ' . $paymentConfig["timestamp"],
+                    'CB-ACCESS-KEY: ' . $paymentConfig["api_key"],
+                ),
+            )
+        );
 
         $raw = json_decode(curl_exec($curl));
 
@@ -156,12 +198,32 @@ class PayWithdrawAdminController extends Controller
         } else {
             if ($raw->data->status == "pending") {
                 $this->createLog('Update Request: ID ' . $withdraw->id . ' - STATUS ' . $raw->data->status . ' - PROCESSING USER ' . auth()->user()->id, 201, 'success', auth()->user()->id);
-                DB::table('withdraw_requests')->where("id", $id)->update(['status' => 1, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+
+                // DB::table('withdraw_requests')->where("id", $id)->update(['status' => 1, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+                WithdrawRequest::where('id', $id)
+                    ->update([
+                        'status' => 1,
+                        'processing_user' => auth()->user()->id,
+                        'payment_code' => $raw->data->resource_path,
+                        'date_payment' => now(), // Usando a função now() para obter a data atual
+                        'updated_at' => now()
+                    ]);
+
                 flash(__("admin_alert.transactioncreate"))->success();
             } else if ($raw->data->status == "completed") {
                 $this->createLog('Update Request: ID ' . $withdraw->id . ' - STATUS ' . $raw->data->status . ' - PROCESSING USER ' . auth()->user()->id, 201, 'success', auth()->user()->id);
-                DB::table('withdraw_requests')->where("id", $id)->update(['status' => 2, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+                // DB::table('withdraw_requests')->where("id", $id)->update(['status' => 2, 'processing_user' => auth()->user()->id, 'payment_code' => $raw->data->resource_path, 'date_payment' => date("Y-m-d H:i:s"), 'updated_at' => date("Y-m-d H:i:s")]);
+
+                WithdrawRequest::where('id', $id)
+                    ->update([
+                        'status' => 2,
+                        'processing_user' => auth()->user()->id,
+                        'payment_code' => $raw->data->resource_path,
+                        'date_payment' => now(), // Usando a função now() para obter a data atual
+                        'updated_at' => now()
+                    ]);
                 flash(__("admin_alert.paymentsucess"))->success();
+
             }
         }
 
@@ -172,13 +234,13 @@ class PayWithdrawAdminController extends Controller
     {
         DB::table('custom_log')->insert(
             [
-                'content'   => 'Start Update Crawler',
-                'user_id'   => '0',
+                'content' => 'Start Update Crawler',
+                'user_id' => '0',
                 'operation' => 'Update Withdraw Request',
                 'controller' => 'PayWithdrawAdminController',
                 'http_code' => '201',
-                'route'     => 'N',
-                'status'    => 'success',
+                'route' => 'N',
+                'status' => 'success',
             ]
         );
         $withdraws = DB::table('withdraw_requests')
@@ -202,22 +264,25 @@ class PayWithdrawAdminController extends Controller
 
             $curl = curl_init();
 
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $paymentConfig['api_url'],
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Content-Type: application/json',
-                    'CB-ACCESS-SIGN: ' . $sig,
-                    'CB-ACCESS-TIMESTAMP: ' . $paymentConfig["timestamp"],
-                    'CB-ACCESS-KEY: ' . $paymentConfig["api_key"],
-                ),
-            ));
+            curl_setopt_array(
+                $curl,
+                array(
+                    CURLOPT_URL => $paymentConfig['api_url'],
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'Content-Type: application/json',
+                        'CB-ACCESS-SIGN: ' . $sig,
+                        'CB-ACCESS-TIMESTAMP: ' . $paymentConfig["timestamp"],
+                        'CB-ACCESS-KEY: ' . $paymentConfig["api_key"],
+                    ),
+                )
+            );
 
             $raw = json_decode(curl_exec($curl));
 
@@ -227,29 +292,35 @@ class PayWithdrawAdminController extends Controller
                 if ($raw->data->status == "completed") {
                     DB::table('custom_log')->insert(
                         [
-                            'content'   => 'Update Withdraw Request: ID ' . $withdraw->id . ' - STATUS ' . $raw->data->status,
-                            'user_id'   => '0',
+                            'content' => 'Update Withdraw Request: ID ' . $withdraw->id . ' - STATUS ' . $raw->data->status,
+                            'user_id' => '0',
                             'operation' => 'Update Withdraw Request',
                             'controller' => 'PayWithdrawAdminController',
                             'http_code' => '201',
-                            'route'     => 'N',
-                            'status'    => 'success',
+                            'route' => 'N',
+                            'status' => 'success',
                         ]
                     );
-                    DB::table('withdraw_requests')->where("id", $withdraw->id)->update(['status' => 2, 'updated_at' => date("Y-m-d H:i:s"), 'message' => 'Updated by Coinbase API']);
+                    WithdrawRequest::where('id', $withdraw->id)
+                        ->update([
+                            'status' => 2,
+                            'message' => 'Updated by Coinbase API',
+                            'updated_at' => now()
+                        ]);
+                    // DB::table('withdraw_requests')->where("id", $withdraw->id)->update(['status' => 2, 'updated_at' => date("Y-m-d H:i:s"), 'message' => 'Updated by Coinbase API']);
                 }
             }
         }
 
         DB::table('custom_log')->insert(
             [
-                'content'   => 'Stop Update Crawler',
-                'user_id'   => '0',
+                'content' => 'Stop Update Crawler',
+                'user_id' => '0',
                 'operation' => 'Update Withdraw Request',
                 'controller' => 'PayWithdrawAdminController',
                 'http_code' => '201',
-                'route'     => 'N',
-                'status'    => 'success',
+                'route' => 'N',
+                'status' => 'success',
             ]
         );
     }

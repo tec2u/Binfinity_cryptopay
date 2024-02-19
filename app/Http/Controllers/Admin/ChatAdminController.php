@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Chat;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Models\ChatMessage;
 use Illuminate\Support\Facades\DB;
@@ -44,14 +46,17 @@ class ChatAdminController extends Controller
 
     public function createMessage(Request $request)
     {
-        DB::table('message')->insert([
-            "chat_id" => $request->chat_id,
-            "user_id" => auth()->user()->id,
-            "text" => $request->text,
-            "date" => date('Y-m-d H:i:s')
-        ]);
 
-        DB::table('chat')->where("id", $request->chat_id)->update(['status' => 1]);
+        $msg = new Message;
+        $msg->chat_id = $request->chat_id;
+        $msg->user_id = auth()->user()->id;
+        $msg->text = $request->text;
+        $msg->date = date('Y-m-d H:i:s');
+        $msg->save();
+
+        $cht = Chat::where('id', $request->chat_id)->first();
+        $cht->status = 1;
+        $cht->save();
 
         return redirect()->route('admin.support');
     }
@@ -103,14 +108,18 @@ class ChatAdminController extends Controller
 
     public function closeChat($id)
     {
-        DB::table('chat')->where("id", $id)->update(['status' => 2]);
+        $cht = Chat::where('id', $id)->first();
+        $cht->status = 2;
+        $cht->save();
 
         return redirect()->route('admin.support');
     }
 
     public function reopenChat($id)
     {
-        DB::table('chat')->where("id", $id)->update(['status' => 0]);
+        $cht = Chat::where('id', $id)->first();
+        $cht->status = 0;
+        $cht->save();
 
         return redirect()->route('admin.support');
     }

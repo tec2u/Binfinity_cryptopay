@@ -13,7 +13,7 @@ class HistoricScoreController extends Controller
 
    public function index()
    {
-      $id_user  = Auth::id();
+      $id_user = Auth::id();
       $scores = DB::table('historic_score')
          ->join('users', 'historic_score.user_id', '=', 'users.id')
          ->select(
@@ -22,7 +22,7 @@ class HistoricScoreController extends Controller
             'historic_score.orders_package_id',
             'historic_score.description',
             'historic_score.created_at'
-         )->whereIn('historic_score.user_id', [$id_user])->get();
+         )->whereIn('historic_score.user_id', [Auth::id()])->get();
 
       return view('signup_commission', compact('scores'));
    }

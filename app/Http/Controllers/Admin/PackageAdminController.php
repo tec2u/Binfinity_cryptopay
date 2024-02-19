@@ -395,9 +395,11 @@ class PackageAdminController extends Controller
                     ->selectRaw('*,orders_package.id as id')
                     ->join('users', 'orders_package.user_id', '=', 'users.id')
                     ->join('packages', 'orders_package.package_id', '=', 'packages.id')
-                    ->where('users.name', 'like', '%' . $data . '%')
-                    ->orWhere('users.login', 'like', '%' . $data . '%')
+                    ->where('users.name', 'like', '%' . '?' . '%')
+                    ->orWhere('users.login', 'like', '%' . '?' . '%')
+                    ->setBindings([$data, $data]) // Define os valores dos placeholders
                     ->paginate(9);
+
             }
 
             flash(__('admin_alert.userfound'))->success();

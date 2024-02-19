@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use stdClass;
 
 class InvoiceController extends Controller
@@ -61,6 +62,28 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         try {
+
+            $regras = [
+                'value' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'] // Aceita números decimais até duas casas decimais
+            ];
+
+            $validator = Validator::make($request->all(), $regras);
+
+            if ($validator->fails()) {
+                return redirect()->back()->with('error', "Value invalid");
+            }
+
+            $metodos = [
+                "BITCOIN",
+                "ETH",
+                "TRX",
+                "USDT_TRC20",
+                "USDT_ERC20"
+            ];
+
+            if (!in_array(strtoupper($request->method), $metodos)) {
+                return redirect()->back()->with('error', "Method not allowed");
+            }
             //code...
 
             $package = Package::where('id', 20)->first();

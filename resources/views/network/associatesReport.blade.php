@@ -43,12 +43,12 @@
 
                             $user_id = ucwords(auth()->user()->id);
 
-                            $user_qr = Illuminate\Support\Facades\DB::select("SELECT * FROM users where id=$network->user_id;");
+                            $user_qr = Illuminate\Support\Facades\DB::select('SELECT * FROM users where id=?;', [$network->user_id]);
                             $user_final = isset($user_qr[0]->{'name'}) ? $user_qr[0]->{'name'} : 0;
                             $user_country = isset($user_qr[0]->{'country'}) ? $user_qr[0]->{'country'} : 0;
                             $user_email = isset($user_qr[0]->{'email'}) ? $user_qr[0]->{'email'} : 0;
 
-                            $indirectVolume = Illuminate\Support\Facades\DB::select("SELECT sum(score) as total FROM historic_score where user_id=$network->user_id and level_from>=0 and level_from<'5'   ");
+                            $indirectVolume = Illuminate\Support\Facades\DB::select("SELECT sum(score) as total FROM historic_score where user_id=? and level_from>=0 and level_from<'5'", [$network->user_id]);
                             $indirectVolume = isset($indirectVolume[0]->{'total'}) ? $indirectVolume[0]->{'total'} : 0;
 
                             $totalVolume = $indirectVolume;

@@ -59,7 +59,7 @@
         <label for="password">VALUE IN DOLLARS</label>
         <div class="sec-2">
           <ion-icon name="lock-closed-outline"></ion-icon>
-          <input type="number" id="valuefora" name="value" placeholder="0.00005" step="0.010" onkeyup="temValor()"
+          <input type="number" id="valuefora" name="value" placeholder="0.00005" step="0.01" onkeyup="temValor()"
             required />
         </div>
       </div>

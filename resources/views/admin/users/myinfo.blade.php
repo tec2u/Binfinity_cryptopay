@@ -705,7 +705,7 @@
               @forelse ($ordersPackages as $orderpackage)
                 @php
                   $user_id = $orderpackage->user_id;
-                  $user_qr = Illuminate\Support\Facades\DB::select("SELECT * FROM users where id=$user_id")[0];
+                  $user_qr = Illuminate\Support\Facades\DB::select('SELECT * FROM users where id=?', [$user_id])[0];
                 @endphp
                 <tr>
                   <th>{{ $orderpackage->id }}</th>

@@ -119,9 +119,9 @@ class ConfigBonusController extends Controller
     public function inactivateall()
     {
         try {
+            ConfigBonusunilevel::query()->update(['status' => 0]);
 
-            $config = DB::table('config_bonusunilevel')->update(array('status' => 0));
-           
+
             $this->createLog('Config_Bonus updated successfully', 204, 'success', auth()->user()->id);
             flash(__('admin_alert.configurationupdate'))->success();
             return redirect()->route('admin.configBonus.list');
@@ -135,7 +135,9 @@ class ConfigBonusController extends Controller
     public function activateall()
     {
         try {
-            $config = DB::table('config_bonusunilevel')->update(array('status' => 1));
+            // $config = DB::table('config_bonusunilevel')->update(array('status' => 1));
+            ConfigBonusunilevel::query()->update(['status' => 1]);
+
 
             $this->createLog('Config_Bonus updated successfully', 204, 'success', auth()->user()->id);
             flash(__('admin_alert.configurationupdate'))->success();

@@ -19,7 +19,8 @@
                 </div>
                 @php
                   $user_id = ucwords(auth()->user()->id);
-                  $pedido = Illuminate\Support\Facades\DB::select("SELECT *  FROM orders_package where id=$orderpackage->id and user_id=$user_id");
+                  $pedido = DB::select('SELECT * FROM orders_package WHERE id = ? AND user_id = ?', [$orderpackage->id, $user_id]);
+
                   if (!isset($pedido)) {
                       echo '<script>
                         window.location = "/home";

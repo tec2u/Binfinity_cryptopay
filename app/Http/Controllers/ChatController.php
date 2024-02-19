@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
+use App\Models\Message;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Alert;
 use App\Models\ChatMessage;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isNull;
 
 class ChatController extends Controller
@@ -24,14 +26,26 @@ class ChatController extends Controller
 
    public function createMessage(Request $request)
    {
-      DB::table('message')->insert([
-         "chat_id" => $request->chat_id,
-         "user_id" => auth()->user()->id,
-         "text" => $request->text,
-         "date" => date('Y-m-d H:i:s')
+      $validator = Validator::make($request->all(), [
+         'chat_id' => 'required|numeric',
+         'text' => 'required',
       ]);
 
-      DB::table('chat')->where("id", $request->chat_id)->update(['status' => 1]);
+      if ($validator->fails()) {
+         return redirect()->route('supports.supporttickets');
+      }
+
+      $message = new Message;
+      $message->chat_id = $request->chat_id;
+      $message->user_id = auth()->user()->id;
+      $message->text = $request->text;
+      $message->date = now(); // Ou use Carbon para manipulação de datas
+      $message->save();
+
+      $cht = Chat::where('id', $request->chat_id)->first();
+      $cht->status = 1;
+      $cht->save();
+      // DB::table('chat')->where("id", $request->chat_id)->update(['status' => 1]);
 
       return redirect()->route('supports.supporttickets');
    }
@@ -57,7 +71,7 @@ class ChatController extends Controller
     */
    public function index()
    {
-      $id_user  = Auth::id();
+      $id_user = Auth::id();
       $chats = Chat::where('user_id', $id_user)->paginate(9);
       if (!is_null(Chat::where('user_id', $id_user)->where('status', '1')->first())) {
          Alert::success(__('backoffice_alert.chat_answered'));
@@ -82,14 +96,14 @@ class ChatController extends Controller
 
          $insertchat = [
             "status" => 0,
-            "title"  => $request->get('title')
+            "title" => $request->get('title')
          ];
 
          $userchat = $user->chat()->create($insertchat);
 
          $insertmessage = [
-            "text"    =>  $request->get('text'),
-            "date"    => date('Y-m-d H:i:s'),
+            "text" => $request->get('text'),
+            "date" => date('Y-m-d H:i:s'),
             "user_id" => $user->id
          ];
 
