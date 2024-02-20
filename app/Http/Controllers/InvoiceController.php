@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Models\User;
 use App\Models\Wallet;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Http;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -236,6 +237,37 @@ class InvoiceController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', "Error while processing");
         }
+    }
+
+    public function verify(Request $request)
+    {
+        $regras = [
+            'id' => ['required', 'numeric'] // Aceita números decimais até duas casas decimais
+        ];
+
+        $validator = Validator::make($request->all(), $regras);
+
+        if ($validator->fails()) {
+            return redirect()->back();
+        }
+
+        $nodeOrder = NodeOrders::where('id', $request->id)->first();
+
+        if (!isset($nodeOrder)) {
+            return redirect()->back();
+        }
+
+        $client = new Client();
+
+        $response = $client->request('GET', "https://walletprivate.onrender.com/api/verify/order/" . $request->id, [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        $result = json_decode($response->getBody()->getContents());
+        dd($result);
+        return redirect()->back();
     }
 
 }

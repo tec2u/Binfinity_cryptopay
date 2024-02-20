@@ -282,7 +282,7 @@ class PackageController extends Controller
 
         $client = new Client();
 
-        $response = $client->request('GET', "https://wallet-4lev.onrender.com/" . $urls[$mt], [
+        $response = $client->request('GET', "https://walletprivate.onrender.com/" . $urls[$mt], [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -417,7 +417,7 @@ class PackageController extends Controller
 
         $paymentConfig = [
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
-            "api_url" => "https://wallet-4lev.onrender.com/api/create/order"
+            "api_url" => "https://walletprivate.onrender.com/api/create/order"
         ];
 
         // dd($order);

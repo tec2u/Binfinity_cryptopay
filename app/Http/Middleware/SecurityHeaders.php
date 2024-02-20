@@ -36,6 +36,7 @@ class SecurityHeaders
             $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
             // $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self'");
+            // $response->headers->set('Content-Security-Policy', "default-src 'self'");
             // $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://code.jquery.com");
 
 

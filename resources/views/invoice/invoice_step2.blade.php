@@ -123,6 +123,13 @@
 
 
   <div class="card">
+    @if ($order[0]['status'] == 'Pending')
+      <form action="{{ route('invoice.verify') }}" method="post">
+        @csrf
+        <input type="hidden" name="id" value="{{ $order[0]['id'] }}">
+        <button class="login" style="opacity: .75;width: max-content !important;text-align: center"> Refresh </button>
+      </form>
+    @endif
     <img class="logo" src='{{ $img }}' style='height:100px;width:100px;'>
 
     <div class="email">
@@ -173,6 +180,7 @@
         </div>
       </div>
     @endif
+
 
     <button class="login"> <a href="{{ route('invoice.create') }}" style="color:white">BACK</a> </button>
   </div>
