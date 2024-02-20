@@ -1,5 +1,59 @@
 @extends('layouts.header')
 @section('content')
+  <style>
+    .card {
+      box-sizing: border-box;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 300px;
+    }
+
+    .card img {
+      width: 100px;
+      margin: 1rem auto;
+      /* border-bottom: 4px solid rgb(255, 0, 0); */
+    }
+
+    h2 {
+      margin: 10px 0;
+    }
+
+    h4 {
+      padding-left: 20px;
+      padding-right: 20px;
+      font-size: 12px;
+    }
+
+    h5 {
+      margin: 30px;
+      font-size: 12px;
+    }
+
+    button {
+      margin: 20px;
+      padding: 10px 20px;
+      background-color: transparent;
+      /* color: #ff0000; */
+      border-radius: 50px;
+      /* border: 2px solid rgb(255, 3, 3); */
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0071C1;
+      color: white;
+    }
+
+    .container-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem
+    }
+  </style>
+
   <main id="main" class="main">
     @include('flash::message')
     <section id="userpackageinfo" class="content">
@@ -23,9 +77,9 @@
                 </form>
                 </h3>
               </div>
-              <div class="card shadow my-3" style="overflow-x: auto">
+              <div class="container-cards shadow my-3" style="overflow-x: auto">
 
-                <table class="table" style="overflow-x: auto">
+                {{-- <table class="table" style="overflow-x: auto">
                   <thead>
                     <tr>
                       <th scope="col">#</th>
@@ -43,7 +97,21 @@
                     @endforeach
 
                   </tbody>
-                </table>
+                </table> --}}
+
+                @foreach ($wallets as $chave => $valor)
+                  @if (isset($icons[$chave]))
+                    <div class="card">
+                      <img src="{{ $icons[$chave] }}" alt="CR7">
+                      <h1>. . . .</h1>
+                      <h2>{{ $chave }}</h2>
+                      {{-- <h4>1501510.52 / 2840498.01</h4> --}}
+                      <button>{{ $moviment[$chave]['dep'] }} / {{ $moviment[$chave]['saq'] }}</button>
+                    </div>
+                  @endif
+                @endforeach
+
+
 
               </div>
             </div>

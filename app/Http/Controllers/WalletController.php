@@ -18,50 +18,104 @@ class WalletController extends Controller
 {
     public function index()
     {
-        $user = User::find(Auth::id());
+        $user = User::find(115875);
 
-        $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+        $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
 
-        return view('wallets.list', compact('wallets'));
+        $icons = [
+            'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
+            'TRX' => 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029',
+            'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
+            'USDT_TRC20' => 'https://images.ctfassets.net/77lc1lz6p68d/5Z7vveK1yJ7rDvX9K5ywJa/cfa5f74c313594a5a75652f98678578a/tether-usdt-trc20.svg',
+            'USDT_ERC20' => 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029',
+        ];
+
+        $moviment = [];
+
+        $decimals = [
+            'BITCOIN' => 6,
+            'TRX' => 2,
+            'ETH' => 6,
+            'USDT_TRC20' => 2,
+            'USDT_ERC20' => 2,
+        ];
+
+        foreach ($icons as $key => $value) {
+            $dep = NodeOrders::where('coin', $key)
+                ->where('id_user', $user->id)
+                ->where(function ($query) {
+                    $query->whereRaw('LOWER(status) = ?', ['paid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+                })
+                ->where('type', 1)
+                ->get()
+                ->sum('price_crypto_payed');
+
+            $saq = NodeOrders::where('coin', $key)
+                ->where('id_user', $user->id)
+                ->where(function ($query) {
+                    $query->whereRaw('LOWER(status) = ?', ['paid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+                })
+                ->where('type', 2)
+                ->get()
+                ->sum('price_crypto_payed');
+
+            $moviment[$key] = [
+                "dep" => number_format($dep, $decimals[$key], '.', ''),
+                "saq" => number_format($saq, $decimals[$key], '.', '')
+            ];
+        }
+
+        return view('wallets.list', compact('wallets', 'icons', 'moviment'));
     }
 
     public function store(Request $request)
     {
-        $user = User::find(Auth::id());
+        try {
+            //code...
 
-        $WithDrawal = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
+            $user = User::find(Auth::id());
 
-        if (!isset($WithDrawal)) {
-            \Alert::error("Add your wallet in > WithDrawal Wallet (" . $request->coin . ")");
-            return redirect()->back();
-        }
+            $WithDrawal = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
 
+            if (!isset($WithDrawal)) {
+                \Alert::error("Add your wallet in > WithDrawal Wallet (" . $request->coin . ")");
+                return redirect()->back();
+            }
 
-        $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
-
-        if (count($wallets) == 10) {
-            return $this->index();
-        }
-
-        while (count($wallets) < 10) {
-            $controller = new PackageController;
-
-            $walletGen = $controller->filterWallet($request->coin);
-
-            $wallet = new Wallet;
-            $wallet->user_id = Auth::id();
-            $wallet->wallet = $walletGen['address'];
-            $wallet->description = 'wallet';
-            $wallet->address = $walletGen['address'];
-            $wallet->key = $walletGen['privateKey'];
-            $wallet->mnemonic = $walletGen['mnemonic'];
-            $wallet->coin = $request->coin;
-            $wallet->save();
 
             $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
-        }
 
-        return $this->index();
+            if (count($wallets) == 10) {
+                return $this->index();
+            }
+
+            while (count($wallets) < 10) {
+                $controller = new PackageController;
+
+                $walletGen = $controller->filterWallet($request->coin);
+
+                $wallet = new Wallet;
+                $wallet->user_id = Auth::id();
+                $wallet->wallet = $walletGen['address'];
+                $wallet->description = 'wallet';
+                $wallet->address = $walletGen['address'];
+                $wallet->key = $walletGen['privateKey'];
+                $wallet->mnemonic = $walletGen['mnemonic'];
+                $wallet->coin = $request->coin;
+                $wallet->save();
+
+                $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
+            }
+
+            return $this->index();
+        } catch (\Throwable $th) {
+            return $this->index();
+            //throw $th;
+        }
     }
 
     public function notify(Request $request)

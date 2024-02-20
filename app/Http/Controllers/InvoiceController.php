@@ -259,14 +259,12 @@ class InvoiceController extends Controller
 
         $client = new Client();
 
-        $response = $client->request('GET', "https://walletprivate.onrender.com/api/verify/order/" . $request->id, [
+        $client->request('GET', "https://walletprivate.onrender.com/api/verify/order/" . $request->id, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
         ]);
 
-        $result = json_decode($response->getBody()->getContents());
-        // dd($result);
         return redirect()->back();
     }
 
