@@ -18,7 +18,7 @@ class WalletController extends Controller
 {
     public function index()
     {
-        $user = User::find(115875);
+        $user = User::find(Auth::id());
 
         $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
 
