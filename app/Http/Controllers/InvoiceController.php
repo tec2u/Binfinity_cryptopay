@@ -266,7 +266,7 @@ class InvoiceController extends Controller
         ]);
 
         $result = json_decode($response->getBody()->getContents());
-        dd($result);
+        // dd($result);
         return redirect()->back();
     }
 
