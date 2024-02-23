@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomLog;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\Package;
@@ -143,98 +144,85 @@ class InvoiceController extends Controller
                 ];
             }
 
-            // dd($moedas);
+            $Walletcontroller = new WalletController;
 
-            $orders9 = NodeOrders::where('coin', $request->method)
-                ->where('id_user', $user->id)
-                ->orderBy('id', 'desc')
-                ->limit(9)
-                ->get();
+            $wallet = $Walletcontroller->returnWallet($request->method, $user->id);
+            if (!$wallet) {
+                return redirect()->back()->with('error', "Wallet invalid");
+            }
+
+            $walletExists = $Walletcontroller->walletTxtWexists($user->id, $Walletcontroller->secured_decrypt($wallet->address));
+
+            if (isset($walletExists) && json_decode($walletExists)) {
+                $jsonW = json_decode($walletExists);
+                if (isset($jsonW->address)) {
+                    $newOrder = new OrderPackage;
+                    $newOrder->user_id = $user->id;
+                    $newOrder->reference = $package->name;
+                    $newOrder->payment_status = 0;
+                    $newOrder->transaction_code = 0;
+                    $newOrder->package_id = $package->id;
+                    $newOrder->price = $request->value;
+                    $newOrder->amount = 1;
+                    $newOrder->transaction_wallet = 0;
+                    $newOrder->printscreen = '-';
+                    $newOrder->pass = '-';
+                    $newOrder->server = '-';
+                    $newOrder->user = '-';
+                    $newOrder->price_crypto = $moedas[$request->method];
+                    $newOrder->wallet = $wallet->id;
+                    $newOrder->save();
 
 
-            if (count($orders9) > 0) {
-                // dd($orders9);
-                $usedWallets = $orders9->pluck('wallet')->toArray();
+                    $controller = new PackageController;
 
-                $unusedWallets = Wallet::where('user_id', $user->id)
-                    ->where('coin', $request->method)
-                    ->whereNotIn('address', $usedWallets)
-                    ->get();
+                    $orderr = new stdClass();
+                    $orderr->id = $newOrder->id;
+                    $orderr->id_user = $newOrder->user_id;
+                    $orderr->price = $newOrder->price;
+                    $orderr->price_crypto = $newOrder->price_crypto;
+                    $orderr->wallet = $Walletcontroller->secured_decrypt($wallet->address);
+                    $orderr->notify_url = route('notify.payment');
+                    $orderr->id_encript = $wallet->id;
 
+                    $postNode = $controller->genUrlCrypto($request->method, $orderr);
 
-                if ($unusedWallets->isNotEmpty()) {
+                    $ord = OrderPackage::where('id', $newOrder->id)->first();
+                    $ord->transaction_wallet = $postNode->merchant_id;
+                    $ord->id_node_order = $postNode->id;
+                    $ord->save();
 
-                    $selectedWallet = $unusedWallets->random();
-                    $wallet = $selectedWallet;
-                } else {
-                    return redirect()->back()->with('error', "Wallet Not found");
-                }
-            } else {
-                $myWallets = Wallet::where('user_id', $user->id)->where('coin', $request->method)->get();
-
-                $wallet = null;
-
-                if (count($myWallets) > 0) {
-                    # code...
-                    $ids = [];
-                    foreach ($myWallets as $w) {
-                        array_push($ids, $w->id);
+                    if (!$request->cookie('financial')) {
+                        $valorCookie = $user->id;
+                        return redirect()->route('invoice.index', $postNode->id)->withCookie(cookie('financial', $valorCookie, 1440)); // 1440 minutos = 24 horas
                     }
 
-                    $idSorteado = $ids[array_rand($ids)];
-
-                    $wallet = Wallet::where('id', $idSorteado)->first();
-                } else {
-                    return redirect()->back()->with('wallet', "Wallet Not found");
+                    return redirect()->route('invoice.index', $postNode->id);
                 }
+            } else {
+                try {
+                    $log = new CustomLog;
+                    $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
+                    $log->user_id = $user->id;
+                    $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
+                    $log->controller = "app/controller/WalletController";
+                    $log->http_code = 200;
+                    $log->route = "WALLET DANGER";
+                    $log->status = "success";
+                    $log->save();
+                    //code...
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
+                $walletdel = Wallet::where('id', $wallet->id)->first();
+                $walletdel->delete();
+
+                return redirect()->back()->with('error', "Wallet invalid");
             }
-
-
-            $newOrder = new OrderPackage;
-            $newOrder->user_id = $user->id;
-            $newOrder->reference = $package->name;
-            $newOrder->payment_status = 0;
-            $newOrder->transaction_code = 0;
-            $newOrder->package_id = $package->id;
-            $newOrder->price = $request->value;
-            $newOrder->amount = 1;
-            $newOrder->transaction_wallet = 0;
-            $newOrder->printscreen = '-';
-            $newOrder->pass = '-';
-            $newOrder->server = '-';
-            $newOrder->user = '-';
-            $newOrder->price_crypto = $moedas[$request->method];
-            $newOrder->wallet = $wallet->id;
-            $newOrder->save();
-
-
-
-            $orderr = new stdClass();
-            $orderr->id = $newOrder->id;
-            $orderr->id_user = $newOrder->user_id;
-            $orderr->price = $newOrder->price;
-            $orderr->price_crypto = $newOrder->price_crypto;
-            $orderr->wallet = $wallet->address;
-            $orderr->notify_url = route('notify.payment');
-
-            $controller = new PackageController;
-
-            $postNode = $controller->genUrlCrypto($request->method, $orderr);
-
-            $ord = OrderPackage::where('id', $newOrder->id)->first();
-            $ord->transaction_wallet = $postNode->merchant_id;
-            $ord->id_node_order = $postNode->id;
-            $ord->save();
-
-            if (!$request->cookie('financial')) {
-                $valorCookie = $user->id;
-                return redirect()->route('invoice.index', $postNode->id)->withCookie(cookie('financial', $valorCookie, 1440)); // 1440 minutos = 24 horas
-            }
-
-            return redirect()->route('invoice.index', $postNode->id);
-
 
         } catch (\Throwable $th) {
+            // dd($th);
             return redirect()->back()->with('error', "Error while processing");
         }
     }
@@ -258,8 +246,8 @@ class InvoiceController extends Controller
         }
 
         $client = new Client();
-
-        $client->request('GET', "https://walletprivate.onrender.com/api/verify/order/" . $request->id, [
+        $node = env('SERV_NODE');
+        $client->request('GET', "$node/api/verify/order/" . $request->id, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -267,5 +255,7 @@ class InvoiceController extends Controller
 
         return redirect()->back();
     }
+
+
 
 }

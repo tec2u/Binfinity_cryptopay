@@ -272,6 +272,7 @@ class PackageController extends Controller
 
     function filterWallet($mt)
     {
+        $node = env('SERV_NODE');
         $urls = [
             "USDT_TRC20" => "api/create/wallet/tron",
             "BITCOIN" => "api/create/wallet/btc",
@@ -282,7 +283,7 @@ class PackageController extends Controller
 
         $client = new Client();
 
-        $response = $client->request('GET', "https://walletprivate.onrender.com/" . $urls[$mt], [
+        $response = $client->request('GET', "$node/" . $urls[$mt], [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -319,92 +320,77 @@ class PackageController extends Controller
     {
         $order = OrderPackage::where('id', $request->id)->first();
 
-        // $walletGen = $this->filterWallet($request->method);
+        $Walletcontroller = new WalletController;
 
-        // $wallet = new Wallet;
-        // $wallet->user_id = Auth::id();
-        // $wallet->wallet = $walletGen['address'];
-        // $wallet->description = 'wallet';
-        // $wallet->address = $walletGen['address'];
-        // $wallet->key = $walletGen['privateKey'];
-        // $wallet->mnemonic = $walletGen['mnemonic'];
-        // $wallet->coin = $request->method;
-        // $wallet->save();
+        $wallet = $Walletcontroller->returnWallet($request->method, Auth::id());
 
-        $orders9 = NodeOrders::where('coin', $request->method)
-            ->where('id_user', Auth::id())
-            ->orderBy('id', 'desc')
-            ->limit(9)
-            ->get();
+        if (!$wallet) {
+            return redirect()->back();
+        }
 
+        $walletExists = $Walletcontroller->walletTxtWexists(Auth::id(), $Walletcontroller->secured_decrypt($wallet->address));
 
-        if (count($orders9) > 0) {
-            // dd($orders9);
-            $usedWallets = $orders9->pluck('wallet')->toArray();
+        // dd($walletExists);
 
-            $unusedWallets = Wallet::where('user_id', Auth::id())
-                ->where('coin', $request->method)
-                ->whereNotIn('address', $usedWallets)
-                ->get();
+        if (isset($walletExists) && json_decode($walletExists)) {
+            $jsonW = json_decode($walletExists);
+            if (isset($jsonW->address)) {
 
-
-            if ($unusedWallets->isNotEmpty()) {
-
-                $selectedWallet = $unusedWallets->random();
-                $wallet = $selectedWallet;
-            } else {
-                return redirect()->back()->with('error', "Wallet Not found");
-            }
-        } else {
-            $myWallets = Wallet::where('user_id', Auth::id())->where('coin', $request->method)->get();
-
-            $wallet = null;
-
-            if (count($myWallets) > 0) {
-                # code...
-                $ids = [];
-                foreach ($myWallets as $w) {
-                    array_push($ids, $w->id);
+                if (strlen($request->price) < 7) {
+                    $price = floatval(str_replace(',', '.', $request->price));
+                } else {
+                    $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
+                    $price = str_replace(',', '.', $valorSemSeparadorMilhar);
                 }
 
-                $idSorteado = $ids[array_rand($ids)];
+                $price = $request->price;
 
-                $wallet = Wallet::where('id', $idSorteado)->first();
-            } else {
-                return redirect()->back()->with('error', "Wallet Not found");
+
+                $order->wallet = $wallet->id;
+                $order->price_crypto = $request->{$request->method};
+                $order->save();
+
+                $orderr = new stdClass();
+                $orderr->id = $order->id;
+                $orderr->id_user = $order->user_id;
+                $orderr->price = $order->price;
+                $orderr->price_crypto = $order->price_crypto;
+                $orderr->wallet = $Walletcontroller->secured_decrypt($wallet->address);
+                $orderr->notify_url = route('notify.payment');
+                $orderr->id_encript = $wallet->id;
+
+                $postNode = $this->genUrlCrypto($request->method, $orderr);
+
+
+                $order = OrderPackage::where('id', $request->id)->first();
+                $order->id_node_order = $postNode->id;
+                $order->transaction_wallet = $postNode->merchant_id;
+                $order->save();
             }
-        }
-
-
-        if (strlen($request->price) < 7) {
-            $price = floatval(str_replace(',', '.', $request->price));
         } else {
-            $valorSemSeparadorMilhar = str_replace('.', '', $request->price);
-            $price = str_replace(',', '.', $valorSemSeparadorMilhar);
+            try {
+                $log = new CustomLog;
+                $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
+                $log->user_id = Auth::id();
+                $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND - ";
+                $log->controller = "app/controller/WalletController";
+                $log->http_code = 200;
+                $log->route = "WALLET DANGER";
+                $log->status = "success";
+                //code...
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+            $log->save();
+
+            $walletdel = Wallet::where('id', $wallet->id)->first();
+            $walletdel->delete();
+
+            return redirect()->back();
         }
 
-        $price = $request->price;
 
 
-        $order->wallet = $wallet->id;
-        $order->price_crypto = $request->{$request->method};
-        $order->save();
-
-        $orderr = new stdClass();
-        $orderr->id = $order->id;
-        $orderr->id_user = $order->user_id;
-        $orderr->price = $order->price;
-        $orderr->price_crypto = $order->price_crypto;
-        $orderr->wallet = $wallet->address;
-        $orderr->notify_url = route('notify.payment');
-
-        $postNode = $this->genUrlCrypto($request->method, $orderr);
-
-
-        $order = OrderPackage::where('id', $request->id)->first();
-        $order->id_node_order = $postNode->id;
-        $order->transaction_wallet = $postNode->merchant_id;
-        $order->save();
 
         // dd($postNode);
 
@@ -414,10 +400,10 @@ class PackageController extends Controller
 
     public function genUrlCrypto($method, $order)
     {
-
+        $node = env('SERV_NODE');
         $paymentConfig = [
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
-            "api_url" => "https://walletprivate.onrender.com/api/create/order"
+            "api_url" => "$node/api/create/order"
         ];
 
         // dd($order);
@@ -449,6 +435,7 @@ class PackageController extends Controller
                 "wallet": "' . $order->wallet . '",
                 "validity": "' . 60 . '",
                 "coin": "' . $method . '",
+                "id_encript: "' . $order->id_encript . '",
                 "notify_url" : "' . $url . '"
 
             }',
@@ -461,6 +448,8 @@ class PackageController extends Controller
         $raw = json_decode(curl_exec($curl));
 
         curl_close($curl);
+
+        return ($raw);
 
         if ($raw) {
             return $raw;

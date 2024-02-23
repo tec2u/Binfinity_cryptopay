@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomLog;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\PaymentLog;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use stdClass;
 
 class WalletController extends Controller
@@ -79,13 +81,14 @@ class WalletController extends Controller
 
             $user = User::find(Auth::id());
 
+            $controller = new PackageController;
+
             $WithDrawal = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
 
             if (!isset($WithDrawal)) {
                 \Alert::error("Add your wallet in > WithDrawal Wallet (" . $request->coin . ")");
                 return redirect()->back();
             }
-
 
             $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
 
@@ -94,28 +97,118 @@ class WalletController extends Controller
             }
 
             while (count($wallets) < 10) {
-                $controller = new PackageController;
 
                 $walletGen = $controller->filterWallet($request->coin);
 
-                $wallet = new Wallet;
-                $wallet->user_id = Auth::id();
-                $wallet->wallet = $walletGen['address'];
-                $wallet->description = 'wallet';
-                $wallet->address = $walletGen['address'];
-                $wallet->key = $walletGen['privateKey'];
-                $wallet->mnemonic = $walletGen['mnemonic'];
-                $wallet->coin = $request->coin;
-                $wallet->save();
+                $first_key = env('FIRSTKEY');
+                $second_key = env('SECONDKEY');
+
+                $json = [
+                    "action" => "create",
+                    "first" => $first_key,
+                    "second" => $second_key,
+                    "user_id" => Auth::id(),
+                    "address" => $walletGen['address'],
+                    "key" => $walletGen['privateKey'],
+                    "mnemonic" => $walletGen['mnemonic'],
+                ];
+
+                $retornoTxt = $this->sendPostBin2($json);
+                if ($retornoTxt) {
+                    $wallet = new Wallet;
+                    $wallet->user_id = Auth::id();
+                    $wallet->wallet = $this->secured_encrypt($walletGen['address']);
+                    $wallet->description = $this->secured_encrypt('wallet');
+                    $wallet->address = $this->secured_encrypt($walletGen['address']);
+                    $wallet->key = "-------";
+                    $wallet->mnemonic = "-------";
+                    $wallet->coin = $request->coin;
+                    $wallet->save();
+                    // dd($wallet);
+                }
 
                 $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
 
             return $this->index();
         } catch (\Throwable $th) {
+            // dd($th->getMessage());
             return $this->index();
             //throw $th;
         }
+    }
+
+    private function sendPostBin2($json)
+    {
+        $user = User::where('id', Auth::id())->first();
+        if (isset($user->hash_user_bin)) {
+            $json["hash_user"] = $user->hash_user_bin;
+        }
+        $url = env('SERV_TXT');
+
+        $response = Http::post("$url/", $json);
+
+        if ($response->successful()) {
+            $content = $response->body();
+            if (isset($content)) {
+                if (!isset($user->hash_user_bin)) {
+                    $user->hash_user_bin = $content;
+                    $user->save();
+                }
+
+                return true;
+            }
+
+        } else {
+            $status = $response->status();
+            $content = $response->body();
+            return false;
+        }
+        return false;
+    }
+
+    public function walletTxtWexists($id_user, $address)
+    {
+        $user = User::where("id", $id_user)->first();
+
+
+        $first_key = env('FIRSTKEY');
+        $second_key = env('SECONDKEY');
+
+        $json = [
+            "action" => "get",
+            "first" => $first_key,
+            "second" => $second_key,
+            "user_id" => $id_user,
+            "address" => $address
+        ];
+
+        if (isset($user->hash_user_bin)) {
+            $json["hash_user"] = $user->hash_user_bin;
+        }
+
+        $url = env('SERV_TXT');
+
+        $response = Http::post("$url/", $json);
+
+        if ($response->successful()) {
+            $content = $response->body();
+            if (isset($content)) {
+                if (json_decode($content)) {
+                    if (json_decode($content)->address) {
+                        return $content;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
+
     }
 
     public function notify(Request $request)
@@ -130,7 +223,6 @@ class WalletController extends Controller
 
         // crypto
         if (isset($requestFormated["login"])) {
-
 
             $log = new PaymentLog;
             $log->content = "status";
@@ -149,79 +241,117 @@ class WalletController extends Controller
                 return "User Not Found";
             }
 
-            $orders9 = NodeOrders::where('coin', $requestFormated['coin'])
-                ->where('id_user', $userAprov->id)
-                ->orderBy('id', 'desc')
-                ->limit(9)
-                ->get();
+            $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
+            if (!$wallet) {
+                return false;
+            }
 
-            if (count($orders9) > 0) {
+            $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
+            if (isset($walletExists) && json_decode($walletExists)) {
+                $jsonW = json_decode($walletExists);
+                if (isset($jsonW->address)) {
+                    $controller = new PackageController;
 
+                    $price_crypto = $requestFormated['price_crypto'];
 
-
-                $usedWallets = $orders9->pluck('wallet')->toArray();
-
-                $unusedWallets = Wallet::where('user_id', $userAprov->id)
-                    ->where('coin', $requestFormated['coin'])
-                    ->whereNotIn('address', $usedWallets)
-                    ->get();
-
-
-                if ($unusedWallets->isNotEmpty()) {
-
-                    $selectedWallet = $unusedWallets->random();
-                    $wallet = $selectedWallet;
-                } else {
-
-                    return "Wallet Not found";
-                }
-
-            } else {
-                $myWallets = Wallet::where('user_id', $userAprov->id)->where('coin', $requestFormated['coin'])->get();
-
-                $wallet = null;
-
-                if (count($myWallets) > 0) {
-                    # code...
-                    $ids = [];
-                    foreach ($myWallets as $w) {
-                        array_push($ids, $w->id);
+                    if (strpos($requestFormated['price_crypto'], ',') !== false) {
+                        $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
                     }
 
-                    $idSorteado = $ids[array_rand($ids)];
+                    $order = new stdClass();
+                    $order->id = $requestFormated['id_order'];
+                    $order->id_user = $userAprov->id;
+                    $order->price = $requestFormated['price'];
+                    $order->price_crypto = $price_crypto;
+                    $order->wallet = $this->secured_decrypt($wallet->address);
+                    $order->notify_url = $requestFormated['notify_url'];
+                    $order->id_encript = $wallet->id;
 
-                    $wallet = Wallet::where('id', $idSorteado)->first();
-                } else {
-                    return "Wallet Not found";
+                    // return json_encode($order);
+                    $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
+
+                    return $postNode;
                 }
+            } else {
+                try {
+                    //code...
+                    $log = new CustomLog;
+                    $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
+                    $log->user_id = $userAprov->user_id;
+                    $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
+                    $log->controller = "app/controller/WalletController";
+                    $log->http_code = 200;
+                    $log->route = "WALLET DANGER";
+                    $log->status = "success";
+                    $log->save();
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
+                $walletdel = Wallet::where('id', $wallet->id)->first();
+                $walletdel->delete();
+
+                return $this->notify($request);
             }
-
-
-            $controller = new PackageController;
-
-            $price_crypto = $requestFormated['price_crypto'];
-
-            if (strpos($requestFormated['price_crypto'], ',') !== false) {
-                $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
-            }
-
-            $order = new stdClass();
-            $order->id = $requestFormated['id_order'];
-            $order->id_user = $userAprov->id;
-            $order->price = $requestFormated['price'];
-            $order->price_crypto = $price_crypto;
-            $order->wallet = $wallet->address;
-            $order->notify_url = $requestFormated['notify_url'];
-
-            $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
-
-            return $postNode;
-
 
         }
 
 
         return response("OK", 200);
+    }
+
+    public function returnWallet($coin, $user_id)
+    {
+        $orders9 = NodeOrders::where('coin', $coin)
+            ->where('id_user', $user_id)
+            ->orderBy('id', 'desc')
+            ->limit(9)
+            ->get();
+
+        if (count($orders9) > 0) {
+            $usedWallets = $orders9->pluck('id_encript')->toArray();
+
+            $usedWallets = array_filter($usedWallets, function ($value) {
+                return $value != null;
+            });
+
+            $unusedWallets = Wallet::where('user_id', $user_id)
+                ->where('coin', $coin)
+                ->whereNotIn('id', $usedWallets)
+                ->get();
+
+
+
+            if ($unusedWallets->isNotEmpty()) {
+
+                $selectedWallet = $unusedWallets->random();
+                $wallet = $selectedWallet;
+            } else {
+
+                return false;
+            }
+
+        } else {
+            $myWallets = Wallet::where('user_id', $user_id)->where('coin', $coin)->get();
+
+            $wallet = null;
+
+            if (count($myWallets) > 0) {
+                # code...
+                $ids = [];
+                foreach ($myWallets as $w) {
+                    array_push($ids, $w->id);
+                }
+
+                $idSorteado = $ids[array_rand($ids)];
+
+                $wallet = Wallet::where('id', $idSorteado)->first();
+            } else {
+                return false;
+            }
+        }
+
+        return $wallet;
     }
 
     public function transactions()
@@ -273,4 +403,43 @@ class WalletController extends Controller
 
         return $this->WithdrawWallet();
     }
+
+    private function secured_decrypt($input)
+    {
+        $first_key = env('FIRSTKEY');
+        $second_key = env('SECONDKEY');
+        $mix = base64_decode($input);
+
+        $method = "aes-256-cbc";
+        $iv_length = openssl_cipher_iv_length($method);
+
+        $iv = substr($mix, 0, $iv_length);
+        $second_encrypted = substr($mix, $iv_length, 64);
+        $first_encrypted = substr($mix, $iv_length + 64);
+
+        $data = openssl_decrypt($first_encrypted, $method, $first_key, OPENSSL_RAW_DATA, $iv);
+        $second_encrypted_new = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
+
+        if (hash_equals($second_encrypted, $second_encrypted_new))
+            return $data;
+
+        return false;
+    }
+
+    private function secured_encrypt($data)
+    {
+        $first_key = env('FIRSTKEY');
+        $second_key = env('SECONDKEY');
+
+        $method = "aes-256-cbc";
+        $iv_length = openssl_cipher_iv_length($method);
+        $iv = openssl_random_pseudo_bytes($iv_length);
+
+        $first_encrypted = openssl_encrypt($data, $method, $first_key, OPENSSL_RAW_DATA, $iv);
+        $second_encrypted = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
+
+        $output = base64_encode($iv . $second_encrypted . $first_encrypted);
+        return $output;
+    }
+
 }

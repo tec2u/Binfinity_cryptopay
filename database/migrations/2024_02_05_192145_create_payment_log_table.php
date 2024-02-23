@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->longText('json')->nullable();
 
-            $table->foreign('order_package_id')->references('id')->on('orders_package')->onDelete('set null');
+            // $table->foreign('order_package_id')->references('id')->on('orders_package')->onDelete('set null');
         });
     }
 
