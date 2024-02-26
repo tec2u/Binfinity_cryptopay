@@ -3,7 +3,7 @@
 namespace App\Console;
 
 use App\Http\Controllers\Admin\PackageAdminController;
-use App\Http\Controllers\CronPagamento;
+use App\Http\Controllers\CronWalletController;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Http\Controllers\Admin\PayWithdrawAdminController;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -19,15 +19,15 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call(function () {
-            PayWithdrawAdminController::update();
-        })->everyFiveMinutes();
-        $schedule->call(function () {
-            PackageAdminController::orderUpdateKYC();
-        })->everyFiveMinutes();
+        // $schedule->call(function () {
+        //     PayWithdrawAdminController::update();
+        // })->everyFiveMinutes();
+        // $schedule->call(function () {
+        //     PackageAdminController::orderUpdateKYC();
+        // })->everyFiveMinutes();
 
         $schedule->call(function () {
-            $controller = new CronPagamento;
+            $controller = new CronWalletController;
             $controller->index();
         })->everyTenMinutes();
     }

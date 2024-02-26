@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\CustomLog;
+use App\Models\User;
+use App\Models\Wallet;
+use Illuminate\Http\Request;
+
+class CronWalletController extends Controller
+{
+    public function index()
+    {
+        $wallets = Wallet::all();
+
+        foreach ($wallets as $wallet) {
+            $user = User::where('id', $wallet->user_id)->first();
+            $this->verifica($wallet, $user);
+        }
+
+    }
+
+    public function verifica($wallet, $userAprov)
+    {
+        $Walletcontroller = new WalletController;
+
+        $walletExists = $Walletcontroller->walletTxtWexists($userAprov->id, $Walletcontroller->secured_decrypt($wallet->address));
+        if (isset($walletExists) && json_decode($walletExists)) {
+            $jsonW = json_decode($walletExists);
+            if (isset($jsonW->address)) {
+                return true;
+            }
+        } else {
+            try {
+                $walletdel = Wallet::where('id', $wallet->id)->first();
+                $walletdel->delete();
+
+                $log = new CustomLog;
+                $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
+                $log->user_id = $userAprov->id;
+                $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
+                $log->controller = "app/controller/WalletController";
+                $log->http_code = 200;
+                $log->route = "WALLET DANGER";
+                $log->status = "success";
+                $log->save();
+
+            } catch (\Throwable $th) {
+                // throw $th;
+            }
+        }
+    }
+
+
+}

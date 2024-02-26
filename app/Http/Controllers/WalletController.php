@@ -20,6 +20,7 @@ class WalletController extends Controller
 {
     public function index()
     {
+
         $user = User::find(Auth::id());
 
         $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
@@ -292,7 +293,7 @@ class WalletController extends Controller
                     $log->save();
 
                 } catch (\Throwable $th) {
-                    throw $th;
+                    // throw $th;
                 }
 
 
