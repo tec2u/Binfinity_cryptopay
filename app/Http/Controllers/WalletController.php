@@ -21,6 +21,11 @@ class WalletController extends Controller
     public function index()
     {
 
+        $controller = new CronWalletController;
+        $controller->index();
+
+        return;
+
         $user = User::find(Auth::id());
 
         $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');

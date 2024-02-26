@@ -26,6 +26,20 @@ class CronWalletController extends Controller
 
         foreach ($wallets as $wallet) {
             $user = User::where('id', $wallet->user_id)->first();
+            if (!isset($user)) {
+                $walletdel = Wallet::where('id', $wallet->id)->first();
+                $walletdel->delete();
+
+                $log = new CustomLog;
+                $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
+                $log->user_id = $wallet->user_id;
+                $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
+                $log->controller = "app/controller/WalletController";
+                $log->http_code = 200;
+                $log->route = "WALLET DANGER";
+                $log->status = "success";
+                $log->save();
+            }
             $this->verifica($wallet, $user);
         }
 
