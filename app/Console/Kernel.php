@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $controller = new CronWalletController;
             $controller->index();
-        })->everyTenMinutes();
+        })->everyMinute();
     }
 
     /**
