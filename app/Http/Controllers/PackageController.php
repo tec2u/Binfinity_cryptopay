@@ -379,11 +379,11 @@ class PackageController extends Controller
                 $log->http_code = 200;
                 $log->route = "WALLET DANGER";
                 $log->status = "success";
+                $log->save();
                 //code...
             } catch (\Throwable $th) {
                 //throw $th;
             }
-            $log->save();
 
             $walletdel = Wallet::where('id', $wallet->id)->first();
             $walletdel->delete();

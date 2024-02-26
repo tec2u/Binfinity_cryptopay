@@ -248,6 +248,7 @@ class WalletController extends Controller
                 return false;
             }
 
+
             $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
             if (isset($walletExists) && json_decode($walletExists)) {
                 $jsonW = json_decode($walletExists);
@@ -276,25 +277,27 @@ class WalletController extends Controller
                 }
             } else {
                 try {
-                    //code...
+
+                    $walletdel = Wallet::where('id', $wallet->id)->first();
+                    $walletdel->delete();
+
                     $log = new CustomLog;
                     $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
-                    $log->user_id = $userAprov->user_id;
+                    $log->user_id = $userAprov->id;
                     $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
                     $log->controller = "app/controller/WalletController";
                     $log->http_code = 200;
                     $log->route = "WALLET DANGER";
                     $log->status = "success";
                     $log->save();
+
                 } catch (\Throwable $th) {
-                    //throw $th;
+                    throw $th;
                 }
 
-                $walletdel = Wallet::where('id', $wallet->id)->first();
-                $walletdel->delete();
 
-                return $this->notify($request);
             }
+            return $this->notify($request);
 
         }
 
@@ -327,6 +330,15 @@ class WalletController extends Controller
                 $selectedWallet = $unusedWallets->random();
                 $wallet = $selectedWallet;
             } else {
+                if (isset($usedWallets)) {
+                    foreach (array_reverse($usedWallets) as $value) {
+                        $wallet = Wallet::where('id', $value)->first();
+
+                        if (isset($wallet)) {
+                            return $wallet;
+                        }
+                    }
+                }
 
                 return false;
             }
