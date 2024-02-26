@@ -59,7 +59,7 @@ class CronWalletController extends Controller
 
         } catch (\Throwable $th) {
             $log = new CustomLog;
-            $log->content = "Erro cron";
+            $log->content = $th->getMessage();
             $log->user_id = 1;
             $log->operation = "erro cron";
             $log->controller = "app/controller/WalletController";
