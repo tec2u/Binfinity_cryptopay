@@ -243,10 +243,10 @@ class WalletController extends Controller
             }
 
             $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
+
             if (!$wallet) {
                 return false;
             }
-
 
             $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
             if (isset($walletExists) && json_decode($walletExists)) {
