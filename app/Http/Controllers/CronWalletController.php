@@ -35,14 +35,14 @@ class CronWalletController extends Controller
     {
         $Walletcontroller = new WalletController;
 
-        $walletExists = $Walletcontroller->walletTxtWexists($userAprov->id, $Walletcontroller->secured_decrypt($wallet->address));
-        if (isset($walletExists) && json_decode($walletExists)) {
-            $jsonW = json_decode($walletExists);
-            if (isset($jsonW->address)) {
-                return true;
-            }
-        } else {
-            try {
+        try {
+            $walletExists = $Walletcontroller->walletTxtWexists($userAprov->id, $Walletcontroller->secured_decrypt($wallet->address));
+            if (isset($walletExists) && json_decode($walletExists)) {
+                $jsonW = json_decode($walletExists);
+                if (isset($jsonW->address)) {
+                    return true;
+                }
+            } else {
                 $walletdel = Wallet::where('id', $wallet->id)->first();
                 $walletdel->delete();
 
@@ -55,10 +55,18 @@ class CronWalletController extends Controller
                 $log->route = "WALLET DANGER";
                 $log->status = "success";
                 $log->save();
-
-            } catch (\Throwable $th) {
-                // throw $th;
             }
+
+        } catch (\Throwable $th) {
+            $log = new CustomLog;
+            $log->content = "Erro cron";
+            $log->user_id = 1;
+            $log->operation = "erro cron";
+            $log->controller = "app/controller/WalletController";
+            $log->http_code = 200;
+            $log->route = "erro cron";
+            $log->status = "success";
+            $log->save();
         }
     }
 
