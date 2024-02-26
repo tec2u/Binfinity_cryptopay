@@ -93,7 +93,7 @@ class WalletController extends Controller
             $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
 
             if (count($wallets) == 10) {
-                return $this->index();
+                return redirect()->route('wallets.index');
             }
 
             while (count($wallets) < 10) {
@@ -129,11 +129,12 @@ class WalletController extends Controller
 
                 $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
+            // dd($wallets);
 
-            return $this->index();
+            return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
             // dd($th->getMessage());
-            return $this->index();
+            return redirect()->route('wallets.index');
             //throw $th;
         }
     }
@@ -246,6 +247,7 @@ class WalletController extends Controller
                 return false;
             }
 
+
             $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
             if (isset($walletExists) && json_decode($walletExists)) {
                 $jsonW = json_decode($walletExists);
@@ -319,8 +321,6 @@ class WalletController extends Controller
                 ->where('coin', $coin)
                 ->whereNotIn('id', $usedWallets)
                 ->get();
-
-
 
             if ($unusedWallets->isNotEmpty()) {
 

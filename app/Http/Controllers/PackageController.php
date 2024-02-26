@@ -406,7 +406,6 @@ class PackageController extends Controller
             "api_url" => "$node/api/create/order"
         ];
 
-        // dd($order);
 
         $curl = curl_init();
 
@@ -430,12 +429,12 @@ class PackageController extends Controller
                 CURLOPT_POSTFIELDS => '{
                 "id_order": "' . $order->id . '",
                 "id_user": "' . $order->id_user . '",
+                "id_encript": "' . $order->id_encript . '",
                 "price": "' . $order->price . '",
                 "price_crypto": "' . $order->price_crypto . '",
                 "wallet": "' . $order->wallet . '",
                 "validity": "' . 60 . '",
                 "coin": "' . $method . '",
-                "id_encript: "' . $order->id_encript . '",
                 "notify_url" : "' . $url . '"
 
             }',
