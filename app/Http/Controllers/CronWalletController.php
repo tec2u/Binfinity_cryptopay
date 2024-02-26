@@ -11,6 +11,17 @@ class CronWalletController extends Controller
 {
     public function index()
     {
+        $log = new CustomLog;
+        $log->content = "rodou cron";
+        $log->user_id = 1;
+        $log->operation = "CRON";
+        $log->controller = "app/controller/WalletController";
+        $log->http_code = 200;
+        $log->route = "cron";
+        $log->status = "success";
+        $log->save();
+
+
         $wallets = Wallet::all();
 
         foreach ($wallets as $wallet) {
