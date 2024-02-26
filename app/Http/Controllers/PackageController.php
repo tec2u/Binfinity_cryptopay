@@ -163,6 +163,8 @@ class PackageController extends Controller
 
         $user = User::find(Auth::id());
         $adesao = !$user->getAdessao($user->id) >= 1;
+        $Walletcontroller = new WalletController;
+        $wallet->address = $Walletcontroller->secured_decrypt($wallet->address);
 
 
         return view('package.packagepay', compact('moedas', 'packages', 'adesao', 'user', 'orderpackage', 'value_btc', 'wallet'));

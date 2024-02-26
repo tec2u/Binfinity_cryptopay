@@ -404,7 +404,7 @@ class WalletController extends Controller
         return $this->WithdrawWallet();
     }
 
-    private function secured_decrypt($input)
+    public function secured_decrypt($input)
     {
         $first_key = env('FIRSTKEY');
         $second_key = env('SECONDKEY');
@@ -426,7 +426,7 @@ class WalletController extends Controller
         return false;
     }
 
-    private function secured_encrypt($data)
+    public function secured_encrypt($data)
     {
         $first_key = env('FIRSTKEY');
         $second_key = env('SECONDKEY');
