@@ -21,10 +21,10 @@ class WalletController extends Controller
     public function index()
     {
 
-        $controller = new CronWalletController;
-        $controller->index();
+        // $controller = new CronWalletController;
+        // $controller->index();
 
-        return;
+        // return;
 
         $user = User::find(Auth::id());
 

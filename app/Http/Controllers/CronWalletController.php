@@ -21,6 +21,8 @@ class CronWalletController extends Controller
         $log->status = "success";
         $log->save();
 
+        ini_set('max_execution_time', 240);
+
 
         $wallets = Wallet::all();
 
@@ -39,8 +41,9 @@ class CronWalletController extends Controller
                 $log->route = "WALLET DANGER";
                 $log->status = "success";
                 $log->save();
+            } else {
+                $this->verifica($wallet, $user);
             }
-            $this->verifica($wallet, $user);
         }
 
     }
@@ -72,6 +75,7 @@ class CronWalletController extends Controller
             }
 
         } catch (\Throwable $th) {
+            dd($th);
             $log = new CustomLog;
             $log->content = $th->getMessage();
             $log->user_id = 1;
