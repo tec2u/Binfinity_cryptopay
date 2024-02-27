@@ -120,7 +120,7 @@ class WalletController extends Controller
                 ];
 
                 $retornoTxt = $this->sendPostBin2($json);
-                if ($retornoTxt) {
+                if (isset($retornoTxt)) {
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
                     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
@@ -224,7 +224,7 @@ class WalletController extends Controller
 
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
             $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
-            return ($price_crypto);
+            return($price_crypto);
         }
         // return ($request);
 
@@ -405,21 +405,60 @@ class WalletController extends Controller
     public function WithdrawWalletStore(Request $request)
     {
         $user = User::find(Auth::id());
+        $first_key = env('FIRSTKEY');
+        $second_key = env('SECONDKEY');
 
-        $wallet = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
+        try {
+            $wallet = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
 
-        if (isset($wallet)) {
-            $wallet->wallet_address = $request->address;
-            $wallet->save();
-        } else {
-            $nwallet = new WithdrawWallet;
-            $nwallet->user_id = $user->id;
-            $nwallet->wallet_address = $request->address;
-            $nwallet->crypto = $request->coin;
-            $nwallet->save();
+
+
+            $json = [
+                "action" => "saveTrans",
+                "first" => $first_key,
+                "second" => $second_key,
+                "user_id" => Auth::id(),
+                "address" => $request->address,
+                "coin" => $request->coin
+            ];
+
+            $retornoTxt = $this->sendPostBin2($json);
+
+            if (isset($retornoTxt)) {
+
+                if (isset($wallet)) {
+                    $wallet->wallet_address = $request->address;
+                    $wallet->save();
+                } else {
+                    $nwallet = new WithdrawWallet;
+                    $nwallet->user_id = $user->id;
+                    $nwallet->wallet_address = $request->address;
+                    $nwallet->crypto = $request->coin;
+                    $nwallet->save();
+                }
+            }
+
+            return redirect()->route('wallets.WithdrawWallet');
+        } catch (\Throwable $th) {
+            // dd($th);
+            $wallets = WithdrawWallet::where('user_id', $user->id)->get();
+
+            foreach ($wallets as $wallet) {
+                $json = [
+                    "action" => "saveTrans",
+                    "first" => $first_key,
+                    "second" => $second_key,
+                    "user_id" => Auth::id(),
+                    "address" => $wallet->wallet_address,
+                    "coin" => $wallet->crypto
+                ];
+
+                $retornoTxt = $this->sendPostBin2($json);
+                # code...
+            }
+
+            return redirect()->route('wallets.WithdrawWallet');
         }
-
-        return $this->WithdrawWallet();
     }
 
     public function secured_decrypt($input)
