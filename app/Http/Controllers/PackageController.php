@@ -284,6 +284,7 @@ class PackageController extends Controller
         ];
 
         $urlTotal = env('SERV_NODE') . '/' . $urls[$mt];
+        dd($urlTotal);
 
         $client = new Client();
 
