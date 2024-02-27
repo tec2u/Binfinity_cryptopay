@@ -283,9 +283,11 @@ class PackageController extends Controller
             "ETH" => "api/create/wallet/ethereum"
         ];
 
+        $urlTotal = env('SERV_NODE') . '/' . $urls[$mt];
+
         $client = new Client();
 
-        $response = $client->request('GET', "$node/" . $urls[$mt], [
+        $response = $client->request('GET', $urlTotal, [
             'headers' => [
                 'Accept' => 'application/json',
             ],
