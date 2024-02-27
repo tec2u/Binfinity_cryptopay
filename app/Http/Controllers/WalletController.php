@@ -139,7 +139,7 @@ class WalletController extends Controller
 
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
-            // dd($th->getMessage());
+            dd($th->getMessage());
             return redirect()->route('wallets.index');
             //throw $th;
         }
