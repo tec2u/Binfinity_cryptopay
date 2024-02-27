@@ -316,6 +316,7 @@ class PackageController extends Controller
             return [
                 "privateKey" => $result->privateKey,
                 "address" => $result->address->base58,
+                "addressHex" => $result->address->hex,
                 "mnemonic" => "",
             ];
         }
@@ -453,7 +454,7 @@ class PackageController extends Controller
 
         curl_close($curl);
 
-        return ($raw);
+        return($raw);
 
         if ($raw) {
             return $raw;

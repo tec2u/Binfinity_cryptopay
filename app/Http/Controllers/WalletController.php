@@ -124,7 +124,13 @@ class WalletController extends Controller
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
                     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
-                    $wallet->description = $this->secured_encrypt('wallet');
+
+                    if ($request->coin == "TRX" || $request->coin == "USDT_TRC20") {
+                        $wallet->description = $walletGen['addressHex'] ?? '';
+                    } else {
+                        $wallet->description = $this->secured_encrypt('wallet');
+                    }
+
                     $wallet->address = $this->secured_encrypt($walletGen['address']);
                     $wallet->key = "-------";
                     $wallet->mnemonic = "-------";
