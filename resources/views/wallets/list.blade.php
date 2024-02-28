@@ -102,6 +102,7 @@
                 @foreach ($wallets as $chave => $valor)
                   @if (isset($icons[$chave]))
                     <div class="card">
+                      <span>{{ count($valor) }} / 10</span>
                       <img src="{{ $icons[$chave] }}" alt="CR7">
                       <h1>. . . .</h1>
                       <h2>{{ $chave }}</h2>
