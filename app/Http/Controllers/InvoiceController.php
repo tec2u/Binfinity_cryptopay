@@ -201,15 +201,26 @@ class InvoiceController extends Controller
                 }
             } else {
                 try {
-                    $log = new CustomLog;
-                    $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
-                    $log->user_id = $user->id;
-                    $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
-                    $log->controller = "app/controller/WalletController";
-                    $log->http_code = 200;
-                    $log->route = "WALLET DANGER";
-                    $log->status = "success";
-                    $log->save();
+                    $userAprov = $user;
+                    $url = env('SERV_TXT');
+                    $json = [
+                        "action" => "saveLog",
+                        "content" => "(INVOICE) Email: $userAprov->email - Coin: " . $request->method . " - Wallet: $wallet->address - PriceCrypto: " . $moedas[$request->method] . " - priceDol: " . $request->value,
+                        "operation" => "Wallet not found",
+                        "user_id" => $userAprov->id
+                    ];
+
+                    $response = Http::post("$url/", $json);
+
+                    if ($response->successful()) {
+                        $content = $response->body();
+                        if (isset($content)) {
+                        }
+
+                    } else {
+                        $status = $response->status();
+                        $content = $response->body();
+                    }
                     //code...
                 } catch (\Throwable $th) {
                     //throw $th;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomLog;
+use App\Models\IpWhitelist;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\PaymentLog;
@@ -226,11 +227,14 @@ class WalletController extends Controller
 
     public function notify(Request $request)
     {
+
         $requestFormated = $request->all();
+
+
 
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
             $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
-            return($price_crypto);
+            // return($price_crypto);
         }
         // return ($request);
 
@@ -259,7 +263,6 @@ class WalletController extends Controller
             if (!$wallet) {
                 return false;
             }
-
 
             $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
             if (isset($walletExists) && json_decode($walletExists)) {
@@ -293,15 +296,29 @@ class WalletController extends Controller
                     $walletdel = Wallet::where('id', $wallet->id)->first();
                     $walletdel->delete();
 
-                    $log = new CustomLog;
-                    $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
-                    $log->user_id = $userAprov->id;
-                    $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
-                    $log->controller = "app/controller/WalletController";
-                    $log->http_code = 200;
-                    $log->route = "WALLET DANGER";
-                    $log->status = "success";
-                    $log->save();
+                    $url = env('SERV_TXT');
+                    $json = [
+                        "action" => "saveLog",
+                        "content" => "(API) Email: $userAprov->email - Coin: " . $requestFormated["coin"] . " - Wallet: $wallet->address - PriceCrypto: " . $requestFormated['price_crypto'] . " - priceDol: " . $requestFormated['price'],
+                        "operation" => "Wallet not found",
+                        "user_id" => $userAprov->id
+                    ];
+
+                    $response = Http::post("$url/", $json);
+
+                    if ($response->successful()) {
+                        $content = $response->body();
+                        if (isset($content)) {
+                            return $content;
+                        }
+
+                    } else {
+                        $status = $response->status();
+                        $content = $response->body();
+                        return false;
+                    }
+                    return;
+
 
                 } catch (\Throwable $th) {
                     // throw $th;
@@ -414,10 +431,15 @@ class WalletController extends Controller
         $first_key = env('FIRSTKEY');
         $second_key = env('SECONDKEY');
 
+        $wtlist = IpWhitelist::where('ip', $request->ip())->get();
+
+        if (count($wtlist) < 1) {
+            return redirect()->route('wallets.WithdrawWallet');
+        }
+
         try {
+
             $wallet = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
-
-
 
             $json = [
                 "action" => "saveTrans",
@@ -428,13 +450,19 @@ class WalletController extends Controller
                 "coin" => $request->coin
             ];
 
-            $retornoTxt = $this->sendPostBin2($json);
+            if (isset($wallet)) {
+                \Alert::error("Contact support");
+            } else {
+                $retornoTxt = $this->sendPostBin2($json);
+            }
+
 
             if (isset($retornoTxt)) {
 
                 if (isset($wallet)) {
-                    $wallet->wallet_address = $request->address;
-                    $wallet->save();
+                    \Alert::error("Contact support");
+                    // $wallet->wallet_address = $request->address;
+                    // $wallet->save();
                 } else {
                     $nwallet = new WithdrawWallet;
                     $nwallet->user_id = $user->id;

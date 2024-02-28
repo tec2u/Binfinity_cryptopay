@@ -375,16 +375,26 @@ class PackageController extends Controller
             }
         } else {
             try {
-                $log = new CustomLog;
-                $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
-                $log->user_id = Auth::id();
-                $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND - ";
-                $log->controller = "app/controller/WalletController";
-                $log->http_code = 200;
-                $log->route = "WALLET DANGER";
-                $log->status = "success";
-                $log->save();
-                //code...
+                $userAprov = User::where('id', Auth::id())->first();
+                $url = env('SERV_TXT');
+                $json = [
+                    "action" => "saveLog",
+                    "content" => "(INTERN) Email: $userAprov->email - Coin: " . $request->method . " - Wallet: $wallet->address - PriceCrypto: " . $request->{$request->method} . " - priceDol: " . $order->price,
+                    "operation" => "Wallet not found",
+                    "user_id" => $userAprov->id
+                ];
+
+                $response = Http::post("$url/", $json);
+
+                if ($response->successful()) {
+                    $content = $response->body();
+                    if (isset($content)) {
+                    }
+
+                } else {
+                    $status = $response->status();
+                    $content = $response->body();
+                }
             } catch (\Throwable $th) {
                 //throw $th;
             }
@@ -454,7 +464,7 @@ class PackageController extends Controller
 
         curl_close($curl);
 
-        return($raw);
+        // return($raw);
 
         if ($raw) {
             return $raw;
