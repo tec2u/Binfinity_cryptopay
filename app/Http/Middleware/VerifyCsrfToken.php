@@ -14,6 +14,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/packages/packagepay/notify',
         '/packages/wallets/notify',
+        '/packages/wallets/decrypt',
         '/send/email'
     ];
 }

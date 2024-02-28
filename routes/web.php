@@ -246,6 +246,7 @@ Route::prefix('home')->middleware('auth')->name('home')->group(function () {
 
 Route::post('/packages/packagepay/notify', [PackageController::class, 'notify'])->name('notify.payment');
 Route::post('/packages/wallets/notify', [WalletController::class, 'notify'])->name('notify.wallet');
+Route::post('/packages/wallets/decrypt', [WalletController::class, 'secured_decrypt_public'])->name('notify.decript');
 
 Route::prefix('packages')->middleware('auth')->name('packages')->group(function () {
    Route::controller(PackageController::class)->group(function () {

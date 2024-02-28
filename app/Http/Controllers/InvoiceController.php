@@ -25,9 +25,13 @@ class InvoiceController extends Controller
     public function orderId($id)
     {
 
-        //dd($id);
         $order = NodeOrders::where('id_order', $id)->get();
         if (count($order) > 0) {
+            $Walletcontroller = new WalletController;
+            $dec = $Walletcontroller->secured_decrypt($order[0]->wallet);
+            if (isset($dec) && $dec) {
+                $order[0]->wallet = $Walletcontroller->secured_decrypt($order[0]->wallet);
+            }
             return view('invoice.invoice_step2', compact('order'));
         } else {
             abort(404);
@@ -41,6 +45,11 @@ class InvoiceController extends Controller
         //dd($id);
         $order = NodeOrders::where('id', $id)->get();
         if (count($order) > 0) {
+            $Walletcontroller = new WalletController;
+            $dec = $Walletcontroller->secured_decrypt($order[0]->wallet);
+            if (isset($dec) && $dec) {
+                $order[0]->wallet = $Walletcontroller->secured_decrypt($order[0]->wallet);
+            }
             return view('invoice.invoice_step2', compact('order'));
         } else {
             return $this->orderId($id);

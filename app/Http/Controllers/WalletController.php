@@ -231,7 +231,6 @@ class WalletController extends Controller
         $requestFormated = $request->all();
 
 
-
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
             $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
             // return($price_crypto);
@@ -259,7 +258,7 @@ class WalletController extends Controller
             }
 
             $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
-
+            // return $wallet;
             if (!$wallet) {
                 return false;
             }
@@ -281,14 +280,20 @@ class WalletController extends Controller
                     $order->id_user = $userAprov->id;
                     $order->price = $requestFormated['price'];
                     $order->price_crypto = $price_crypto;
-                    $order->wallet = $this->secured_decrypt($wallet->address);
+                    $order->wallet = $wallet->address;
                     $order->notify_url = $requestFormated['notify_url'];
                     $order->id_encript = $wallet->id;
 
                     // return json_encode($order);
                     $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
+                    // return $postNode;
 
-                    return $postNode;
+                    return [
+                        "id" => $postNode->id,
+                        "merchant_id" => $postNode->merchant_id,
+                        "wallet" => $this->secured_decrypt($postNode->wallet)
+                    ];
+
                 }
             } else {
                 try {
@@ -500,6 +505,30 @@ class WalletController extends Controller
         $first_key = env('FIRSTKEY');
         $second_key = env('SECONDKEY');
         $mix = base64_decode($input);
+
+        $method = "aes-256-cbc";
+        $iv_length = openssl_cipher_iv_length($method);
+
+        $iv = substr($mix, 0, $iv_length);
+        $second_encrypted = substr($mix, $iv_length, 64);
+        $first_encrypted = substr($mix, $iv_length + 64);
+
+        $data = openssl_decrypt($first_encrypted, $method, $first_key, OPENSSL_RAW_DATA, $iv);
+        $second_encrypted_new = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
+
+        if (hash_equals($second_encrypted, $second_encrypted_new))
+            return $data;
+
+        return false;
+    }
+
+    public function secured_decrypt_public(Request $request)
+    {
+        $requestFormated = $request->all();
+
+        $first_key = $requestFormated['f'];
+        $second_key = $requestFormated['s'];
+        $mix = base64_decode($requestFormated['c']);
 
         $method = "aes-256-cbc";
         $iv_length = openssl_cipher_iv_length($method);
