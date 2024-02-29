@@ -117,6 +117,9 @@
 
 				if ($sql2) {
 					$pega_order_2 = mysqli_fetch_array($sql2);
+				} else {
+					$sql2 = null;
+					$pega_order_2 = null;
 				}
 
 				?>
