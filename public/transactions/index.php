@@ -68,13 +68,17 @@
 				<th scope="col">Status</th>
 				<th scope="col">Price</th>
 				<th scope="col">Price crypto</th>
+				<th scope="col">Price crypto Paid</th>
 				<th scope="col">Wallet</th>
 				<th scope="col">Withdrawn</th>
 				<th scope="col">Change Withdrawn</th>
 				<th scope="col">Link Hash</th>
+				<th scope="col">Withdrawn Link Hash</th>
 			</tr>
 		</thead>
 		<tbody>
+
+
 
 			<?php while ($pega_order = mysqli_fetch_array($sql)): ?>
 				<?php
@@ -98,6 +102,23 @@
 					$change = "Yes";
 				}
 
+				if ($pega_order['coin'] == 'TRX' or $pega_order['coin'] == 'USDT_TRC20') {
+					$link_hash = "<a target='_blank' href='https://tronscan.org/#/transaction/$pega_order[hash]'>LINK</a>";
+				}
+				if ($pega_order['coin'] == 'ETH' or $pega_order['coin'] == 'USDT_ERC20') {
+					$link_hash = "<a target='_blank' href='https://etherscan.io/tx/$pega_order[hash]'>LINK</a>";
+				}
+				if ($pega_order['coin'] == 'BTC') {
+					$link_hash = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order[hash]'>LINK</a>";
+				}
+
+				$sql2 = mysqli_query($con, "select * from node_orders where and type=2 and payment_of_id=" . $pega_order["id"] . " order by id desc");
+				$pega_order_2 = null;
+
+				if ($sql2) {
+					$pega_order_2 = mysqli_fetch_array($sql2);
+				}
+
 				?>
 				<tr class="<?php echo $class ?>">
 					<td scope="col">
@@ -116,13 +137,39 @@
 						<?php echo $pega_order['price_crypto'] * 1 ?>
 					</td>
 					<td>
+						<?php echo $pega_order['price_crypto_payed'] * 1 ?>
+					</td>
+					<td>
 						<?php echo $pega_order['wallet'] ?>
 					</td>
 					<td>
 						<?php echo $pega_order['withdrawn'] == 1 ? "Yes" : "No" ?>
 					</td>
-					<td><a href='?change_withdrawal=1&id=$pega_order[id]'>CHANGE WITHDRAWAL TO <> $change</a></td>
-					<td>Link Hash</td>
+					<td><a href='?change_withdrawal=1&id=<?php echo $pega_order['id'] ?>'>CHANGE WITHDRAWAL TO
+							<?php echo $change ?>
+						</a>
+					</td>
+					<td>
+						<?php echo $link_hash ?>
+					</td>
+					<td>
+						<?php
+						if (isset($pega_order_2['id'])) {
+							if ($pega_order_2['coin'] == 'TRX' or $pega_order_2['coin'] == 'USDT_TRC20') {
+								$link_hash2 = "<a target='_blank' href='https://tronscan.org/#/transaction/$pega_order_2[hash]'>LINK</a>";
+							}
+							if ($pega_order_2['coin'] == 'ETH' or $pega_order_2['coin'] == 'USDT_ERC20') {
+								$link_hash2 = "<a target='_blank' href='https://etherscan.io/tx/$pega_order_2[hash]'>LINK</a>";
+							}
+							if ($pega_order_2['coin'] == 'BTC') {
+								$link_hash2 = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order_2[hash]'>LINK</a>";
+							}
+						}
+
+						echo $link_hash2;
+
+						?>
+					</td>
 				</tr>
 
 			<?php endwhile; ?>
