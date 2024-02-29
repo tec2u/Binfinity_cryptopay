@@ -168,6 +168,7 @@
 
 						echo $link_hash2;
 
+						$pega_order_2 = null;
 						?>
 					</td>
 				</tr>
