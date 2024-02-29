@@ -74,7 +74,11 @@
 				<th scope="col">Change Withdrawn</th>
 				<th scope="col">Gas Withdrawn</th>
 				<th scope="col">Link Hash</th>
-				<th scope="col">Withdrawn Link Hash</th>
+				<?php if (isset($_GET['type']) && $_GET['type'] == 2): ?>
+					<th scope="col">Payment of id</th>
+				<?php else: ?>
+					<th scope="col">Withdrawn Link Hash</th>
+				<?php endif; ?>
 			</tr>
 		</thead>
 		<tbody>
@@ -158,25 +162,32 @@
 					<td>
 						<?php echo $link_hash ?>
 					</td>
-					<td>
-						<?php
-						$link_hash2 = null;
-						if (isset($pega_order_2['id']) && $pega_order_2['payment_of_id'] == $pega_order['id']) {
-							if ($pega_order_2['coin'] == 'TRX' or $pega_order_2['coin'] == 'USDT_TRC20') {
-								$link_hash2 = "<a target='_blank' href='https://tronscan.org/#/transaction/$pega_order_2[hash]'>LINK</a>";
-							}
-							if ($pega_order_2['coin'] == 'ETH' or $pega_order_2['coin'] == 'USDT_ERC20') {
-								$link_hash2 = "<a target='_blank' href='https://etherscan.io/tx/$pega_order_2[hash]'>LINK</a>";
-							}
-							if ($pega_order_2['coin'] == 'BTC') {
-								$link_hash2 = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order_2[hash]'>LINK</a>";
-							}
-						}
 
-						echo $link_hash2;
-						$pega_order_2 = null;
-						?>
-					</td>
+					<?php if ($pega_order['type'] == 1): ?>
+						<td>
+							<?php
+							$link_hash2 = null;
+							if (isset($pega_order_2['id']) && $pega_order_2['payment_of_id'] == $pega_order['id']) {
+								if ($pega_order_2['coin'] == 'TRX' or $pega_order_2['coin'] == 'USDT_TRC20') {
+									$link_hash2 = "<a target='_blank' href='https://tronscan.org/#/transaction/$pega_order_2[hash]'>LINK</a>";
+								}
+								if ($pega_order_2['coin'] == 'ETH' or $pega_order_2['coin'] == 'USDT_ERC20') {
+									$link_hash2 = "<a target='_blank' href='https://etherscan.io/tx/$pega_order_2[hash]'>LINK</a>";
+								}
+								if ($pega_order_2['coin'] == 'BTC') {
+									$link_hash2 = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order_2[hash]'>LINK</a>";
+								}
+							}
+
+							echo $link_hash2;
+							$pega_order_2 = null;
+							?>
+						</td>
+					<?php else: ?>
+						<td>
+							<?php echo $pega_order['payment_of_id'] ?? '' ?>
+						</td>
+					<?php endif; ?>
 				</tr>
 
 			<?php endwhile; ?>
