@@ -156,7 +156,7 @@
 					</td>
 					<td>
 						<?php
-						if (isset($pega_order_2['id'])) {
+						if (isset($pega_order_2['id']) && $pega_order_2['payment_of_id'] == $pega_order['id']) {
 							if ($pega_order_2['coin'] == 'TRX' or $pega_order_2['coin'] == 'USDT_TRC20') {
 								$link_hash2 = "<a target='_blank' href='https://tronscan.org/#/transaction/$pega_order_2[hash]'>LINK</a>";
 							}
