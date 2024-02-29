@@ -1,7 +1,7 @@
 <?php
 
-$banco_user = 'root';
-$banco_senha = 'root';
+$banco_user = 'binfinit_cryptopay';
+$banco_senha = 'Hnash@kjPbab@';
 $con = @mysqli_connect("localhost", $banco_user, $banco_senha, "binfinit_cryptopay");
 
 

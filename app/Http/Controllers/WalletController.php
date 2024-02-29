@@ -454,19 +454,19 @@ class WalletController extends Controller
                 "coin" => $request->coin
             ];
 
-            // if (isset($wallet)) {
-            //     \Alert::error("Contact support");
-            // } else {
-            // }
-            $retornoTxt = $this->sendPostBin2($json);
+            if (isset($wallet)) {
+                \Alert::error("Contact support");
+            } else {
+                $retornoTxt = $this->sendPostBin2($json);
+            }
 
 
             if (isset($retornoTxt)) {
 
                 if (isset($wallet)) {
-                    // \Alert::error("Contact support");
-                    $wallet->wallet_address = $request->address;
-                    $wallet->save();
+                    \Alert::error("Contact support");
+                    // $wallet->wallet_address = $request->address;
+                    // $wallet->save();
                 } else {
                     $nwallet = new WithdrawWallet;
                     $nwallet->user_id = $user->id;
