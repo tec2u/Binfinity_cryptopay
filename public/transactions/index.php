@@ -170,7 +170,6 @@
 						}
 
 						echo $link_hash2;
-						echo $pega_order_2['id'];
 						$pega_order_2 = null;
 						?>
 					</td>
