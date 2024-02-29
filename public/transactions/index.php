@@ -169,6 +169,7 @@
 						}
 
 						echo $link_hash2;
+						echo $id_order;
 						$pega_order_2 = null;
 						?>
 					</td>
