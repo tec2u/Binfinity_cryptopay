@@ -72,6 +72,7 @@
 				<th scope="col">Wallet</th>
 				<th scope="col">Withdrawn</th>
 				<th scope="col">Change Withdrawn</th>
+				<th scope="col">Gas Withdrawn</th>
 				<th scope="col">Link Hash</th>
 				<th scope="col">Withdrawn Link Hash</th>
 			</tr>
@@ -146,6 +147,9 @@
 					</td>
 					<td>
 						<?php echo $pega_order['withdrawn'] == 1 ? "Yes" : "No" ?>
+					</td>
+					<td>
+						<?php echo $pega_order['gas_fee'] ?? '' ?>
 					</td>
 					<td><a href='?change_withdrawal=1&id=<?php echo $pega_order['id'] ?>'>CHANGE WITHDRAWAL TO
 							<?php echo $change ?>
