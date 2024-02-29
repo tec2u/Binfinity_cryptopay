@@ -84,7 +84,6 @@ class WalletController extends Controller
     public function store(Request $request)
     {
         try {
-            //code...
 
             $user = User::find(Auth::id());
 
@@ -545,6 +544,8 @@ class WalletController extends Controller
 
         return false;
     }
+
+
 
     public function secured_encrypt($data)
     {
