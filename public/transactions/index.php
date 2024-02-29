@@ -112,7 +112,7 @@
 					$link_hash = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order[hash]'>LINK</a>";
 				}
 
-				$sql2 = mysqli_query($con, "select * from node_orders where and type=2 and payment_of_id=" . $pega_order["id"] . " order by id desc");
+				$sql2 = mysqli_query($con, "select * from node_orders where type=2 and payment_of_id=" . $pega_order["id"] . " order by id desc");
 				$pega_order_2 = null;
 
 				if ($sql2) {
