@@ -148,12 +148,12 @@
 					<td>
 						<?php echo $pega_order['withdrawn'] == 1 ? "Yes" : "No" ?>
 					</td>
-					<td>
-						<?php echo $pega_order['gas_fee'] ?? '' ?>
-					</td>
 					<td><a href='?change_withdrawal=1&id=<?php echo $pega_order['id'] ?>'>CHANGE WITHDRAWAL TO
 							<?php echo $change ?>
 						</a>
+					</td>
+					<td>
+						<?php echo $pega_order['gas_fee'] ?? '' ?>
 					</td>
 					<td>
 						<?php echo $link_hash ?>
