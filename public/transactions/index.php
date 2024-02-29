@@ -32,9 +32,6 @@
 	error_reporting(E_ERROR | E_PARSE);
 	include "config.php";
 
-	// error_reporting(E_ALL);
-	// ini_set('display_errors', 1);
-	
 	if ($_GET['type'] == '' or $_GET['type'] == '1') {
 		$and = 'and type=1';
 	} else {
@@ -43,7 +40,7 @@
 
 	$sql = mysqli_query($con, "select * from node_orders where id>0 $and order by id desc");
 
-	if (isset($_GET['change_withdrawal']) && $_GET['change_withdrawal'] != '') {
+	if ($_GET['change_withdrawal'] != '') {
 
 
 		$get_change = mysqli_fetch_array(mysqli_query($con, "select * from node_orders where id=" . $_GET['id']));
@@ -61,25 +58,7 @@
 
 	echo "<a href='?type=1'>ENTRADAS</a> | <a href='?type=2'>SAIDAS</a></br></br>";
 
-	$links = [];
-
-	// if ($sql) {
-	// 	while ($pega_order = mysqli_fetch_array($sql)) {
-	// 		$order_id = $pega_order['id'];
-	
-	// 		$sql2 = mysqli_query($con, "SELECT * FROM node_orders WHERE type = 2 AND payment_of_id = $order_id ORDER BY id DESC");
-	
-	// 		if ($sql2) {
-	// 			if (mysqli_num_rows($sql2) > 0) {
-	// 				$links[$pega_order['id']] = $pega_order_2['hash'];
-	
-	// 			}
-	// 		}
-	// 	}
-	// }
-	
 	?>
-
 
 	<table class="table" style="overflow-x: scroll;">
 		<thead>
@@ -133,20 +112,14 @@
 					$link_hash = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order[hash]'>LINK</a>";
 				}
 
-				$order_id = $pega_order['id'];
-
-				$sql2 = mysqli_query($con, "SELECT * FROM node_orders WHERE type = 2 AND payment_of_id = $order_id ORDER BY id DESC");
+				$id_order = $pega_order['id'];
+				$sql2 = mysqli_query($con, "select * from node_orders where type=2 and payment_of_id=$id_order order by id desc");
+				$pega_order_2 = null;
 
 				if ($sql2) {
-					if (mysqli_num_rows($sql2) > 0) {
-						// var_dump($sql2);
-						$links[$pega_order['id']] = $pega_order_2['hash'];
-
-					}
+					$pega_order_2 = mysqli_fetch_array($sql2);
 				}
 
-				// var_dump($links);
-			
 				?>
 				<tr class="<?php echo $class ?>">
 					<td scope="col">
@@ -182,21 +155,19 @@
 					</td>
 					<td>
 						<?php
-						if (isset($links[$pega_order["id"]])) {
-							$hashPay = $links[$pega_order["id"]];
-							if ($pega_order['coin'] == 'TRX' or $pega_order['coin'] == 'USDT_TRC20') {
-								$link_hash2 = "<a target='_blank' href='https://tronscan.org/#/transaction/$hashPay'>LINK</a>";
+						if (isset($pega_order_2['id'])) {
+							if ($pega_order_2['coin'] == 'TRX' or $pega_order_2['coin'] == 'USDT_TRC20') {
+								$link_hash2 = "<a target='_blank' href='https://tronscan.org/#/transaction/$pega_order_2[hash]'>LINK</a>";
 							}
-							if ($pega_order['coin'] == 'ETH' or $pega_order['coin'] == 'USDT_ERC20') {
-								$link_hash2 = "<a target='_blank' href='https://etherscan.io/tx/$hashPay'>LINK</a>";
+							if ($pega_order_2['coin'] == 'ETH' or $pega_order_2['coin'] == 'USDT_ERC20') {
+								$link_hash2 = "<a target='_blank' href='https://etherscan.io/tx/$pega_order_2[hash]'>LINK</a>";
 							}
-							if ($pega_order['coin'] == 'BTC') {
-								$link_hash2 = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$hashPay'>LINK</a>";
+							if ($pega_order_2['coin'] == 'BTC') {
+								$link_hash2 = "<a target='_blank' href='https://blockchair.com/bitcoin/transaction/$pega_order_2[hash]'>LINK</a>";
 							}
 						}
 
 						echo $link_hash2;
-
 						$pega_order_2 = null;
 						?>
 					</td>
