@@ -119,6 +119,7 @@
 				if ($sql2) {
 					$pega_order_2 = mysqli_fetch_array($sql2);
 				}
+				mysqli_free_result($sql2);
 
 				?>
 				<tr class="<?php echo $class ?>">
