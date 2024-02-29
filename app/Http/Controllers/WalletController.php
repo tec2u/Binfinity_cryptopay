@@ -545,6 +545,29 @@ class WalletController extends Controller
         return false;
     }
 
+    public function secured_encrypt_public(Request $request)
+    {
+        $requestFormated = $request->all();
+
+        $first_key = $requestFormated['f'];
+        $second_key = $requestFormated['s'];
+        $mix = $requestFormated['c'];
+
+        $first_key = env('FIRSTKEY');
+        $second_key = env('SECONDKEY');
+
+        $method = "aes-256-cbc";
+        $iv_length = openssl_cipher_iv_length($method);
+        $iv = openssl_random_pseudo_bytes($iv_length);
+
+        $first_encrypted = openssl_encrypt($mix, $method, $first_key, OPENSSL_RAW_DATA, $iv);
+        $second_encrypted = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
+
+        $output = base64_encode($iv . $second_encrypted . $first_encrypted);
+        return $output;
+    }
+
+
 
 
     public function secured_encrypt($data)

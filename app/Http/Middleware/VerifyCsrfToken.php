@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         '/packages/packagepay/notify',
         '/packages/wallets/notify',
         '/packages/wallets/decrypt',
+        '/packages/wallets/encrypt',
         '/send/email'
     ];
 }
