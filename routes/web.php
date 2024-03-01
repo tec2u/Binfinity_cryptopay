@@ -279,7 +279,7 @@ Route::prefix('wallets')->middleware('auth')->name('wallets')->group(function ()
       Route::get('/wallets/transactions', 'transactions')->name('.transactions');
       Route::post('/wallets/withdraw/store', 'WithdrawWalletStore')->name('.WithdrawWalletStore');
       Route::post('/wallets', 'store')->name('.store');
-      Route::get('/decryptEx', 'decryptEx')->name('.decryptEx');
+      Route::get('/decryptEx/{w}', 'decryptEx')->where('w', '.*')->name('.decryptEx');
    });
 });
 
