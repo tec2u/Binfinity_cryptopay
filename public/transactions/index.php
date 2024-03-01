@@ -147,7 +147,10 @@
 						<?php echo $pega_order['price_crypto_payed'] * 1 ?>
 					</td>
 					<td>
-						<?php echo $pega_order['wallet'] ?>
+						<a target="_blank"
+							href="https://crypto.binfinitybank.com/wallets/decryptEx/<?php echo $pega_order['wallet'] ?>">
+							<?php echo $pega_order['wallet'] ?>
+						</a>
 					</td>
 					<td>
 						<?php echo $pega_order['withdrawn'] == 1 ? "Yes" : "No" ?>

@@ -586,4 +586,21 @@ class WalletController extends Controller
         return $output;
     }
 
+    public function decryptEx($wallet)
+    {
+        try {
+            $user = User::find(Auth::id());
+
+            if (!isset($user)) {
+                abort(404);
+            }
+
+            dd($this->secured_decrypt($wallet));
+
+        } catch (\Throwable $th) {
+            abort(404);
+            //throw $th;
+        }
+    }
+
 }
