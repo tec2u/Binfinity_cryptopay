@@ -148,7 +148,7 @@
 					</td>
 					<td>
 						<a target="_blank"
-							href="https://crypto.binfinitybank.com/wallets/decryptEx/<?php echo $pega_order['wallet'] ?>">
+							href="https://crypto.binfinitybank.com/wallets/decryptEx/?w=<?php echo $pega_order['wallet'] ?>">
 							<?php echo $pega_order['wallet'] ?>
 						</a>
 					</td>

@@ -586,7 +586,7 @@ class WalletController extends Controller
         return $output;
     }
 
-    public function decryptEx($wallet)
+    public function decryptEx(Request $request)
     {
         try {
             $user = User::find(Auth::id());
@@ -595,11 +595,12 @@ class WalletController extends Controller
                 abort(404);
             }
 
+            $wallet = $request->input('w');
             dd($this->secured_decrypt($wallet));
 
         } catch (\Throwable $th) {
             abort(404);
-            //throw $th;
+            // throw $th;
         }
     }
 
