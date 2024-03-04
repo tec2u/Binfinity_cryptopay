@@ -262,6 +262,8 @@ class WalletController extends Controller
                 return false;
             }
 
+            // return $wallet;
+
             $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
             if (isset($walletExists) && json_decode($walletExists)) {
                 $jsonW = json_decode($walletExists);
@@ -340,6 +342,19 @@ class WalletController extends Controller
 
     public function returnWallet($coin, $user_id)
     {
+        $tempoLimite = Carbon::now()->subSeconds(30);
+
+        $lastNode = NodeOrders::where('coin', $coin)
+            ->where('id_user', $user_id)
+            ->where('createdAt', '>', $tempoLimite)
+            ->orderBy('id', 'desc')
+            ->first();
+
+
+        if (isset($lastNode)) {
+            return false;
+        }
+
         $orders9 = NodeOrders::where('coin', $coin)
             ->where('id_user', $user_id)
             ->orderBy('id', 'desc')
