@@ -361,7 +361,7 @@ class PackageController extends Controller
                 $orderr->id_user = $order->user_id;
                 $orderr->price = $order->price;
                 $orderr->price_crypto = $order->price_crypto;
-                $orderr->wallet = $Walletcontroller->secured_decrypt($wallet->address);
+                $orderr->wallet = $wallet->address;
                 $orderr->notify_url = route('notify.payment');
                 $orderr->id_encript = $wallet->id;
 

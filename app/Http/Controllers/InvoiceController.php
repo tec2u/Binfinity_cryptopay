@@ -190,7 +190,7 @@ class InvoiceController extends Controller
                     $orderr->id_user = $newOrder->user_id;
                     $orderr->price = $newOrder->price;
                     $orderr->price_crypto = $newOrder->price_crypto;
-                    $orderr->wallet = $Walletcontroller->secured_decrypt($wallet->address);
+                    $orderr->wallet = $wallet->address;
                     $orderr->notify_url = route('notify.payment');
                     $orderr->id_encript = $wallet->id;
 
