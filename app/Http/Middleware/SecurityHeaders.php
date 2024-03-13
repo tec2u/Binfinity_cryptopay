@@ -23,36 +23,11 @@ class SecurityHeaders
      */
     public function handle($request, Closure $next)
     {
-        $response = $next($request);
-
-        if (!app()->environment('testing')) {
-            $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
-            $response->headers->set('X-XSS-Protection', '1; mode=block');
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-            $response->headers->set('Expect-CT', 'enforce, max-age=30');
-            $response->headers->set('Permissions-Policy', 'autoplay=(self), camera=(), encrypted-media=(self), fullscreen=(), geolocation=(self), gyroscope=(self), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=(self), usb=()');
-            // $response->headers->set('Access-Control-Allow-Origin', '*');
-            $response->headers->set('Access-Control-Allow-Origin', 'https://ai-nextlevel.com');
-            $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            // $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self'");
-            // $response->headers->set('Content-Security-Policy', "default-src 'self'");
-            // $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' https://code.jquery.com");
-
-
-            $this->removeUnwantedHeaders($this->unwantedHeaders);
-        }
-
-        return $response;
+        return $next($request);
     }
 
     /**
      * @param $headers
      */
-    private function removeUnwantedHeaders($headers): void
-    {
-        foreach ($headers as $header) {
-            header_remove($header);
-        }
-    }
+
 }
