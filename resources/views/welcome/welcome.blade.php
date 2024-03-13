@@ -27,13 +27,13 @@ https://templatemo.com/tm-535-softy-pinko
 <body>
 
   <!-- ***** Preloader Start ***** -->
-  <div id="preloader">
+  {{-- <div id="preloader">
     <div class="jumper">
       <div></div>
       <div></div>
       <div></div>
     </div>
-  </div>
+  </div> --}}
   <!-- ***** Preloader End ***** -->
 
 
@@ -587,28 +587,11 @@ https://templatemo.com/tm-535-softy-pinko
   </footer>
 
   <!-- jQuery -->
-  <script src="assetsWelcomeNew/js/jquery-2.1.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
-    integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <!-- Bootstrap -->
-  <script src="assetsWelcomeNew/js/popper.js"></script>
-  <script src="assetsWelcomeNew/js/bootstrap.min.js"></script>
-
-  <!-- Plugins -->
-  <script src="assetsWelcomeNew/js/scrollreveal.min.js"></script>
-  <script src="assetsWelcomeNew/js/waypoints.min.js"></script>
-  <script src="assetsWelcomeNew/js/jquery.counterup.min.js"></script>
-  <script src="assetsWelcomeNew/js/imgfix.min.js"></script>
-
-  <!-- Global Init -->
-  <script src="assetsWelcomeNew/js/custom.js"></script>
-
   <script>
+    setTimeout(() => {
+      getElementById('preloader').style.display = 'none';
+    }, 1000);
+
     const formulario = document.getElementById('contact');
 
     // Adicione um ouvinte de evento de envio ao formulário
@@ -633,6 +616,27 @@ https://templatemo.com/tm-535-softy-pinko
         });
     });
   </script>
+  <script src="assetsWelcomeNew/js/jquery-2.1.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+    integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Bootstrap -->
+  <script src="assetsWelcomeNew/js/popper.js"></script>
+  <script src="assetsWelcomeNew/js/bootstrap.min.js"></script>
+
+  <!-- Plugins -->
+  <script src="assetsWelcomeNew/js/scrollreveal.min.js"></script>
+  <script src="assetsWelcomeNew/js/waypoints.min.js"></script>
+  <script src="assetsWelcomeNew/js/jquery.counterup.min.js"></script>
+  <script src="assetsWelcomeNew/js/imgfix.min.js"></script>
+
+  <!-- Global Init -->
+  <script src="assetsWelcomeNew/js/custom.js"></script>
+
 </body>
 
 </html>
