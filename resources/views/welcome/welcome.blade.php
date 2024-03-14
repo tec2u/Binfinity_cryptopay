@@ -27,13 +27,13 @@ https://templatemo.com/tm-535-softy-pinko
 <body>
 
   <!-- ***** Preloader Start ***** -->
-  {{-- <div id="preloader">
+  <div id="preloader">
     <div class="jumper">
       <div></div>
       <div></div>
       <div></div>
     </div>
-  </div> --}}
+  </div>
   <!-- ***** Preloader End ***** -->
 
 
@@ -589,8 +589,8 @@ https://templatemo.com/tm-535-softy-pinko
   <!-- jQuery -->
   <script>
     setTimeout(() => {
-      getElementById('preloader').style.display = 'none';
-    }, 1000);
+      document.getElementById('preloader').style.display = 'none';
+    }, 2000);
 
     const formulario = document.getElementById('contact');
 
