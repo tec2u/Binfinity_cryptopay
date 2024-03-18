@@ -520,7 +520,7 @@ class WalletController extends Controller
                 # code...
             }
 
-            \Alert::error($th->getMessage());
+            \Alert::error("Error - Contact Support");
             return redirect()->route('wallets.WithdrawWallet');
         }
     }
