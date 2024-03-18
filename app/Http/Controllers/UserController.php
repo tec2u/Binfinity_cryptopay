@@ -77,20 +77,19 @@ class UserController extends Controller
             return redirect()->back();
          }
 
-         if (!empty($request->get('wallet'))) {
-            $datawallet = [
-               "wallet" => $request->get('wallet'),
-               "description" => "wallet"
-            ];
+         // if (!empty($request->get('wallet'))) {
+         //    $datawallet = [
+         //       "wallet" => $request->get('wallet'),
+         //       "description" => "wallet"
+         //    ];
 
-            $exists = Wallet::where('user_id', $id)->first();
-            if (isset($exists)) {
-               $user->wallet()->update($datawallet);
-            } else {
-               $user->wallet()->create($datawallet);
-            }
-
-         }
+         //    $exists = Wallet::where('user_id', $id)->first();
+         //    if (isset($exists)) {
+         //       $user->wallet()->update($datawallet);
+         //    } else {
+         //       $user->wallet()->create($datawallet);
+         //    }
+         // }
 
          // else {
          //    $datawallet = [
@@ -101,18 +100,18 @@ class UserController extends Controller
          // }
 
 
-         $club = new ClubSwanController;
-         $clubResponse = NULL;
-         if ($user->contact_id == NULL) {
-            $clubResponse = $club->singUp($data);
-            if ($clubResponse->status == 'success') {
-               $data['contact_id'] = $clubResponse->data->contactId;
-            }
-            //  else {
-            // throw new Exception(json_encode($clubResponse));
+         // $club = new ClubSwanController;
+         // $clubResponse = NULL;
+         // if ($user->contact_id == NULL) {
+         //    $clubResponse = $club->singUp($data);
+         //    if ($clubResponse->status == 'success') {
+         //       $data['contact_id'] = $clubResponse->data->contactId;
+         //    }
+         //  else {
+         // throw new Exception(json_encode($clubResponse));
 
-            // }
-         }
+         // }
+         // }
 
          unset($data['password']);
 
@@ -121,14 +120,15 @@ class UserController extends Controller
 
          $this->createLog('User updated successfully', 200, 'success', auth()->user()->id);
 
-         if ($clubResponse == NULL) {
-            Alert::success(__('backoffice_alert.user_update'));
-         }
+         // if ($clubResponse == NULL) {
+         //    Alert::success(__('backoffice_alert.user_update'));
+         // }
          return redirect()->route('users.index');
 
       } catch (Exception $e) {
+         dd($e);
          $error = json_decode($e->getMessage(), true);
-         if (isset($error['status']) && $error['status'] == 'fail') {
+         if (isset ($error['status']) && $error['status'] == 'fail') {
             $this->errorCatch($error['message'] . ' - PayLoad: ' . json_encode($data) . ' - Response: ' . $e->getMessage(), auth()->user()->id);
             $q = '';
             if ($error['message'] == 'Invalid parameter(s)') {
@@ -216,7 +216,7 @@ class UserController extends Controller
       $packages = Package::where('activated', 1)->where('type', '!=', 'activator')->orderBy('price')->get();
 
       $user = User::where('id', $id)->orWhere('login', $id)->first();
-      if (!isset($user)) {
+      if (!isset ($user)) {
          Alert::error('User not found!');
          return view('auth.register_must_active');
       }
