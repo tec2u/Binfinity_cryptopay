@@ -478,6 +478,7 @@ class WalletController extends Controller
 
             if (isset ($wallet)) {
                 \Alert::error("Contact support");
+                return redirect()->back();
             } else {
                 $retornoTxt = $this->sendPostBin2($json);
             }
@@ -519,6 +520,7 @@ class WalletController extends Controller
                 # code...
             }
 
+            \Alert::error($th->getMessage());
             return redirect()->route('wallets.WithdrawWallet');
         }
     }
