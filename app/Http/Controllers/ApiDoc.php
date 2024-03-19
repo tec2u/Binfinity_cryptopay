@@ -9,6 +9,6 @@ class ApiDoc extends Controller
     //
     public function index()
     {
-        return view('apidoc.doc');
+        return view('apiDoc.doc');
     }
 }
