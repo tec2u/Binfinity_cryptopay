@@ -170,7 +170,7 @@
     a:hover,
     a:visited,
     a:active {
-      color: #2896eb;
+      color: #ffffff;
       text-decoration: none;
     }
 
