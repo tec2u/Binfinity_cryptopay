@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" sizes="400x400" href="assetsWelcomeNew/images/icon.png">
   <title>B Inifnity Bank - Crypto Pay</title>
 
+
   <style>
     @import url('https://fonts.googleapis.com/css?family=Lato:400,700');
 
@@ -52,6 +53,8 @@
     nav ul li {
       padding: 5px 0;
       margin-top: 5px;
+      font-size: 1.2rem;
+      margin-top: 1rem;
     }
 
     .active {
@@ -154,7 +157,7 @@
 
     footer {
       padding: 4px 0;
-      background-color: #00a281;
+      background-color: #8261ee;
       color: #ffffff;
       font-size: 12px;
       text-align: center;
@@ -198,6 +201,25 @@
         background-color: white;
       }
     }
+
+    code {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    pre code {
+      display: block;
+      /* margin-bottom: 40px; */
+      background-color: rgb(30, 44, 52, 0.95);
+      color: white;
+      border-radius: 5px;
+      padding: 5px;
+      line-height: 2;
+      font-size: 12px;
+    }
+
+    #navbar img {
+      max-width: 80%;
+    }
   </style>
 </head>
 
@@ -205,13 +227,14 @@
 
 
   <nav id="navbar">
-    <header>React Documentation</header>
+    <header>
+      <img src="https://crypto.binfinitybank.com/assetsWelcomeNew/images/logo2.png" alt="" srcset="">
+    </header>
     <ul>
       <li><a class="nav-link" href="#Getting_Started">Getting Started</a></li>
       <li><a class="nav-link" href="#Hello_World">Create Account</a></li>
-      <li><a class="nav-link" href="#Introducing_JSX">Introducing JSX</a></li>
-      <li><a class="nav-link" href="#Rendering_Elements">Rendering Elements</a></li>
-      <li><a class="nav-link" href="#Components_and_Props">Components and Props</a></li>
+      <li><a class="nav-link" href="#EndPoints">EndPoints</a></li>
+      <li><a class="nav-link" href="#Notify">Notify</a></li>
 
     </ul>
   </nav>
@@ -222,115 +245,92 @@
         <header>Getting Started</header>
         <article>
           <p class="first-p">This page is an overview of the API documentation and related resources.</p>
-          <p><strong>React</strong> is a JavaScript library for building user interfaces. Learn what React is all about
-            on
-            our homepage or in the tutorial.</p>
-          <h2>Try React</h2>
-          <p>React has been designed from the start for gradual adoption, and you can use as little or as much React as
-            you need. Whether you want to get a taste of React, add some interactivity to a simple HTML page, or start a
-            complex React-powered app, the links in this section will help you get started.</p>
+
         </article>
       </section>
 
       <section class="main-section" id="Hello_World">
-        <header>Hello World</header>
+        <header>Create Account</header>
         <article>
-          <p class="first-p">The smallest React example looks like this:</p>
-          <pre><code>ReactDOM.render(
-        &lt;h1&gt;Hello, world!&lt;/h1&gt;,
-        document.getElementById('root')
-  );
-        </code></pre>
-          <p>It displays a heading saying “Hello, world!” on the page.</p>
+          click <a style="color: #8261ee" href="/login">HERE</a> to create your account
+          <p>After creating your account, access the menu and register your withdrawal wallet</p>
+          <p>Then access your allocated wallets and generate the wallets of the desired currency</p>
         </article>
       </section>
 
-      <section class="main-section" id="Introducing_JSX">
-        <header>Introducing JSX</header>
+      <section class="main-section" id="EndPoints">
+        <header>EndPoints</header>
         <article>
-          <p class="first-p">Consider this variable declaration:</p>
-          <pre><code>const element = &lt;h1&gt;Hello, world!&lt;h1&gt;;</code></pre>
-          <p>This funny tag syntax is neither a string nor HTML.</p>
-          <p>It is called JSX, and it is a syntax extension to JavaScript. We recommend using it with React to describe
-            what the UI should look like. JSX may remind you of a template language, but it comes with the full power of
-            JavaScript.
-          <p>
-          <p>JSX produces React “elements”. We will explore rendering them to the DOM in the next section. Below, you
-            can
-            find the basics of JSX necessary to get you started.</p>
-          <h2>Why JSX?</h2>
-          <p>React embraces the fact that rendering logic is inherently coupled with other UI logic: how events are
-            handled, how the state changes over time, and how the data is prepared for display.</p>
-          <p>Instead of artificially separating technologies by putting markup and logic in separate files, React
-            separates concerns with loosely coupled units called “components” that contain both. We will come back to
-            components in a further section, but if you’re not yet comfortable putting markup in JS, this talk might
-            convince you otherwise.</p>
-          <p>React doesn’t require using JSX, but most people find it helpful as a visual aid when working with UI
-            inside
-            the JavaScript code. It also allows React to show more useful error and warning messages.</p>
-          <p>With that out of the way, let’s get started!</p>
-        </article>
-      </section>
+          <p class="first-p">Create invoice:</p>
+          {{-- <pre><code>const element = &lt;h1&gt;Hello, world!&lt;h1&gt;;</code></pre> --}}
+          <pre><code>{{ route('notify.wallet') }}</code></pre>
 
-      <section class="main-section" id="Rendering_Elements">
-        <header>Rendering Elements</header>
-        <article>
-          <p class="first-p">Elements are the smallest building blocks of React apps.</p>
-          <p>An element describes what you want to see on the screen:</p>
-          <pre><code>const element = &lt;h1&gt;Hello, world!&lt;h1&gt;;</code></pre>
-          <p>Unlike browser DOM elements, React elements are plain objects, and are cheap to create. React DOM takes
-            care
-            of updating the DOM to match the React elements.</p>
-          <blockquote cite="https://reactjs.org/docs/rendering-elements.html">
-            <strong>Note:</strong>
-            <p>One might confuse elements with a more widely known concept of “components”. We will introduce components
-              in the next section. Elements are what components are “made of”, and we encourage you to read this section
-              before jumping ahead.</p>
-          </blockquote>
-        </article>
-      </section>
+          <p><strong>Request: (POST)</strong></p>
 
-      <section class="main-section" id="Components_and_Props">
-        <header>Components and Props</header>
-        <article>
-          <p class="first-p">Components let you split the UI into independent, reusable pieces, and think about each
-            piece
-            in isolation. This page provides an introduction to the idea of components. You can find a <a
-              href="https://reactjs.org/docs/react-component.html">detailed component API reference here.</a></p>
-          <p>Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and
-            return React elements describing what should appear on the screen.</p>
-          <h2>Function and Class Components</h2>
-          <p>The simplest way to define a component is to write a JavaScript function:</p>
-          <pre><code>function Welcome(props) {
-              return &lt;h1&gt;Hello, {props.name}&lt;h1&gt;;
+          <pre style=""><code id="">
+            {
+              "id_order": "1",
+              "price": "100",
+              "price_crypto": "100",
+              "login": "your_login",
+              "password": "your_password",
+              "coin": "USTD_TRC20",
+              "notify_url": "Your_system_url_notify",
             }
-        </code></pre>
-          <p>This function is a valid React component because it accepts a single “props” (which stands for properties)
-            object argument with data and returns a React element. We call such components “function components” because
-            they are literally JavaScript functions.</p>
-          <p>You can also use an <a
-              href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Classes">ES6</a>
-            class to define a component:</p>
-          <pre><code>class Welcome extends React.Component {
-                    render() {
-                        return &lt;h1&gt;Hello, {this.props.name}&lt;h1&gt;;
-                    }
-                }
             </code></pre>
-          <p>The above two components are equivalent from React’s point of view.</p>
-          <p>Classes have some additional features that we will discuss in the next sections. Until then, we will use
-            function components for their conciseness.</p>
+
+          <p><strong>Response:</strong></p>
+
+          <pre style=""><code id="">
+
+            {
+              "id": "1", 
+              "merchant_id": "USDT_TRC20100",
+              "wallet": "a1b2c3d4e5f6g7h8i9",
+            }
+            </code></pre>
+
         </article>
       </section>
 
+      <section class="main-section" id="Notify">
+        <header>Notify</header>
+        <article>
+          <p class="first-p">Notify structure:</p>
+          <p>With this information, your system will process the information as needed.</p>
+          <pre><code>Your system will receive</code></pre>
 
+          <p><strong>Request: (POST)</strong></p>
 
-      <footer>
-        <p id="footer-content">All content sourced from <a href="https://reactjs.org/docs/">ReactJS</a></p>
-      </footer>
+          <pre style=""><code id="">
+            {
+                "id":628,
+                "id_order":"5103",
+                "status":"Paid",
+                "price_crypto":158,
+                "price_crypto_payed":158,
+                "dif":0,
+                "hash":"999999999999999999999999",
+                "merchant_id":"USDT_TRC20628",
+                "node":true
+            }
+            </code></pre>
+
+        </article>
+      </section>
+
+      <a href="{{ route('.welcome') }}">
+        <footer>
+          <p id="footer-content">
+            Return to Binfinity Bank
+          </p>
+        </footer>
+      </a>
 
     </main>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+      integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
       integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -345,6 +345,7 @@
         });
 
       });
+      hljs.highlightAll();
     </script>
 </body>
 
