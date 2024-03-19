@@ -29,7 +29,7 @@ class InvoiceController extends Controller
         if (count($order) > 0) {
             $Walletcontroller = new WalletController;
             $dec = $Walletcontroller->secured_decrypt($order[0]->wallet);
-            if (isset($dec) && $dec) {
+            if (isset ($dec) && $dec) {
                 $order[0]->wallet = $Walletcontroller->secured_decrypt($order[0]->wallet);
             }
             return view('invoice.invoice_step2', compact('order'));
@@ -47,7 +47,7 @@ class InvoiceController extends Controller
         if (count($order) > 0) {
             $Walletcontroller = new WalletController;
             $dec = $Walletcontroller->secured_decrypt($order[0]->wallet);
-            if (isset($dec) && $dec) {
+            if (isset ($dec) && $dec) {
                 $order[0]->wallet = $Walletcontroller->secured_decrypt($order[0]->wallet);
             }
             return view('invoice.invoice_step2', compact('order'));
@@ -102,11 +102,11 @@ class InvoiceController extends Controller
             $user = User::where('login', $request->login)->first();
 
 
-            if (!isset($user) || !Hash::check($request->password, $user->financial_password) && !$request->cookie('financial')) {
+            if (!isset ($user) || !Hash::check($request->password, $user->financial_password) && !$request->cookie('financial')) {
                 return redirect()->back()->with('error', "User Not found");
             }
 
-            if (!isset($package)) {
+            if (!isset ($package)) {
                 return redirect()->back()->with('error', "Invoice Not Available");
 
             }
@@ -162,9 +162,9 @@ class InvoiceController extends Controller
 
             $walletExists = $Walletcontroller->walletTxtWexists($user->id, $Walletcontroller->secured_decrypt($wallet->address));
 
-            if (isset($walletExists) && json_decode($walletExists)) {
+            if (isset ($walletExists) && json_decode($walletExists)) {
                 $jsonW = json_decode($walletExists);
-                if (isset($jsonW->address)) {
+                if (isset ($jsonW->address)) {
                     $newOrder = new OrderPackage;
                     $newOrder->user_id = $user->id;
                     $newOrder->reference = $package->name;
@@ -189,7 +189,15 @@ class InvoiceController extends Controller
                     $orderr->id = $newOrder->id;
                     $orderr->id_user = $newOrder->user_id;
                     $orderr->price = $newOrder->price;
-                    $orderr->price_crypto = $newOrder->price_crypto;
+
+                    // $orderr->price_crypto = $newOrder->price_crypto;
+
+                    if (strpos($moedas[$request->method], ',') !== false) {
+                        $orderr->price_crypto = str_replace(",", "", $moedas[$request->method]);
+                    } else {
+                        $orderr->price_crypto = $moedas[$request->method];
+                    }
+
                     $orderr->wallet = $wallet->address;
                     $orderr->notify_url = route('notify.payment');
                     $orderr->id_encript = $wallet->id;
@@ -223,7 +231,7 @@ class InvoiceController extends Controller
 
                     if ($response->successful()) {
                         $content = $response->body();
-                        if (isset($content)) {
+                        if (isset ($content)) {
                         }
 
                     } else {
@@ -261,7 +269,7 @@ class InvoiceController extends Controller
 
         $nodeOrder = NodeOrders::where('id', $request->id)->first();
 
-        if (!isset($nodeOrder)) {
+        if (!isset ($nodeOrder)) {
             return redirect()->back();
         }
 

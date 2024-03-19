@@ -117,16 +117,16 @@ class PackageController extends Controller
 
         }
 
-        if (isset($orderpackage->wallet)) {
+        if (isset ($orderpackage->wallet)) {
             $wallett = Wallet::where('id', $orderpackage->wallet)->first();
-            if (isset($wallett)) {
+            if (isset ($wallett)) {
                 $wallet = $wallett;
             }
         }
         $moedas = null;
         $value_btc = null;
 
-        if (isset($orderpackage->price_crypto)) {
+        if (isset ($orderpackage->price_crypto)) {
             $value_btc = $orderpackage->price_crypto;
         } else {
 
@@ -186,7 +186,7 @@ class PackageController extends Controller
 
         $orderpackage = OrderPackage::find($packageid);
 
-        if (isset($request->image)) {
+        if (isset ($request->image)) {
             if ($request->file('image')->isValid()) {
                 $rules = [
                     'image' => 'image|mimes:jpeg,png,webp|max:10240',
@@ -338,9 +338,9 @@ class PackageController extends Controller
 
         // dd($walletExists);
 
-        if (isset($walletExists) && json_decode($walletExists)) {
+        if (isset ($walletExists) && json_decode($walletExists)) {
             $jsonW = json_decode($walletExists);
-            if (isset($jsonW->address)) {
+            if (isset ($jsonW->address)) {
 
                 if (strlen($request->price) < 7) {
                     $price = floatval(str_replace(',', '.', $request->price));
@@ -353,7 +353,13 @@ class PackageController extends Controller
 
 
                 $order->wallet = $wallet->id;
-                $order->price_crypto = $request->{$request->method};
+
+                if (strpos($request->{$request->method}, ',') !== false) {
+                    $order->price_crypto = str_replace(",", "", $request->{$request->method});
+                } else {
+                    $order->price_crypto = $request->{$request->method};
+                }
+
                 $order->save();
 
                 $orderr = new stdClass();
@@ -388,7 +394,7 @@ class PackageController extends Controller
 
                 if ($response->successful()) {
                     $content = $response->body();
-                    if (isset($content)) {
+                    if (isset ($content)) {
                     }
 
                 } else {
@@ -425,7 +431,7 @@ class PackageController extends Controller
 
         $curl = curl_init();
 
-        if (isset($order->notify_url)) {
+        if (isset ($order->notify_url)) {
             $url = $order->notify_url;
         } else {
             $url = route('notify.payment');
@@ -478,13 +484,13 @@ class PackageController extends Controller
         $requestFormated = $request->all();
 
         // crypto
-        if (isset($requestFormated["id"]) && !isset($requestFormated["node"])) {
+        if (isset ($requestFormated["id"]) && !isset ($requestFormated["node"])) {
 
             $payment = OrderPackage::where('transaction_wallet', $requestFormated["id"])
                 ->orWhere('transaction_wallet', $requestFormated["merchant_id"])
                 ->first();
 
-            if (!isset($payment)) {
+            if (!isset ($payment)) {
                 return false;
             }
 
@@ -515,13 +521,13 @@ class PackageController extends Controller
             $log->json = json_encode($request->all());
             $log->save();
 
-        } else if (isset($requestFormated["node"])) {
+        } else if (isset ($requestFormated["node"])) {
             $payment = OrderPackage::where('transaction_wallet', $requestFormated["id"])
                 ->orWhere('transaction_wallet', $requestFormated["merchant_id"])
                 ->Where('id', $requestFormated["id_order"])
                 ->first();
 
-            if (!isset($payment) || $payment->id != $requestFormated["id_order"]) {
+            if (!isset ($payment) || $payment->id != $requestFormated["id_order"]) {
                 return false;
             }
 
@@ -560,8 +566,8 @@ class PackageController extends Controller
         }
 
 
-        if (isset($requestFormated["teste"])) {
-            if (isset($requestFormated["idpedido"])) {
+        if (isset ($requestFormated["teste"])) {
+            if (isset ($requestFormated["idpedido"])) {
                 $payment = OrderPackage::where('id', $requestFormated["idpedido"])->first();
                 return response()->json($payment);
             } else {
@@ -676,7 +682,7 @@ class PackageController extends Controller
         !is_dir($path) &&
             mkdir($path, 0777, true);
 
-        if (isset($request->image)) {
+        if (isset ($request->image)) {
             if ($request->file('image')->isValid()) {
                 $rules = [
                     'image' => 'file|mimes:jpeg,jpg,png,webp,doc,docx,pdf|max:10240',

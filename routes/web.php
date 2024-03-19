@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\UpdateDailyAdminController;
 use App\Http\Controllers\Admin\VerifyOrderUserAdminController;
 use App\Http\Controllers\Admin\VideoAdminController;
 use App\Http\Controllers\Admin\DocumentsAdminController;
+use App\Http\Controllers\ApiDoc;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\HistoricScoreController;
@@ -55,6 +56,11 @@ Route::get('setlocale/{locale}', function ($locale) {
       session(['locale' => $locale]);
    }
    return redirect()->back();
+});
+
+
+Route::controller(ApiDoc::class)->group(function () {
+   Route::get('/api/doc', 'index')->name('api.doc');
 });
 
 
@@ -320,6 +326,7 @@ Route::prefix('supports')->middleware('auth')->name('supports')->group(function 
       Route::get('/reopen_chat/{id}', 'reopenChat')->name('.reopenChat');
    });
 });
+
 
 
 
