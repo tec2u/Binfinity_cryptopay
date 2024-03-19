@@ -277,12 +277,12 @@
 
           <pre style=""><code id="" class="language-javascript">
             {
-              "id_order": "1",
-              "price": "100",
+              "id_order": "1", // id of your order in your system
+              "price": "100", // in USD
               "price_crypto": "100",
               "login": "your_login",
               "password": "your_password",
-              "coin": "USTD_TRC20",
+              "coin": "USTD_TRC20", 
               "notify_url": "Your_system_url_notify",
             }
             </code></pre>
