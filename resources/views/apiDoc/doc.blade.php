@@ -7,7 +7,15 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" sizes="400x400" href="assetsWelcomeNew/images/icon.png">
   <title>B Inifnity Bank - Crypto Pay</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
+  <!-- and it's easy to individually load additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+
+  <script>
+    hljs.highlightAll();
+  </script>
 
   <style>
     @import url('https://fonts.googleapis.com/css?family=Lato:400,700');
@@ -267,7 +275,7 @@
 
           <p><strong>Request: (POST)</strong></p>
 
-          <pre style=""><code id="">
+          <pre style=""><code id="" class="language-javascript">
             {
               "id_order": "1",
               "price": "100",
@@ -281,7 +289,7 @@
 
           <p><strong>Response:</strong></p>
 
-          <pre style=""><code id="">
+          <pre style=""><code id="" class="language-javascript">
 
             {
               "id": "1", 
@@ -300,7 +308,7 @@
           <p>With this information, your system will process the information as needed.</p>
           <pre><code>Your system will receive</code></pre>
           <p><strong>Request: (POST)</strong></p>
-          <pre style=""><code id="">
+          <pre style=""><code id="" class="language-javascript">
             {
                 "id":628,
                 "id_order":"5103",
@@ -343,7 +351,6 @@
         });
 
       });
-      hljs.highlightAll();
     </script>
 </body>
 
