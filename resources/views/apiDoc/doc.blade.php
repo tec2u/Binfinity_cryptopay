@@ -299,9 +299,7 @@
           <p class="first-p">Notify structure:</p>
           <p>With this information, your system will process the information as needed.</p>
           <pre><code>Your system will receive</code></pre>
-
           <p><strong>Request: (POST)</strong></p>
-
           <pre style=""><code id="">
             {
                 "id":628,
