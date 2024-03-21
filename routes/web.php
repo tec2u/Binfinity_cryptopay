@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\UpdateDailyAdminController;
 use App\Http\Controllers\Admin\VerifyOrderUserAdminController;
 use App\Http\Controllers\Admin\VideoAdminController;
 use App\Http\Controllers\Admin\DocumentsAdminController;
+use App\Http\Controllers\ApiApp;
 use App\Http\Controllers\ApiDoc;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PackageController;
@@ -76,6 +77,7 @@ Route::get('/blog', function () {
 Route::get('/invoice_step1', function () {
    return view('invoice.invoice_step1');
 });
+
 
 
 Route::controller(InvoiceController::class)->group(function () {
@@ -360,6 +362,9 @@ Route::prefix('users')->middleware('auth')->name('users')->group(function () {
    Route::controller(UserController::class)->group(function () {
       Route::get('/users', 'index')->name('.index');
       Route::put('/{id}/update', 'update')->name('.update');
+      Route::get('/ipAllowed', 'ipAllowed')->name('.ipAllowed');
+      Route::post('/ipAllowed/store', 'ipAllowedStore')->name('.ipAllowedStore');
+      Route::post('/ipAllowed/delete', 'ipAllowedDelete')->name('.ipAllowedDelete');
       Route::get('/password', 'password')->name('.password');
       Route::put('/password/change', 'changePassword')->name('.change.password');
       Route::put('/financial/password/change', 'changeFinancialPassword')->name('.change.financial.password');
@@ -525,6 +530,7 @@ Route::prefix('admin')->middleware(['auth', 'is.admin'])->name('admin')->group(f
          Route::get('/ban', 'indexBan')->name('.indexban');
          Route::get('/{id}/ban', 'ban')->name('.ban');
          Route::get('/{id}/inactive', 'inactive')->name('.inactive');
+         Route::get('/{id}/activeUser', 'activeUser')->name('.activeUser');
          Route::get('/myinfo', 'myinfo')->name('.myinfo');
          Route::get('/{id}/edit', 'edit')->name('.edit');
          Route::put('/{id}/update', 'update')->name('.update');

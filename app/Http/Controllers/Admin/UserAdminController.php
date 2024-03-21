@@ -86,8 +86,8 @@ class UserAdminController extends Controller
     public function myinfo()
     {
         $user = User::find(auth()->user()->id);
-        $ordersPackages = OrderPackage::where('user_id',$user->id)->get();
-        return view('admin.users.myinfo', compact('user','ordersPackages'));
+        $ordersPackages = OrderPackage::where('user_id', $user->id)->get();
+        return view('admin.users.myinfo', compact('user', 'ordersPackages'));
     }
     /**
      * Show the form for creating a new resource.
@@ -127,9 +127,9 @@ class UserAdminController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        $ordersPackages = OrderPackage::where('user_id',$user->id)->get();
+        $ordersPackages = OrderPackage::where('user_id', $user->id)->get();
 
-        return view('admin.users.myinfo', compact('user','ordersPackages'));
+        return view('admin.users.myinfo', compact('user', 'ordersPackages'));
     }
 
     public function transactions($id)
@@ -193,9 +193,25 @@ class UserAdminController extends Controller
         try {
             $user = User::find($id);
             $user->activated = false;
-            $user->update();
+            $user->save();
             $this->createLog('User inactive successfully', 204, 'success', auth()->user()->id);
             flash(__('admin_alert.user_inactive'))->success();
+            return redirect()->route('admin.users.index');
+        } catch (Exception $e) {
+            $this->errorCatch($e->getMessage(), auth()->user()->id);
+            flash(__('admin_alert.user_notremove'))->error();
+            return redirect()->back();
+        }
+    }
+
+    public function activeUser($id)
+    {
+        try {
+            $user = User::find($id);
+            $user->activated = 1;
+            $user->save();
+            $this->createLog('User active successfully', 204, 'success', auth()->user()->id);
+            flash('user actived')->success();
             return redirect()->route('admin.users.index');
         } catch (Exception $e) {
             $this->errorCatch($e->getMessage(), auth()->user()->id);
@@ -206,13 +222,13 @@ class UserAdminController extends Controller
     public function networkuser($parameter)
     {
         $rede = Rede::where('user_id', $parameter)->first();
-        $name = empty($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->name;
+        $name = empty ($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->name;
         $redename = $rede->user->login;
         $id = $rede->id;
         $qty = $rede->qty;
         $email = $rede->user->email;
         $volume = $rede->user->getVolume($rede->user->id);
-        $tag =  '';
+        $tag = '';
         $pay = OrderPackage::where('user_id', $rede->user->id)->where('status', 1)->where('payment_status', 1)->first();
         $getadessao = $rede->user->getAdessao($rede->user->id);
         $getpackages = $rede->user->getPackages($rede->user->id);
@@ -234,8 +250,8 @@ class UserAdminController extends Controller
                 "img" => "https://cdn.balkan.app/shared/empty-img-none.svg",
                 "size" => ".$qty",
                 "referred" => $name,
-                "email"     => $email,
-                "volume"  => "Volume: $volume",
+                "email" => $email,
+                "volume" => "Volume: $volume",
                 "tags" => $tag
             );
             $networks = array_merge($network, $networks);
@@ -248,7 +264,7 @@ class UserAdminController extends Controller
                     "img" => "https://cdn.balkan.app/shared/empty-img-none.svg",
                     "size" => ".$qty",
                     "referred" => $name,
-                    "volume"  => "Volume: $volume",
+                    "volume" => "Volume: $volume",
                     "tags" => $tag
                 )
             );
@@ -269,37 +285,41 @@ class UserAdminController extends Controller
     public function networkuserdiferente($parameter)
     {
         $rede = Rede::where('user_id', $parameter)->first();
-        $name = empty($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->login;
+        $name = empty ($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->login;
         $redename = $rede->user->login;
         $id = $rede->id;
         $network = $this->getNetworkDiferente($rede->id);
         if ($network != NULL) {
             $networks['tree'] = array($id => $network['tree']);
-            $networks['params'] = array($id => array(
-                'trad' => $redename . ' </br>',
-                'styles' => array(
-                    'font-weight' => '600',
-                    'font-size' => '18px',
-                    'background-color' => '#f3f3f37a',
-                    'color' => 'red',
-                    'box-shadow' => '0 0 4px 1px #aeaeae',
-                    'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+            $networks['params'] = array(
+                $id => array(
+                    'trad' => $redename . ' </br>',
+                    'styles' => array(
+                        'font-weight' => '600',
+                        'font-size' => '18px',
+                        'background-color' => '#f3f3f37a',
+                        'color' => 'red',
+                        'box-shadow' => '0 0 4px 1px #aeaeae',
+                        'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                    )
                 )
-            ));
+            );
             $networks['params'] = $network['params'] + $networks['params'];
         } else {
             $networks['tree'] = array($id => '');
-            $networks['params'] = array($id => array(
-                'trad' => $redename . ' </br>',
-                'styles' => array(
-                    'font-weight' => '600',
-                    'font-size' => '18px',
-                    'background-color' => '#f3f3f37a',
-                    'color' => 'red',
-                    'box-shadow' => '0 0 4px 1px #aeaeae',
-                    'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+            $networks['params'] = array(
+                $id => array(
+                    'trad' => $redename . ' </br>',
+                    'styles' => array(
+                        'font-weight' => '600',
+                        'font-size' => '18px',
+                        'background-color' => '#f3f3f37a',
+                        'color' => 'red',
+                        'box-shadow' => '0 0 4px 1px #aeaeae',
+                        'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                    )
                 )
-            ));
+            );
         }
         $tree = json_encode($networks['tree']);
         $params = json_encode($networks['params']);
@@ -365,18 +385,18 @@ class UserAdminController extends Controller
     }
     private function getNetwork($id, $cont = '')
     {
-        $cont = empty($cont) ? 1 : $cont;
+        $cont = empty ($cont) ? 1 : $cont;
         $rede_users = Rede::where('upline_id', $id)->get();
         $networks = array();
         foreach ($rede_users as $rede) {
-            $name = empty(Rede::find($rede->upline_id)) ? "" : Rede::find($rede->upline_id)->first()->user->name;
+            $name = empty (Rede::find($rede->upline_id)) ? "" : Rede::find($rede->upline_id)->first()->user->name;
             $redename = $rede->user->login;
             $id = $rede->id;
             $qty = $rede->qty;
             $email = $rede->user->email;
             $upline = $rede->upline_id;
             $volume = $rede->user->getVolume($rede->user->id);
-            $tag =  '';
+            $tag = '';
             $pay = OrderPackage::where('user_id', $rede->user->id)->where('status', 1)->where('payment_status', 1)->first();
             $getadessao = $rede->user->getAdessao($rede->user->id);
             $getpackages = $rede->user->getPackages($rede->user->id);
@@ -397,8 +417,8 @@ class UserAdminController extends Controller
                 "size" => "$qty",
                 "referred" => $name,
                 "email" => $email,
-                "volume"  => "Volume: $volume ",
-                "btn"     => "<a href='" . route('admin.users.network', ['parameter' => $rede->user->id]) . "'> More + </a>",
+                "volume" => "Volume: $volume ",
+                "btn" => "<a href='" . route('admin.users.network', ['parameter' => $rede->user->id]) . "'> More + </a>",
                 "tags" => $tag
             );
             $cont++;
@@ -412,68 +432,77 @@ class UserAdminController extends Controller
     private function getNetworkDiferente($parameter)
     {
         $redes = Rede::where('upline_id', $parameter)->get();
-        if ($redes == NULL) return NULL;
+        if ($redes == NULL)
+            return NULL;
         $networks = array();
         foreach ($redes as $rede) {
             $redename = $rede->user->login;
             $id = $rede->id;
             $network = $this->getNetworkDiferente($rede->id);
             if ($network != NULL) {
-                if (isset($networks['tree'])) {
+                if (isset ($networks['tree'])) {
                     $networks['tree'] = $networks['tree'] + array($id => $network['tree']);
-                    $networks['params'] = $networks['params'] + array($id => array(
-                        'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
-                        'styles' => array(
-                            'font-weight' => '600',
-                            'font-size' => '18px',
-                            'background-color' => '#f3f3f37a',
-                            'color' => 'red',
-                            'box-shadow' => '0 0 4px 1px #aeaeae',
-                            'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                    $networks['params'] = $networks['params'] + array(
+                        $id => array(
+                            'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
+                            'styles' => array(
+                                'font-weight' => '600',
+                                'font-size' => '18px',
+                                'background-color' => '#f3f3f37a',
+                                'color' => 'red',
+                                'box-shadow' => '0 0 4px 1px #aeaeae',
+                                'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                            )
                         )
-                    ));
+                    );
                 } else {
                     $networks['tree'] = array($id => $network['tree']);
-                    $networks['params'] = array($id => array(
-                        'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
-                        'styles' => array(
-                            'font-weight' => '600',
-                            'font-size' => '18px',
-                            'background-color' => '#f3f3f37a',
-                            'color' => 'red',
-                            'box-shadow' => '0 0 4px 1px #aeaeae',
-                            'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                    $networks['params'] = array(
+                        $id => array(
+                            'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
+                            'styles' => array(
+                                'font-weight' => '600',
+                                'font-size' => '18px',
+                                'background-color' => '#f3f3f37a',
+                                'color' => 'red',
+                                'box-shadow' => '0 0 4px 1px #aeaeae',
+                                'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                            )
                         )
-                    ));
+                    );
                 }
                 $networks['params'] = $network['params'] + $networks['params'];
             } else {
-                if (isset($networks['tree'])) {
+                if (isset ($networks['tree'])) {
                     $networks['tree'] = $networks['tree'] + array($id => '');
-                    $networks['params'] = $networks['params'] + array($id => array(
-                        'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
-                        'styles' => array(
-                            'font-weight' => '600',
-                            'font-size' => '18px',
-                            'background-color' => '#f3f3f37a',
-                            'color' => 'red',
-                            'box-shadow' => '0 0 4px 1px #aeaeae',
-                            'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                    $networks['params'] = $networks['params'] + array(
+                        $id => array(
+                            'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
+                            'styles' => array(
+                                'font-weight' => '600',
+                                'font-size' => '18px',
+                                'background-color' => '#f3f3f37a',
+                                'color' => 'red',
+                                'box-shadow' => '0 0 4px 1px #aeaeae',
+                                'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                            )
                         )
-                    ));
+                    );
                 } else {
                     $networks['tree'] = array($id => '');
-                    $networks['params'] = array($id => array(
-                        'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
-                        'styles' => array(
-                            'font-weight' => '600',
-                            'font-size' => '18px',
-                            'background-color' => '#f3f3f37a',
-                            'color' => 'red',
-                            'box-shadow' => '0 0 4px 1px #aeaeae',
-                            'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                    $networks['params'] = array(
+                        $id => array(
+                            'trad' => $redename . ' </br> <a style="font-size: 14px; color: #111111; text-decoration: none !important;display: flex;justify-content: flex-end"href="' . route('admin.users.network', ['parameter' => $rede->user->id]) . '"> More + </a>',
+                            'styles' => array(
+                                'font-weight' => '600',
+                                'font-size' => '18px',
+                                'background-color' => '#f3f3f37a',
+                                'color' => 'red',
+                                'box-shadow' => '0 0 4px 1px #aeaeae',
+                                'font-family' => '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                            )
                         )
-                    ));
+                    );
                 }
             }
         }

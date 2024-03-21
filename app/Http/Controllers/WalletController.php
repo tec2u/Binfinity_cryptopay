@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomLog;
+use App\Models\IpAccessApi;
+use App\Models\IpAllowedApi;
 use App\Models\IpWhitelist;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
@@ -15,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 use stdClass;
 
 class WalletController extends Controller
@@ -233,14 +236,45 @@ class WalletController extends Controller
 
     public function notify(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'id_order' => 'required|string|max:255',
+            'price' => 'required',
+            'price_crypto' => 'required',
+            'login' => 'required|email',
+            'password' => 'required|string|max:255',
+            'coin' => 'required|string|max:255',
+            'notify_url' => 'required|url'
+        ]);
 
         $requestFormated = $request->all();
+
+        if ($validator->fails()) {
+            return false;
+        }
+
+        // return "testando";
+
+        $ip = $request->ip();
+        $ipRequest = new IpAccessApi;
+        $ipRequest->ip = $ip;
+        $ipRequest->request = json_encode($requestFormated);
+        $ipRequest->save();
+
+        $ipAllowed = IpAllowedApi::where('ip', $ip)->first();
+        if (!isset ($ipAllowed)) {
+            return false;
+        }
 
 
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
             $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
-            // return($price_crypto);
         }
+
+        $price_ = $requestFormated['price'];
+        if (strpos($requestFormated['price'], ',') !== false) {
+            $price_ = str_replace(",", "", $requestFormated['price']);
+        }
+
         // return ($request);
 
         // crypto
@@ -259,8 +293,20 @@ class WalletController extends Controller
 
             $userAprov = User::where('email', $requestFormated['login'])->orWhere('login', $requestFormated['login'])->first();
 
+            if (!isset ($userAprov)) {
+                return false;
+            }
+
             if (!Hash::check($requestFormated['password'], $userAprov->password)) {
                 return "User Not Found";
+            }
+
+            if ($userAprov->activated == null || $userAprov->activated == 0) {
+                return false;
+            }
+
+            if ($userAprov->id != $ipAllowed->user_id) {
+                return false;
             }
 
             $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
@@ -286,7 +332,7 @@ class WalletController extends Controller
                     $order = new stdClass();
                     $order->id = $requestFormated['id_order'];
                     $order->id_user = $userAprov->id;
-                    $order->price = $requestFormated['price'];
+                    $order->price = $price_;
                     $order->price_crypto = $price_crypto;
                     $order->wallet = $wallet->address;
                     $order->notify_url = $requestFormated['notify_url'];
@@ -312,7 +358,7 @@ class WalletController extends Controller
                     $url = env('SERV_TXT');
                     $json = [
                         "action" => "saveLog",
-                        "content" => "(API) Email: $userAprov->email - Coin: " . $requestFormated["coin"] . " - Wallet: $wallet->address - PriceCrypto: " . $requestFormated['price_crypto'] . " - priceDol: " . $requestFormated['price'],
+                        "content" => "(API) Email: $userAprov->email - Coin: " . $requestFormated["coin"] . " - Wallet: $wallet->address - PriceCrypto: " . $requestFormated['price_crypto'] . " - priceDol: " . $price_,
                         "operation" => "Wallet not found",
                         "user_id" => $userAprov->id
                     ];

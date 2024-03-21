@@ -278,9 +278,9 @@
           <pre style=""><code id="" class="language-javascript">
             {
               "id_order": "1", // id of your order in your system
-              "price": "100", // in USD
-              "price_crypto": "100",
-              "login": "your_login",
+              "price": 100, // in USD
+              "price_crypto": 100,
+              "login": "your_email",
               "password": "your_password",
               "coin": "USTD_TRC20", 
               "notify_url": "Your_system_url_notify",
@@ -292,7 +292,7 @@
           <pre style=""><code id="" class="language-javascript">
 
             {
-              "id": "1", 
+              "id": 1, 
               "merchant_id": "USDT_TRC20100",
               "wallet": "a1b2c3d4e5f6g7h8i9",
             }

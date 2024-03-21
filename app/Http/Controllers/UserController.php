@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IpAllowedApi;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Traits\CustomLogTrait;
@@ -227,5 +228,40 @@ class UserController extends Controller
          Alert::error("Your referral is not active yet. Please refresh this page as soon as it's active to continue the registration process.");
          return view('auth.register_must_active');
       }
+   }
+
+   public function ipAllowed()
+   {
+      $ips = IpAllowedApi::where('user_id', Auth::id())->get();
+
+      return view('ipApi.index', compact('ips'));
+   }
+
+   public function ipAllowedStore(Request $request)
+   {
+      try {
+         $ips = IpAllowedApi::where('ip', $request->id)->where('user_id', Auth::id())->first();
+
+         if (!isset ($ips)) {
+            $nIp = new IpAllowedApi;
+            $nIp->ip = $request->ip;
+            $nIp->user_id = Auth::id();
+            $nIp->save();
+         }
+
+         return redirect()->back();
+
+      } catch (\Throwable $th) {
+         return redirect()->back();
+
+      }
+   }
+
+   public function ipAllowedDelete(Request $request)
+   {
+      $ips = IpAllowedApi::where('id', $request->id)->first();
+      $ips->delete();
+
+      return redirect()->back();
    }
 }

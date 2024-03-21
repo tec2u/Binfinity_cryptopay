@@ -164,78 +164,80 @@
         </a>
       </li><!-- End Dashboard Nav -->
 
+      @if (auth()->user()->activated == 1)
+        <li class="nav-item">
+          <a class="nav-link " href="{{ route('packages.index') }}">
+            <i class="bi bi-circle"></i><span>New Invoice</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/packages/packagesprofit">
+            <i class="bi bi-circle"></i><span>My Invoices</span>
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('packages.index') }}">
-          <i class="bi bi-circle"></i><span>New Invoice</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link " href="/packages/packagesprofit">
-          <i class="bi bi-circle"></i><span>My Invoices</span>
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link " href="{{ route('wallets.WithdrawWallet') }}">
+            <i class="bi bi-clipboard2-minus"></i><span>WithDrawal Wallet</span>
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('wallets.WithdrawWallet') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>WithDrawal Wallet</span>
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link " href="{{ route('wallets.index') }}">
+            <i class="bi bi-clipboard2-minus"></i><span>All My Allocated Wallets</span>
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('wallets.index') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>All My Allocated Wallets</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('wallets.transactions') }}">
-          <i class="bi bi-clipboard2-minus"></i><span>Crypto Transactions</span>
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link " href="{{ route('wallets.transactions') }}">
+            <i class="bi bi-clipboard2-minus"></i><span>Crypto Transactions</span>
+          </a>
+        </li>
 
 
 
-      {{-- <!-- End Products Nav --> --}}
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#networks-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-people"></i><span>Referral Program</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="networks-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <!--<li>
+        {{-- <!-- End Products Nav --> --}}
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#networks-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-people"></i><span>Referral Program</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="networks-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+            <!--<li>
 
                     <a href="{{ route('networks.mytree', ['parameter' => auth()->user()->id]) }}">
                         <i class="bi bi-circle"></i><span>@lang('header.my_tree')</span>
                     </a>
                 </li>-->
-          <li>
-            <a href="{{ route('networks.associatesReport') }}">
-              <i class="bi bi-circle"></i><span>My Team</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('withdraws.withdrawRequests') }}">
-              <i class="bi bi-circle"></i><span>Withdraw Request</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('withdraws.withdrawLog') }}">
-              <i class="bi bi-circle"></i><span>Withdraw Orders</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('reports.transactions') }}">
-              <i class="bi bi-circle"></i><span>Commissions Transactions</span>
-            </a>
-          </li>
-          <!--<li>
+            <li>
+              <a href="{{ route('networks.associatesReport') }}">
+                <i class="bi bi-circle"></i><span>My Team</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('withdraws.withdrawRequests') }}">
+                <i class="bi bi-circle"></i><span>Withdraw Request</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('withdraws.withdrawLog') }}">
+                <i class="bi bi-circle"></i><span>Withdraw Orders</span>
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('reports.transactions') }}">
+                <i class="bi bi-circle"></i><span>Commissions Transactions</span>
+              </a>
+            </li>
+            <!--<li>
                     <a href="{{ route('networks.associatesReport') }}">
                         <i class="bi bi-circle"></i><span>@lang('header.associates')</span>
                     </a>
                 </li>-->
-        </ul>
-      </li>
+          </ul>
+        </li>
+      @endif
 
       <li class="nav-item">
         <a class="nav-link " href="{{ route('supports.supporttickets') }}">
@@ -245,24 +247,28 @@
       </li>
 
 
+      @if (auth()->user()->activated == 1)
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-bar-chart"></i><span>Report</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-bar-chart"></i><span>Report</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-
-
-
-        </ul>
-      </li>
-
+          </ul>
+        </li>
+      @endif
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#settings-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-gear"></i><span>Settings</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="settings-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('users.ipAllowed') }}">
+              <i class="bi bi-circle"></i><span>IP allowed</span>
+            </a>
+          </li>
+
           <li>
             <a href="{{ route('users.index') }}">
               <i class="bi bi-circle"></i><span>My Info</span>
