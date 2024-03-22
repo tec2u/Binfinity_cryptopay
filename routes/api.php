@@ -24,6 +24,7 @@ Route::controller(PaymentController::class)->group(function () {
 Route::prefix('/app')->name('api.app')->group(function () {
     Route::controller(ApiApp::class)->group(function () {
         Route::post('/login', 'login')->name('.login');
+        Route::post('/register', 'register')->name('.register');
         //protegida
         Route::middleware('token.auth')->group(function () {
             Route::post('/teste', 'teste')->name('.teste');

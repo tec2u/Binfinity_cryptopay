@@ -6,32 +6,29 @@ use Carbon\Carbon;
 use Closure;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class TokenAuthentication
 {
     public function handle(Request $request, Closure $next)
     {
-        // Verificar se o cabeçalho Authorization está presente
         if (!$request->hasHeader('Authorization')) {
             return response()->json(['error' => 'Token required'], 401);
         }
 
-        // Obter o token do cabeçalho Authorization
-        $token = $request->header('Authorization');
+        $token = $request->bearerToken();
 
-        // Verificar se o token está no formato correto
-        if (strpos($token, 'Bearer ') !== 0) {
-            return response()->json(['error' => 'Token invalid'], 401);
-        }
+        // $token = $request->header('Authorization');
 
-        // Extrair o token
-        $token = substr($token, 7);
+        // if (strpos($token, 'Bearer ') !== 0) {
+        //     return response()->json(['error' => 'Token invalid'], 401);
+        // }
 
-        // Verificar se o token existe no banco de dados
+        // $token = substr($token, 7);
+
         $tkn = PersonalAccessToken::where('token', $token)->first();
 
-        // Verificar se o token é válido
         if (!$tkn) {
             return response()->json(['error' => 'Token invalid'], 401);
         }
