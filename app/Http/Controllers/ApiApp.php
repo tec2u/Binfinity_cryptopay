@@ -316,8 +316,8 @@ class ApiApp extends Controller
                         'logo' => $logo,
                         'qrcode' => "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=$walletDecrypted",
                         'address' => $walletDecrypted,
-                        'value_crypto' => $nodeOrderSave->price_crypto,
-                        'value_dollars' => $nodeOrderSave->price,
+                        'value_crypto' => $nodeOrderSave->price_crypto * 1,
+                        'value_dollars' => $nodeOrderSave->price * 1,
                         'created_at' => $nodeOrderSave->createdAt
                     ]);
 
