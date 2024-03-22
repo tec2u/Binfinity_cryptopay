@@ -18,6 +18,7 @@ use App\Models\CareerUser;
 use App\Models\HistoricScore;
 use App\Traits\CustomLogTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 
 
@@ -505,7 +506,15 @@ class ReportsAdminController extends Controller
             $w->address = $wallet;
          }
 
-         $w->balance = 0;
+         $node = env('SERV_NODE');
+         $response = Http::get("$node/api/query/wallet/tron/saldo/$wallet");
+
+         if ($response->successful()) {
+            $data = $response->json();
+            $w->balance = $data;
+         } else {
+            $w->balance = 0;
+         }
       }
 
       return view('admin.reports.walletsNode', compact('wallets'));
