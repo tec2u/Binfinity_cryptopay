@@ -14,7 +14,7 @@ return [
     |
     */
 
-   'title' => 'AI NEXT LEVEL',
+   'title' => 'binfinitybank',
    'title_prefix' => '',
    'title_postfix' => '',
 
@@ -63,8 +63,8 @@ return [
     |
     */
 
-   'logo' => '<b>Ai Next Level</b>',
-   'logo_img' => '/images/tigle_logo2.png',
+   'logo' => '<b>binfinitybank</b>',
+   'logo_img' => '/assetsWelcomeNew/images/logo2.png',
    'logo_img_class' => 'brand-image img-circle elevation-3',
    'logo_img_xl' => null,
    'logo_img_xl_class' => 'brand-image-xs',
@@ -86,7 +86,7 @@ return [
    'auth_logo' => [
       'enabled' => false,
       'img' => [
-         'path' => '/images/tigle_logo2.png',
+         'path' => '/assetsWelcomeNew/images/logo2.png',
          'alt' => 'Auth Logo',
          'class' => '',
          'width' => 50,
