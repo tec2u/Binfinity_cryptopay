@@ -67,12 +67,16 @@
         </thead>
         <tbody>
           @forelse($wallets as $w)
-            <tr>
-              <th>{{ $w->id }}</th>
-              <th>{{ $w->user }}</th>
-              <th>{{ $w->address }}</th>
-              <th>{{ $w->coin }}</th>
-              <th>{{ $w->balance }}</th>
+            @if ($w->balance < 30 && $w->coin == 'USDT_TRC20')
+              <tr class="table-danger">
+              @else
+              <tr>
+            @endif
+            <th>{{ $w->id }}</th>
+            <th>{{ $w->user }}</th>
+            <th>{{ $w->address }}</th>
+            <th>{{ $w->coin }}</th>
+            <th>{{ $w->balance }}</th>
             </tr>
           @empty
             <p class="m-4 fst-italic">@lang('admin.transaction.table.empty')</p>
