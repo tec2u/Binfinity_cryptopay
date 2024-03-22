@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\Package;
 use App\Models\Rede;
@@ -287,7 +288,38 @@ class ApiApp extends Controller
                     $ord->id_node_order = $postNode->id;
                     $ord->save();
 
-                    return response()->json(['id' => $postNode->id]);
+                    $nodeOrderSave = NodeOrders::where('id', $postNode->id)->first();
+
+                    $logo = null;
+
+                    if ($nodeOrderSave->coin == 'BITCOIN') {
+                        $logo = 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029';
+                    }
+                    if ($nodeOrderSave->coin == 'TRX') {
+                        $logo = 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029';
+                    }
+                    if ($nodeOrderSave->coin == 'ETH') {
+                        $logo = 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029';
+                    }
+                    if ($nodeOrderSave->coin == 'USDT_TRC20') {
+                        $logo = 'https://images.ctfassets.net/77lc1lz6p68d/5Z7vveK1yJ7rDvX9K5ywJa/cfa5f74c313594a5a75652f98678578a/tether-usdt-trc20.svg';
+                    }
+                    if ($nodeOrderSave->coin == 'USDT_ERC20') {
+                        $logo = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
+                    }
+
+                    $walletDecrypted = $Walletcontroller->secured_decrypt($wallet->address);
+
+                    return response()->json([
+                        'id' => $nodeOrderSave->id,
+                        'coin' => $nodeOrderSave->coin,
+                        'logo' => $logo,
+                        'qrcode' => "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=$walletDecrypted",
+                        'address' => $walletDecrypted,
+                        'value_crypto' => $nodeOrderSave->price_crypto,
+                        'value_dollars' => $nodeOrderSave->price,
+                        'created_at' => $nodeOrderSave->createdAt
+                    ]);
 
                 }
             } else {
