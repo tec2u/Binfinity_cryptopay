@@ -51,6 +51,9 @@ class ApiApp extends Controller
             return false;
         }
 
+        $tkn->last_used_at = Carbon::now()->format('Y-m-d H:i:s');
+        $tkn->save();
+
         return $user;
     }
 
