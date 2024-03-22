@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SearchRequest;
 use App\Models\HistoricScore as Score;
 use App\Http\Controllers\Controller;
 use App\Models\NodeOrders;
+use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -488,5 +489,25 @@ class ReportsAdminController extends Controller
 
       }
       return view('admin.reports.transactionsNode', compact('transactions'));
+   }
+
+   public function walletsBalance()
+   {
+      $wallets = Wallet::paginate(25);
+      $walletController = new WalletController;
+
+      foreach ($wallets as $w) {
+         $user = User::where('id', $w->user_id)->first();
+         $w->user = $user->login ?? '';
+
+         $wallet = $walletController->secured_decrypt($w->address);
+         if (isset ($wallet) && $wallet) {
+            $w->address = $wallet;
+         }
+
+         $w->balance = 0;
+      }
+
+      return view('admin.reports.walletsNode', compact('wallets'));
    }
 }

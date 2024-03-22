@@ -570,6 +570,7 @@ Route::prefix('admin')->middleware(['auth', 'is.admin'])->name('admin')->group(f
          Route::get('/searchMonthly', 'searchMonthly')->name('.searchMonthly');
          Route::get('/select', 'getDateMonthly')->name('.getDateMonthly');
          Route::get('/transactions', 'transactions')->name('.transactions');
+         Route::get('/wallets/balance', 'walletsBalance')->name('.walletsBalance');
          Route::get('/transactions/node', 'transactionsNode')->name('.transactionsNode');
          Route::get('/transactions/node/notWithdrawn', 'notWithdrawn')->name('.notWithdrawn');
          Route::post('/transactions/node/update', 'transactionsNodeChangeWithdrawn')->name('.transactionsNodeChangeWithdrawn');

@@ -358,8 +358,12 @@ return [
          'can' => 'admin',
          'submenu' => [
             [
-               'text' => 'transactions node',
+               'text' => 'Transactions node',
                'url' => 'admin/reports/transactions/node',
+            ],
+            [
+               'text' => 'Balance Wallets',
+               'url' => 'admin/reports/wallets/balance',
             ],
          ],
       ],
