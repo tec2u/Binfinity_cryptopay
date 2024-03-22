@@ -23,6 +23,7 @@ Route::controller(PaymentController::class)->group(function () {
 
 Route::prefix('/app')->name('api.app')->group(function () {
     Route::controller(ApiApp::class)->group(function () {
+        Route::post('/get/user', 'returnUser')->name('.returnUser');
         Route::post('/login', 'login')->name('.login');
         Route::post('/register', 'register')->name('.register');
         //protegida

@@ -363,4 +363,16 @@ class ApiApp extends Controller
         }
 
     }
+
+
+    public function returnUser(Request $request)
+    {
+        $user = $this->getUser($request);
+        if ($user == false) {
+            return response()->json(['error' => "Invalid token"]);
+        }
+
+        return response()->json($user);
+
+    }
 }
