@@ -511,7 +511,7 @@ class ReportsAdminController extends Controller
 
          if ($response->successful()) {
             $data = $response->json();
-            $w->balance = $data;
+            $w->balance = number_format($data, 2);
          } else {
             $w->balance = 0;
          }
