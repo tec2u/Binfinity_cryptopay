@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrderPackage;
+use App\Models\Package;
 use App\Models\Rede;
 use App\Models\User;
+use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Hash;
+use stdClass;
 
 class ApiApp extends Controller
 {
@@ -169,13 +175,157 @@ class ApiApp extends Controller
 
     }
 
-    public function teste(Request $request)
+    public function createInvoice(Request $request)
     {
-        $user = $this->getUser($request);
-        if ($user == false) {
-            return response()->json(['error' => "Invalid token"]);
+        try {
+            $user = $this->getUser($request);
+            if ($user == false) {
+                return response()->json(['error' => "Invalid token"]);
+            }
+
+            $validatedData = Validator::make($request->all(), [
+                'coin' => ['required', 'string', Rule::in(['BTC', 'ETH', 'TRX', 'USDT_TRC20', 'USDT_ERC20'])],
+                'value' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/']
+            ]);
+
+            if ($validatedData->fails()) {
+                return response()->json(['error' => $validatedData->errors()], 422);
+            }
+
+            $package = Package::where('id', 20)->first();
+
+            if ($request->coin == 'USDT_TRC20' || $request->coin == 'USDT_ERC20') {
+                $trc20 = 1;
+                $erc20 = 1;
+
+                $price_order = $request->value;
+
+                $moedas = [
+                    "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                    "USDT_TRC20" => number_format($price_order / $trc20, 2),
+                ];
+            } else {
+                $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
+
+                $response = Http::withHeaders([
+                    'X-CMC_PRO_API_KEY' => $api_key,
+                    'Content-Type' => 'application/json',
+                ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+
+                $data = $response->json();
+
+                $price_order = $request->value;
+
+                $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
+                $trc20 = 1;
+                $erc20 = 1;
+                $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
+                $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+
+                $moedas = [
+                    "BITCOIN" => number_format($price_order / $btc, 5),
+                    "ETH" => number_format($price_order / $eth, 4),
+                    "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                    "TRX" => number_format($price_order / $trx, 2),
+                    "USDT_TRC20" => number_format($price_order / $trc20, 2),
+                ];
+            }
+
+            $Walletcontroller = new WalletController;
+
+            $wallet = $Walletcontroller->returnWallet($request->coin, $user->id);
+            if (!$wallet) {
+                return response()->json(['error' => "Invalid wallet"]);
+            }
+
+            $walletExists = $Walletcontroller->walletTxtWexists($user->id, $Walletcontroller->secured_decrypt($wallet->address));
+
+            if (isset ($walletExists) && json_decode($walletExists)) {
+                $jsonW = json_decode($walletExists);
+                if (isset ($jsonW->address)) {
+                    $newOrder = new OrderPackage;
+                    $newOrder->user_id = $user->id;
+                    $newOrder->reference = $package->name;
+                    $newOrder->payment_status = 0;
+                    $newOrder->transaction_code = 0;
+                    $newOrder->package_id = $package->id;
+                    $newOrder->price = $request->value;
+                    $newOrder->amount = 1;
+                    $newOrder->transaction_wallet = 0;
+                    $newOrder->printscreen = '-';
+                    $newOrder->pass = '-';
+                    $newOrder->server = '-';
+                    $newOrder->user = '-';
+                    $newOrder->price_crypto = $moedas[$request->coin];
+                    $newOrder->wallet = $wallet->id;
+                    $newOrder->save();
+
+
+                    $controller = new PackageController;
+
+                    $orderr = new stdClass();
+                    $orderr->id = $newOrder->id;
+                    $orderr->id_user = $newOrder->user_id;
+                    $orderr->price = $newOrder->price;
+
+                    // $orderr->price_crypto = $newOrder->price_crypto;
+
+                    if (strpos($moedas[$request->coin], ',') !== false) {
+                        $orderr->price_crypto = str_replace(",", "", $moedas[$request->coin]);
+                    } else {
+                        $orderr->price_crypto = $moedas[$request->coin];
+                    }
+
+                    $orderr->wallet = $wallet->address;
+                    $orderr->notify_url = route('notify.payment');
+                    $orderr->id_encript = $wallet->id;
+
+                    $postNode = $controller->genUrlCrypto($request->coin, $orderr);
+
+                    $ord = OrderPackage::where('id', $newOrder->id)->first();
+                    $ord->transaction_wallet = $postNode->merchant_id;
+                    $ord->id_node_order = $postNode->id;
+                    $ord->save();
+
+                    return response()->json(['id' => $postNode->id]);
+
+                }
+            } else {
+                try {
+                    $userAprov = $user;
+                    $url = env('SERV_TXT');
+                    $json = [
+                        "action" => "saveLog",
+                        "content" => "(INVOICE) Email: $userAprov->email - Coin: " . $request->coin . " - Wallet: $wallet->address - PriceCrypto: " . $moedas[$request->coin] . " - priceDol: " . $request->value,
+                        "operation" => "Wallet not found",
+                        "user_id" => $userAprov->id
+                    ];
+
+                    $response = Http::post("$url/", $json);
+
+                    if ($response->successful()) {
+                        $content = $response->body();
+                        if (isset ($content)) {
+                        }
+
+                    } else {
+                        $status = $response->status();
+                        $content = $response->body();
+                    }
+                    //code...
+                } catch (\Throwable $th) {
+                    //throw $th;
+                }
+
+                $walletdel = Wallet::where('id', $wallet->id)->first();
+                $walletdel->delete();
+
+                return response()->json(['error' => "Wallet invalid, try again"]);
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Failed to create invoice']);
         }
 
-        return response()->json(['user' => $user]);
     }
 }

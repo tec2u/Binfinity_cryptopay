@@ -27,7 +27,7 @@ Route::prefix('/app')->name('api.app')->group(function () {
         Route::post('/register', 'register')->name('.register');
         //protegida
         Route::middleware('token.auth')->group(function () {
-            Route::post('/teste', 'teste')->name('.teste');
+            Route::post('/create/invoice', 'createInvoice')->name('.createInvoice');
         });
     });
 });
