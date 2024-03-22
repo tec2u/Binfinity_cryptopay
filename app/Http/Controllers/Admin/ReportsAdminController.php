@@ -506,12 +506,18 @@ class ReportsAdminController extends Controller
             $w->address = $wallet;
          }
 
-         $node = env('SERV_NODE');
-         $response = Http::get("$node/api/query/wallet/tron/saldo/$wallet");
+         # code...
 
-         if ($response->successful()) {
-            $data = $response->json();
-            $w->balance = number_format($data, 2);
+         $node = env('SERV_NODE');
+         if ($w->coin == 'USDT_TRC20') {
+            $response = Http::get("$node/api/query/wallet/tron/saldo/$wallet");
+
+            if ($response->successful()) {
+               $data = $response->json();
+               $w->balance = number_format($data, 2);
+            } else {
+               $w->balance = 0;
+            }
          } else {
             $w->balance = 0;
          }
