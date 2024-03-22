@@ -570,6 +570,7 @@ Route::prefix('admin')->middleware(['auth', 'is.admin'])->name('admin')->group(f
          Route::get('/searchMonthly', 'searchMonthly')->name('.searchMonthly');
          Route::get('/select', 'getDateMonthly')->name('.getDateMonthly');
          Route::get('/transactions', 'transactions')->name('.transactions');
+         Route::get('/transactions/node', 'transactionsNode')->name('.transactionsNode');
          Route::get('/searchTransactions', 'searchTransactions')->name('.searchTransactions');
          Route::get('/searchDataTransactions', 'getDateTransactions')->name('.getDateTransactions');
          Route::get('/searchLevelIncome', 'searchLevelIncome')->name('.searchLevelIncome');

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\WalletController;
 use App\Http\Requests\Admin\SearchRequest;
 use App\Models\HistoricScore as Score;
 use App\Http\Controllers\Controller;
+use App\Models\NodeOrders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -395,5 +397,31 @@ class ReportsAdminController extends Controller
    public function destroy($id)
    {
       //
+   }
+
+   public function transactionsNode()
+   {
+      $transactions = NodeOrders::orderBy('id', 'desc')->paginate(25);
+      $walletController = new WalletController;
+      foreach ($transactions as $trans) {
+         $user = User::where('id', $trans->id_user)->first();
+         $trans->user = $user->login ?? '';
+
+         $wallet = $walletController->secured_decrypt($trans->wallet);
+         if (isset ($wallet)) {
+            $trans->wallet = $wallet;
+         }
+
+         if ($trans->type == 1) {
+            $myWithdrawn = NodeOrders::where('payment_of_id', $trans->id)->first();
+
+            if (isset ($myWithdrawn)) {
+               $trans->hashWithdrawn = $myWithdrawn->hash;
+            }
+         }
+
+
+      }
+      return view('admin.reports.transactionsNode', compact('transactions'));
    }
 }

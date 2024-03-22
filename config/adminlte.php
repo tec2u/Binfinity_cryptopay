@@ -292,7 +292,7 @@ return [
    'menu' => [
       // Navbar items:
       [
-         'type'         => 'fullscreen-widget',
+         'type' => 'fullscreen-widget',
          'topnav_right' => true,
       ],
       [
@@ -321,11 +321,11 @@ return [
 
       // Sidebar items:
       [
-         'text'        => 'dashboard',
-         'url'         => 'admin/home',
-         'icon'        => 'fas fa-fw fa-home',
+         'text' => 'dashboard',
+         'url' => 'admin/home',
+         'icon' => 'fas fa-fw fa-home',
          'label_color' => 'success',
-         'can'  => 'is_admin5',
+         'can' => 'is_admin5',
 
       ],
       // [
@@ -334,13 +334,13 @@ return [
       //    'icon' => 'fas fa-fw fa-desktop',
       // ],
       [
-         'text'    => 'members',
-         'icon'    => 'fas fa-fw fa-users',
-         'can'  => 'admin',
+         'text' => 'members',
+         'icon' => 'fas fa-fw fa-users',
+         'can' => 'admin',
          'submenu' => [
             [
                'text' => 'members_list',
-               'url'  => 'admin/users',
+               'url' => 'admin/users',
             ],
             // [
             //    'text' => 'ban_members_list',
@@ -353,23 +353,34 @@ return [
          ],
       ],
       [
+         'text' => 'Transactions',
+         'icon' => 'fas fa-fw fa-money-bill',
+         'can' => 'admin',
+         'submenu' => [
+            [
+               'text' => 'transactions node',
+               'url' => 'admin/reports/transactions/node',
+            ],
+         ],
+      ],
+      [
          'text' => 'package',
          'icon' => 'fas fa-fw fa-box',
-         'can'  => 'is_admin',
+         'can' => 'is_admin',
          'submenu' => [
             [
                'text' => 'packages',
-               'url'  => 'admin/packages',
+               'url' => 'admin/packages',
             ],
             [
                'text' => 'Bot Orders',
-               'url'  => 'admin/packages/orderPackages',
+               'url' => 'admin/packages/orderPackages',
             ],
             [
                'text' => 'Profit Orders',
-               'url'  => 'admin/packages/orderProfit',
+               'url' => 'admin/packages/orderProfit',
             ],
-			[
+            [
                'text' => 'Create Pkg Order',
                'url' => "/admin/order-admin",
             ],
@@ -388,24 +399,24 @@ return [
       // ],
       [
          'text' => 'withdraw',
-         'url'  => 'admin/settings',
+         'url' => 'admin/settings',
          'icon' => 'fas fa-fw fa-money-bill',
-         'can'  => 'is_admin1',
+         'can' => 'is_admin1',
          'submenu' => [
             [
                'text' => 'withdraw_requests',
-               'url'  => 'admin/withdraws/withdrawRequests',
+               'url' => 'admin/withdraws/withdrawRequests',
             ],
             [
                'text' => 'withdraw_log',
-               'url'  => 'admin/withdraws/withdrawLog',
+               'url' => 'admin/withdraws/withdrawLog',
             ],
          ],
       ],
 
       [
          'text' => 'support',
-         'url'  => 'admin/support',
+         'url' => 'admin/support',
          'icon' => 'fas fa-fw fa-headset',
       ],
 
@@ -421,32 +432,32 @@ return [
          'submenu' => [
             [
                'text' => 'Upload Video',
-               'url'  => 'admin/video-upload',
+               'url' => 'admin/video-upload',
             ],
             [
                'text' => 'Upload Document',
-               'url'  => 'admin/documents-upload',
+               'url' => 'admin/documents-upload',
             ],
          ],
       ],
       [
          'text' => 'reports',
-         'url'  => 'admin/settings',
+         'url' => 'admin/settings',
          'icon' => 'fas fa-fw fa-file',
-         'can'  => 'is_admin2',
+         'can' => 'is_admin2',
          'submenu' => [
 
             [
                'text' => 'Username Up To Master',
-               'url'  => 'admin/reports/UsernameUpToMaster',
+               'url' => 'admin/reports/UsernameUpToMaster',
             ],
             [
                'text' => 'Registration Report',
-               'url'  => '/admin/reports/RegistrationsWithDate',
+               'url' => '/admin/reports/RegistrationsWithDate',
             ],
             [
                'text' => 'Registration Per Country',
-               'url'  => '/admin/reports/UsersByCountry',
+               'url' => '/admin/reports/UsersByCountry',
             ],
             // [
             //    'text' => 'special_commission',
@@ -483,37 +494,37 @@ return [
             // ],
             [
                'text' => 'transactions',
-               'url'  => 'admin/reports/transactions',
+               'url' => 'admin/reports/transactions',
             ],
          ],
       ],
       [
          'text' => 'settings',
-         'url'  => 'admin/settings',
+         'url' => 'admin/settings',
          'icon' => 'fas fa-fw fa-cog',
-         'can'  => 'is_admin3',
+         'can' => 'is_admin3',
          'submenu' => [
             [
                'text' => 'indication',
-               'url'  => 'admin/settings/indication',
+               'url' => 'admin/settings/indication',
             ],
             [
                'text' => 'white_list',
-               'url'  => 'admin/whitelist/whitelist',
+               'url' => 'admin/whitelist/whitelist',
             ],
             [
                'text' => 'black_list',
-               'url'  => 'admin/blacklist/blacklist',
+               'url' => 'admin/blacklist/blacklist',
             ],
             [
                'text' => 'config_system',
-               'url'  => 'admin/settings/system',
+               'url' => 'admin/settings/system',
             ],
 
 
             [
                'text' => 'Bonus Daily',
-               'url'  => 'admin/bonus-daily',
+               'url' => 'admin/bonus-daily',
             ],
             // [
             //    'text' => 'SMTP Setting',
@@ -548,14 +559,14 @@ return [
       // ],
       [
          'text' => 'change_password',
-         'url'  => 'admin/users/password',
+         'url' => 'admin/users/password',
          'icon' => 'fas fa-fw fa-lock',
       ],
       [
          'text' => 'my_info',
-         'url'  => 'admin/users/myinfo',
+         'url' => 'admin/users/myinfo',
          'icon' => 'fas fa-fw fa-lock',
-         'can'  => 'is_admin4',
+         'can' => 'is_admin4',
       ],
    ],
 

@@ -110,13 +110,13 @@ class ApiApp extends Controller
             $exists = User::where('email', $request->email)->orWhere('login', $request->login)->first();
 
             if (isset ($exists)) {
-                return response()->json(['Error' => "User already exists"]);
+                return response()->json(['error' => "User already exists"]);
             }
 
             $user_rec = User::where('id', $request->recommendation_user_id)->orWhere('login', $request->recommendation_user_id)->first();
 
             if (!isset ($user_rec)) {
-                return response()->json(['Error' => "Referral invalid"]);
+                return response()->json(['error' => "Referral invalid"]);
             }
 
             $recommendation = $user_rec != null ? $user_rec->id : '3';
@@ -164,7 +164,7 @@ class ApiApp extends Controller
             return $this->login($request);
 
         } catch (\Throwable $th) {
-            return response()->json(['Error' => "Failed to create User"]);
+            return response()->json(['error' => "Failed to create User"]);
         }
 
     }
@@ -173,7 +173,7 @@ class ApiApp extends Controller
     {
         $user = $this->getUser($request);
         if ($user == false) {
-            return response()->json(['Error' => "Invalid token"]);
+            return response()->json(['error' => "Invalid token"]);
         }
 
         return response()->json(['user' => $user]);
