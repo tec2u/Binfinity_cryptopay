@@ -451,13 +451,19 @@ class ReportsAdminController extends Controller
 
    public function notWithdrawn()
    {
+      // $transactions = NodeOrders::where('type', 1)
+      //    ->where(DB::raw('LOWER(status)'), 'paid')
+      //    ->whereNotExists(function ($query) {
+      //       $query->select(DB::raw(1))
+      //          ->from('node_orders as no2')
+      //          ->whereRaw('no2.payment_of_id != node_orders.id');
+      //    })
+      //    ->orderBy('id', 'desc')
+      //    ->paginate(25);
+
       $transactions = NodeOrders::where('type', 1)
          ->where(DB::raw('LOWER(status)'), 'paid')
-         ->whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-               ->from('node_orders as no2')
-               ->whereRaw('no2.payment_of_id != node_orders.id');
-         })
+         ->where('withdrawn', 0)
          ->orderBy('id', 'desc')
          ->paginate(25);
 
