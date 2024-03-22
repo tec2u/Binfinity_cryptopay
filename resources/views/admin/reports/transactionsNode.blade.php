@@ -13,6 +13,12 @@
 
   <div class="card">
     <div class="card-header">
+      <a href="{{ route('admin.reports.transactionsNode') }}">
+        <button type="submit" class="btn btn-success">All</button>
+      </a>
+      <a href="{{ route('admin.reports.notWithdrawn') }}">
+        <button type="submit" class="btn btn-warning">Deposit not withdrawn</button>
+      </a>
       <div class="row">
         <div class="col-sm-12 col-md-4">
           {{-- <form action="{{ route('admin.reports.searchTransactions') }}" method="GET">
@@ -97,9 +103,23 @@
             <th>{{ $transaction->gas_fee }}</th>
             <th>{{ $transaction->payment_of_id }}</th>
             <th style="display: flex;flex-direction: row;gap:1rem">
-              <button type="button" class="btn btn-primary">Change Withdrawn</button>
-              <button type="button" class="btn btn-primary">Link Hash</button>
-              <button type="button" class="btn btn-primary">Withdrawn Link Hash</button>
+              @if ($transaction->type == 1 && strtolower($transaction->status) == 'paid')
+                <form action="{{ route('admin.reports.transactionsNodeChangeWithdrawn') }}" method="post">
+                  @csrf
+                  <input type="hidden" name="id" value="{{ $transaction->id }}">
+                  <button type="submit" class="btn btn-primary">Change Withdrawn</button>
+                </form>
+              @endif
+              @if (isset($transaction->hash))
+                <a target="_blank" href="https://tronscan.org/#/transaction/{{ $transaction->hash }}">
+                  <button type="button" class="btn btn-primary">Link Hash</button>
+                </a>
+              @endif
+              @if (isset($transaction->hashWithdrawn))
+                <a target="_blank" href="https://tronscan.org/#/transaction/{{ $transaction->hashWithdrawn }}">
+                  <button type="button" class="btn btn-primary">Withdrawn Link Hash</button>
+                </a>
+              @endif
             </th>
             </tr>
           @empty

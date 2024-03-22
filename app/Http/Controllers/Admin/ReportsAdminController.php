@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\SearchRequest;
 use App\Models\HistoricScore as Score;
 use App\Http\Controllers\Controller;
 use App\Models\NodeOrders;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -408,7 +409,65 @@ class ReportsAdminController extends Controller
          $trans->user = $user->login ?? '';
 
          $wallet = $walletController->secured_decrypt($trans->wallet);
-         if (isset ($wallet)) {
+         if (isset ($wallet) && $wallet) {
+            $trans->wallet = $wallet;
+         }
+
+         if ($trans->type == 1) {
+            $myWithdrawn = NodeOrders::where('payment_of_id', $trans->id)->first();
+
+            if (isset ($myWithdrawn)) {
+               $trans->hashWithdrawn = $myWithdrawn->hash;
+            }
+         }
+
+
+      }
+      return view('admin.reports.transactionsNode', compact('transactions'));
+   }
+
+   public function transactionsNodeChangeWithdrawn(Request $request)
+   {
+      try {
+         $transaction = NodeOrders::where('id', $request->id)->first();
+         if (isset ($transaction)) {
+            if ($transaction->withdrawn == 1) {
+               $transaction->withdrawn = 0;
+            } else {
+               $transaction->withdrawn = 1;
+            }
+            $transaction->updatedAt = Carbon::now()->format('Y-m-d H:i:s');
+
+            $transaction->save();
+         }
+
+         return redirect()->route('admin.reports.transactionsNode');
+      } catch (\Throwable $th) {
+
+         return redirect()->route('admin.reports.transactionsNode');
+
+      }
+   }
+
+   public function notWithdrawn()
+   {
+      $transactions = NodeOrders::where('type', 1)
+         ->where(DB::raw('LOWER(status)'), 'paid')
+         ->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+               ->from('node_orders as no2')
+               ->whereRaw('no2.payment_of_id != node_orders.id');
+         })
+         ->orderBy('id', 'desc')
+         ->paginate(25);
+
+      $walletController = new WalletController;
+      foreach ($transactions as $trans) {
+         $user = User::where('id', $trans->id_user)->first();
+         $trans->user = $user->login ?? '';
+
+         $wallet = $walletController->secured_decrypt($trans->wallet);
+         if (isset ($wallet) && $wallet) {
             $trans->wallet = $wallet;
          }
 

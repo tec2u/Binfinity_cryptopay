@@ -11,6 +11,7 @@ class NodeOrders extends Model
 
     protected $table = 'node_orders';
 
+    public $timestamps = false;
     protected $fillable = [
         'id_order',
         'id_user',
