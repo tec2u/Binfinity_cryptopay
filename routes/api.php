@@ -29,6 +29,8 @@ Route::prefix('/app')->name('api.app')->group(function () {
         //protegida
         Route::middleware('token.auth')->group(function () {
             Route::post('/create/invoice', 'createInvoice')->name('.createInvoice');
+            Route::post('/get/invoices', 'getInvoices')->name('.getInvoices');
+            Route::post('/get/invoice', 'getInvoice')->name('.getInvoice');
         });
     });
 });

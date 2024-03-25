@@ -375,4 +375,132 @@ class ApiApp extends Controller
         return response()->json($user);
 
     }
+
+    public function getInvoice(Request $request)
+    {
+
+        try {
+            //code...
+
+
+            $user = $this->getUser($request);
+            if ($user == false) {
+                return response()->json(['error' => "Invalid token"]);
+            }
+
+            $validatedData = Validator::make($request->all(), [
+                'id' => 'required|numeric',
+            ]);
+
+            if ($validatedData->fails()) {
+                return response()->json(['error' => $validatedData->errors()], 422);
+            }
+
+            $nodeOrderSave = NodeOrders::where('id', $request->id)->first();
+
+            if (!isset ($nodeOrderSave)) {
+                return response()->json(['error' => "Invoice not found"]);
+            }
+
+            $logo = null;
+
+            if ($nodeOrderSave->coin == 'BITCOIN') {
+                $logo = 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029';
+            }
+            if ($nodeOrderSave->coin == 'TRX') {
+                $logo = 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029';
+            }
+            if ($nodeOrderSave->coin == 'ETH') {
+                $logo = 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029';
+            }
+            if ($nodeOrderSave->coin == 'USDT_TRC20') {
+                $logo = 'https://images.ctfassets.net/77lc1lz6p68d/5Z7vveK1yJ7rDvX9K5ywJa/cfa5f74c313594a5a75652f98678578a/tether-usdt-trc20.svg';
+            }
+            if ($nodeOrderSave->coin == 'USDT_ERC20') {
+                $logo = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
+            }
+
+            $Walletcontroller = new WalletController;
+            $walletDecrypted = $Walletcontroller->secured_decrypt($nodeOrderSave->wallet);
+
+            return response()->json([
+                'id' => $nodeOrderSave->id,
+                'coin' => $nodeOrderSave->coin,
+                'status' => $nodeOrderSave->status,
+                'logo' => $logo,
+                'qrcode' => "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=$walletDecrypted",
+                'address' => $walletDecrypted,
+                'value_crypto' => $nodeOrderSave->price_crypto * 1,
+                'value_dollars' => $nodeOrderSave->price * 1,
+                'created_at' => $nodeOrderSave->createdAt
+            ]);
+
+        } catch (\Throwable $th) {
+            return response()->json(['error' => "Error in return invoice"]);
+        }
+
+    }
+    public function getInvoices(Request $request)
+    {
+
+        try {
+
+            $user = $this->getUser($request);
+            if ($user == false) {
+                return response()->json(['error' => "Invalid token"]);
+            }
+
+            $nodeOrdersSave = NodeOrders::where('id_user', $user->id)->orderBy('id', 'desc')->get();
+
+            if (count($nodeOrdersSave) < 1) {
+                return response()->json(['error' => "Invoice not found"]);
+            }
+
+            $arrReturn = [];
+            $Walletcontroller = new WalletController;
+
+            foreach ($nodeOrdersSave as $nodeOrderSave) {
+
+                $logo = null;
+
+                if ($nodeOrderSave->coin == 'BITCOIN') {
+                    $logo = 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029';
+                }
+                if ($nodeOrderSave->coin == 'TRX') {
+                    $logo = 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029';
+                }
+                if ($nodeOrderSave->coin == 'ETH') {
+                    $logo = 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029';
+                }
+                if ($nodeOrderSave->coin == 'USDT_TRC20') {
+                    $logo = 'https://images.ctfassets.net/77lc1lz6p68d/5Z7vveK1yJ7rDvX9K5ywJa/cfa5f74c313594a5a75652f98678578a/tether-usdt-trc20.svg';
+                }
+                if ($nodeOrderSave->coin == 'USDT_ERC20') {
+                    $logo = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
+                }
+
+                $walletDecrypted = $Walletcontroller->secured_decrypt($nodeOrderSave->wallet);
+
+                array_push($arrReturn, [
+                    'id' => $nodeOrderSave->id,
+                    'coin' => $nodeOrderSave->coin,
+                    'status' => $nodeOrderSave->status,
+                    'logo' => $logo,
+                    'qrcode' => "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=$walletDecrypted",
+                    'address' => $walletDecrypted,
+                    'value_crypto' => $nodeOrderSave->price_crypto * 1,
+                    'value_dollars' => $nodeOrderSave->price * 1,
+                    'created_at' => $nodeOrderSave->createdAt
+                ]);
+            }
+
+            return response()->json([
+                "count" => count($nodeOrdersSave),
+                "invoices" => $arrReturn
+            ]);
+
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage());
+        }
+    }
 }
