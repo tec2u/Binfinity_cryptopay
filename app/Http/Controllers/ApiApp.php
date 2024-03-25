@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IpAccessApi;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\Package;
@@ -79,6 +80,22 @@ class ApiApp extends Controller
             return response()->json(['error' => $validatedData->errors()], 422);
         }
 
+        $ip = $request->ip();
+
+        $tryFailed = IpAccessApi::where('operation', 'api/app/validate/login/failed')->where('ip', $ip)->whereDate('created_at', Carbon::today())->get();
+
+        if (count($tryFailed) > 5) {
+            return response()->json(['error' => 'There were too many login attempts today'], 422);
+        }
+
+        $requestFormated = $request->all();
+
+        $ipRequest = new IpAccessApi;
+        $ipRequest->ip = $ip;
+        $ipRequest->operation = "api/app/validate/login";
+        $ipRequest->request = json_encode($requestFormated);
+        $ipRequest->save();
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
@@ -103,7 +120,14 @@ class ApiApp extends Controller
             }
 
         } else {
+            $ip = $request->ip();
+            $requestFormated = $request->all();
 
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/app/validate/login/failed";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
     }
@@ -127,6 +151,15 @@ class ApiApp extends Controller
             if ($validatedData->fails()) {
                 return response()->json(['error' => $validatedData->errors()], 422);
             }
+
+            $ip = $request->ip();
+            $requestFormated = $request->all();
+
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/app/register/user";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
 
             $exists = User::where('email', $request->email)->orWhere('login', $request->login)->first();
 
@@ -206,6 +239,15 @@ class ApiApp extends Controller
             if ($validatedData->fails()) {
                 return response()->json(['error' => $validatedData->errors()], 422);
             }
+
+            $ip = $request->ip();
+            $requestFormated = $request->all();
+
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/app/register/invoice";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
 
             $package = Package::where('id', 20)->first();
 
@@ -379,6 +421,16 @@ class ApiApp extends Controller
     public function returnUser(Request $request)
     {
         $user = $this->getUser($request);
+
+        $ip = $request->ip();
+        $requestFormated = $request->all();
+
+        $ipRequest = new IpAccessApi;
+        $ipRequest->ip = $ip;
+        $ipRequest->operation = "api/app/get/user";
+        $ipRequest->request = json_encode($requestFormated);
+        $ipRequest->save();
+
         if ($user == false) {
             return response()->json(['error' => "Invalid token"]);
         }
@@ -406,6 +458,15 @@ class ApiApp extends Controller
             if ($validatedData->fails()) {
                 return response()->json(['error' => $validatedData->errors()], 422);
             }
+
+            $ip = $request->ip();
+            $requestFormated = $request->all();
+
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/app/get/invoice";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
 
             $nodeOrderSave = NodeOrders::where('id', $request->id)->first();
 
@@ -461,6 +522,15 @@ class ApiApp extends Controller
                 return response()->json(['error' => "Invalid token"]);
             }
 
+            $ip = $request->ip();
+            $requestFormated = $request->all();
+
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/app/get/invoices";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
+
             $nodeOrdersSave = NodeOrders::where('id_user', $user->id)->orderBy('id', 'desc')->get();
 
             if (count($nodeOrdersSave) < 1) {
@@ -513,5 +583,10 @@ class ApiApp extends Controller
         } catch (\Throwable $th) {
             return response()->json($th->getMessage());
         }
+    }
+
+    public function updateUser(Request $request)
+    {
+
     }
 }

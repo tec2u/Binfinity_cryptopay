@@ -257,6 +257,7 @@ class WalletController extends Controller
         $ip = $request->ip();
         $ipRequest = new IpAccessApi;
         $ipRequest->ip = $ip;
+        $ipRequest->operation = "api/web/get/wallet";
         $ipRequest->request = json_encode($requestFormated);
         $ipRequest->save();
 

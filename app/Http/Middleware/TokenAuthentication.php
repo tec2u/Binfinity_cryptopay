@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\IpAccessApi;
 use Carbon\Carbon;
 use Closure;
 use App\Models\User;
@@ -47,6 +48,15 @@ class TokenAuthentication
             if (!$user) {
                 return response()->json(['error' => 'Token invalid'], 401);
             }
+
+            $ip = $request->ip();
+            $requestFormated = $request->all();
+
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/app/validate/token";
+            $ipRequest->request = json_encode(["token" => $token, "request" => $requestFormated]);
+            $ipRequest->save();
 
             return $next($request);
         } catch (\Throwable $th) {
