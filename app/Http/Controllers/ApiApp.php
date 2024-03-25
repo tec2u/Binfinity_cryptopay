@@ -491,7 +491,7 @@ class ApiApp extends Controller
                 $logo = 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029';
             }
             if ($nodeOrderSave->coin == 'USDT_TRC20') {
-                $logo = asset('images/tron-usdt.png');
+                $logo = 'https://crypto.binfinitybank.com/public/images/tron-usdt.png';
             }
             if ($nodeOrderSave->coin == 'USDT_ERC20') {
                 $logo = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
