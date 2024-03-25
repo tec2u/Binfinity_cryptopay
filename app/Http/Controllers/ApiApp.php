@@ -233,7 +233,7 @@ class ApiApp extends Controller
 
             $validatedData = Validator::make($request->all(), [
                 'coin' => ['required', 'string', Rule::in(['BTC', 'ETH', 'TRX', 'USDT_TRC20', 'USDT_ERC20'])],
-                'value' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/']
+                'value' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/', 'min:30']
             ]);
 
             if ($validatedData->fails()) {
@@ -248,6 +248,11 @@ class ApiApp extends Controller
             $ipRequest->operation = "api/app/register/invoice";
             $ipRequest->request = json_encode($requestFormated);
             $ipRequest->save();
+
+            if ($request->value < 30) {
+                # code... 
+                return response()->json(['error' => "The value field must be at least 30."], 422);
+            }
 
             $package = Package::where('id', 20)->first();
 
