@@ -267,6 +267,7 @@ class PackageController extends Controller
                 $order->pstatus = $nodeOrders->status;
                 $order->price_crypto = $nodeOrders->price_crypto * 1;
                 $order->price_crypto_paid = $nodeOrders->price_crypto_paid * 1;
+                $order->hash = $nodeOrders->hash;
             }
         }
 
