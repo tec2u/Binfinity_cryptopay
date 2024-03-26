@@ -14,8 +14,8 @@
                 </div>
                 <div class="card-header py-3">
                   <!-- <button type="button" class="btn btn-info btn-sm rounded-pill" style="width: 80px;">CSV</button>
-                                                                                      <button type="button" class="btn btn-success btn-sm rounded-pill" style="width: 80px;">Excel</button>
-                                                                                      <button type="button" class="btn btn-danger btn-sm rounded-pill" style="width: 80px;">PDF</button> -->
+                                                                                              <button type="button" class="btn btn-success btn-sm rounded-pill" style="width: 80px;">Excel</button>
+                                                                                              <button type="button" class="btn btn-danger btn-sm rounded-pill" style="width: 80px;">PDF</button> -->
                   <div class="card-tools">
                     <div class="input-group input-group-sm my-1" style="width: 250px;">
                       <input type="text" name="table_search" class="form-control float-right rounded-pill pl-3"
@@ -37,13 +37,7 @@
                         <th>@lang('package.package_price')</th>
                         <th>Price crypto</th>
                         <th>Price crypto paid</th>
-                        <th>@lang('package.package_price')</th>
-                        {{-- <th>@lang('package.daily_return')</th>
-                                            <th>@lang('package.yearly_return_coin')</th>
-                                            <th>@lang('package.total_return_coin')</th>
-                                            <th>@lang('package.steaking_period')</th>
-                                            <th>@lang('package.capping_coin')</th>
-                                            <th>@lang('package.expected_total_return')</th> --}}
+                        {{-- <th>@lang('package.package_price')</th> --}}
                         <th>@lang('package.date')</th>
                         <th>Coin</th>
                         <th>Status</th>
@@ -57,8 +51,16 @@
                           <th>{{ $orderpackage->coin }}</th>
                           <td>{{ $orderpackage->id }}</td>
                           <td>$ {{ $orderpackage->price }}</td>
-                          <td>$ {{ $orderpackage->price_crypto }}</td>
-                          <td>$ {{ $orderpackage->price_crypto_paid }}</td>
+                          @if (isset($orderpackage->price_crypto))
+                            <td>$ {{ $orderpackage->price_crypto }}</td>
+                          @else
+                            <td></td>
+                          @endif
+                          @if (isset($orderpackage->price_crypto))
+                            <td>$ {{ $orderpackage->price_crypto_paid }}</td>
+                          @else
+                            <td></td>
+                          @endif
                           {{-- <td>{{$orderpackage->package->daily_returns}}</td>
                                             <td>{{$orderpackage->package->yaerly_returns}}</td>
                                             <td>{{$orderpackage->package->total_returns}}</td>
