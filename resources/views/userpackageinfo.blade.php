@@ -15,8 +15,8 @@
                 </div>
                 <div class="card-header py-3">
                   <!-- <button type="button" class="btn btn-info btn-sm rounded-pill" style="width: 80px;">CSV</button>
-                                  <button type="button" class="btn btn-success btn-sm rounded-pill" style="width: 80px;">Excel</button>
-                                  <button type="button" class="btn btn-danger btn-sm rounded-pill" style="width: 80px;">PDF</button> -->
+                                    <button type="button" class="btn btn-success btn-sm rounded-pill" style="width: 80px;">Excel</button>
+                                    <button type="button" class="btn btn-danger btn-sm rounded-pill" style="width: 80px;">PDF</button> -->
                   <div class="card-tools">
                     <div class="input-group input-group-sm my-1" style="width: 250px;">
                       <input type="text" name="table_search" class="form-control float-right rounded-pill pl-3"
