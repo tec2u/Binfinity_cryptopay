@@ -387,6 +387,25 @@
       max-width: 99%;
       overflow-x: auto;
       font-size: .8rem;
+      display: flex;
+      align-items: center;
+      gap: .1rem;
+    }
+
+    .green {
+      background-color: green;
+      border-radius: 50%;
+      height: 10px;
+      width: 10px;
+      content: '';
+    }
+
+    .red {
+      background-color: red;
+      border-radius: 50%;
+      height: 10px;
+      width: 10px;
+      content: '';
     }
   </style>
 
@@ -415,7 +434,7 @@
               <span><strong>Profile</strong></span>
               <a href="{{ route('users.index') }}">
                 <span>&#9998;</span>
-              </a>
+              </a>;
             </div>
             <div class="profile-card-main">
 
@@ -444,10 +463,17 @@
                   <img src="{{ asset('images/star.png') }}" alt="">
                   <div>
                     <span>Free Plan:</span>
-                    <strong>
-                      <div class="green"></div>
-                      Active
-                    </strong>
+                    @if (auth()->user()->activated == 1)
+                      <strong>
+                        <div class="green"></div>
+                        Active
+                      </strong>
+                    @else
+                      <strong>
+                        <div class="red"></div>
+                        Inative
+                      </strong>
+                    @endif
                   </div>
                 </div>
               </div>
