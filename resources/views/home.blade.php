@@ -471,7 +471,7 @@
                     @else
                       <strong>
                         <div class="red"></div>
-                        Inative
+                        Inactive
                       </strong>
                     @endif
                   </div>
