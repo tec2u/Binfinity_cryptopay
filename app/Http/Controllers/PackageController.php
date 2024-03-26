@@ -265,8 +265,8 @@ class PackageController extends Controller
             if (isset($nodeOrders)) {
                 $order->coin = $nodeOrders->coin;
                 $order->pstatus = $nodeOrders->status;
-                $order->price_crypto = $nodeOrders->price_crypto;
-                $order->price_crypto_paid = $nodeOrders->price_crypto_paid;
+                $order->price_crypto = $nodeOrders->price_crypto * 1;
+                $order->price_crypto_paid = $nodeOrders->price_crypto_paid * 1;
             }
         }
 
