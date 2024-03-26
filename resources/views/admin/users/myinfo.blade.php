@@ -19,15 +19,14 @@
               @csrf
               @method('PUT')
               <div class="form-row">
-                {{-- <div class="form-group col-md-12">
-                  <label for="active">Activated</label>
-                  <select id="active" name="activated" class="form-control">
-                    <option value="1" @if ($user->activated == 1) selected @endif>Activated
-                    </option>
-                    <option value="M" @if ($user->activated == 0) selected @endif>Not activated
-                    </option>
-                  </select>
-                </div> --}}
+
+                <div class="form-group col-md-6">
+                  <label for="tax_percent">%Tax in withdrawn</label>
+                  <input type="number" id="tax_percent" name="tax_percent" class="form-control" placeholder="Unwritten"
+                    value="{{ $user->tax_percent ?? '' }}" step="0.01" />
+
+                </div>
+
                 <div class="form-group col-md-6">
                   <label for="firstname">@lang('admin.myinfo.firstname')</label>
                   <input type="text" id="name" name="name" class="form-control" placeholder="Unwritten"

@@ -50,7 +50,8 @@ class User extends Authenticatable
       'id_card',
       'activated',
       'qty',
-      'contact_id'
+      'contact_id',
+      'tax_percent'
    ];
 
    /**
@@ -312,7 +313,7 @@ class User extends Authenticatable
       $volume = HistoricScore::where('user_id', $id)->where('description', '!=', "9")->selectRaw('sum(score) as total')
          ->first();
 
-      if (empty($volume->total)) {
+      if (empty ($volume->total)) {
          $volume->total = 0;
       }
 
@@ -324,7 +325,7 @@ class User extends Authenticatable
       $poll = HistoricScore::where('user_id', $id)->where('description', "9")->selectRaw('sum(score) as total')
          ->first();
 
-      if (empty($poll->total)) {
+      if (empty ($poll->total)) {
          $poll->total = 0;
       }
 
@@ -336,7 +337,7 @@ class User extends Authenticatable
       $rede = HistoricScore::where('user_id', $id)->where('description', "6")->selectRaw('sum(score) as total')
          ->first();
 
-      if (empty($rede->total)) {
+      if (empty ($rede->total)) {
          $rede->total = 0;
       }
 

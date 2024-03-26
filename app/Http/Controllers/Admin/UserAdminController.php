@@ -160,7 +160,8 @@ class UserAdminController extends Controller
             'telephone',
             'cell',
             'country',
-            'rule'
+            'rule',
+            'tax_percent'
         ]);
         $user = User::find($id);
         if (($request->has('password') && $request->get('password')) && ($request->has('password_confirmation') && $request->get('password_confirmation'))) {
