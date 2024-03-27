@@ -99,9 +99,15 @@ class WalletController extends Controller
                 $lastT = 0;
             }
 
+            $name = WalletName::where('id', $value[0]->id_name)->first();
+            if (isset($name)) {
+                $value->name = $name->name;
+            } else {
+                $value->name = $key;
+            }
+
             $value->lastT = $lastT;
 
-            // dd($wallets);
         }
 
 
