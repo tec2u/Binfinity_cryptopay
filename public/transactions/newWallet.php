@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ERROR | E_PARSE);
 include "config.php";
-
+return;
 
 ##SERV NODE
 ###Mudar o processo de criação de transferencia para ver o txt com a carteira em json no servidor secundario para pegar a key. 

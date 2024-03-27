@@ -283,6 +283,7 @@ Route::prefix('packages')->middleware('auth')->name('packages')->group(function 
 Route::prefix('wallets')->middleware('auth')->name('wallets')->group(function () {
    Route::controller(WalletController::class)->group(function () {
       Route::get('/wallets', 'index')->name('.index');
+      Route::post('/edit/active', 'editActive')->name('.editActive');
       Route::get('/wallets/withdraw', 'WithdrawWallet')->name('.WithdrawWallet');
       Route::get('/wallets/transactions', 'transactions')->name('.transactions');
       Route::post('/wallets/withdraw/store', 'WithdrawWalletStore')->name('.WithdrawWalletStore');

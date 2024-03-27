@@ -109,7 +109,8 @@
       width: 25px;
     }
 
-    .wallet-header div {
+    .wallet-header div,
+    .wallet-header form {
       display: flex;
       align-items: center;
       gap: .5rem;
@@ -259,8 +260,14 @@
                           <strong>{{ $chave }}</strong>
                         </div>
                         <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
-                            checked>
+                          <form class="form-check form-switch" action="{{ route('wallets.editActive') }}" method="post"
+                            id="form-active-{{ $chave }}">
+                            @csrf
+                            <input type="hidden" name="coin" value="{{ $chave }}">
+                            <input class="form-check-input" type="checkbox" role="switch"
+                              id="flexSwitchCheckChecked{{ $chave }}"
+                              @if ($valor[0]->active) checked @endif>
+                          </form>
                         </div>
                       </div>
                       <div class="wallet-main">
@@ -274,11 +281,11 @@
                       <div class="wallet-footer">
                         <div class="left">
                           <span>Last Update</span>
-                          <strong>20/03/2024</strong>
+                          <strong>{{ date('d/m/Y', strtotime($valor[0]->updated_at)) }}</strong>
                         </div>
                         <div class="right">
                           <span>Last Transaction</span>
-                          <strong>150.25</strong>
+                          <strong>${{ $valor->lastT }}</strong>
                         </div>
                       </div>
                     </div>
@@ -292,6 +299,12 @@
                     {{-- <button>{{ $moviment[$chave]['dep'] }} / {{ $moviment[$chave]['saq'] }}</button>
                     </div> --}}
                   @endif
+
+                  <script>
+                    document.getElementById("flexSwitchCheckChecked{{ $chave }}").addEventListener('click', function() {
+                      document.getElementById("form-active-{{ $chave }}").submit();
+                    });
+                  </script>
                 @endforeach
 
 
@@ -306,7 +319,6 @@
 
   <script>
     var buttons = document.querySelectorAll('[data-coin-choose="true"]');
-    console.log(buttons);
 
     // Adiciona um evento de clique a cada botão
     buttons.forEach(function(button) {

@@ -11,6 +11,7 @@ use App\Models\OrderPackage;
 use App\Models\PaymentLog;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Models\WalletName;
 use App\Models\WithdrawWallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -81,6 +82,29 @@ class WalletController extends Controller
             ];
         }
 
+        foreach ($wallets as $key => $value) {
+            $lastT = NodeOrders::where('coin', $key)
+                ->where('id_user', $user->id)
+                ->where(function ($query) {
+                    $query->whereRaw('LOWER(status) = ?', ['paid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+                })
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if (isset($lastT)) {
+                $lastT = $lastT->price;
+            } else {
+                $lastT = 0;
+            }
+
+            $value->lastT = $lastT;
+
+            // dd($wallets);
+        }
+
+
         return view('wallets.list', compact('wallets', 'icons', 'moviment'));
     }
 
@@ -126,9 +150,16 @@ class WalletController extends Controller
 
                 $retornoTxt = $this->sendPostBin2($json);
                 if (isset($retornoTxt)) {
+                    $nn = new WalletName;
+                    $nn->id_user = Auth::id();
+                    $nn->name = $request->name;
+                    $nn->coin = $request->coin;
+                    $nn->active = 1;
+                    $nn->save();
+
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
-                    $wallet->name = $request->name ?? '';
+                    $wallet->name = $nn->id ?? '';
                     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
 
                     if ($request->coin == "TRX" || $request->coin == "USDT_TRC20") {
@@ -677,6 +708,29 @@ class WalletController extends Controller
             abort(404);
             throw $th;
         }
+    }
+
+    public function editActive(Request $request)
+    {
+
+        try {
+            $user = User::find(Auth::id());
+
+            $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)
+                ->orderBy('id', 'DESC')->get();
+            foreach ($wallets as $w) {
+                $w->active = $w->active == 0 ? 1 : 0;
+                $w->save();
+            }
+
+            \Alert::success("Wallets edited");
+            return redirect()->route('wallets.index');
+        } catch (\Throwable $th) {
+
+            \Alert::error("Failed in edit wallets");
+            return redirect()->route('wallets.index');
+        }
+
     }
 
 }
