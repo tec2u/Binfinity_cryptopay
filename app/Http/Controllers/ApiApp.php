@@ -628,7 +628,7 @@ class ApiApp extends Controller
         $ipRequest->request = json_encode($requestFormated);
         $ipRequest->save();
 
-        $nodeOrderSave = NodeOrders::where('id', $request->id)->where('type', 1)->first();
+        $nodeOrderSave = NodeOrders::where('id', $request->id)->where('type', 1)->where('id_user', $user->id)->first();
 
         if (!isset($nodeOrderSave)) {
             return response()->json(['error' => "Invoice not found"]);
