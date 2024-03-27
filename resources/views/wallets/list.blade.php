@@ -52,6 +52,30 @@
       flex-wrap: wrap;
       gap: 2rem
     }
+
+    .option-coin {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: .5rem;
+      border-top: #cccccc70 1px solid;
+      cursor: pointer;
+    }
+
+
+    .option-coin:hover {
+      background-color: #ececec;
+    }
+
+    .option-coin img {
+      width: 50px;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
   </style>
 
   <main id="main" class="main">
@@ -59,11 +83,16 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Wallet coin {{ $wallet->coin ?? '' }}</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Create wallet</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-
+            @foreach ($icons as $chave => $valor)
+              <div class="option-coin">
+                <img src="{{ $valor }}" alt="">
+                <strong>{{ $chave }}</strong>
+              </div>
+            @endforeach
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -85,7 +114,7 @@
                     +</button>
                 </h3>
               </div>
-              {{-- <div class="card-header bbcolorp">
+              {{-- <div class="card-header bbcolorp"> 
                 <form action="{{ route('wallets.store') }}" method="post" class="d-flex">
                   @csrf
                   <select name="coin" id="">

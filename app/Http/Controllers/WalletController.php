@@ -38,7 +38,7 @@ class WalletController extends Controller
             'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
             'TRX' => 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029',
             'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
-            'USDT_TRC20' => 'https://images.ctfassets.net/77lc1lz6p68d/5Z7vveK1yJ7rDvX9K5ywJa/cfa5f74c313594a5a75652f98678578a/tether-usdt-trc20.svg',
+            'USDT_TRC20' => 'https://crypto.binfinitybank.com/public/images/tron-usdt.png',
             'USDT_ERC20' => 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029',
         ];
 
@@ -94,7 +94,7 @@ class WalletController extends Controller
 
             $WithDrawal = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
 
-            if (!isset ($WithDrawal)) {
+            if (!isset($WithDrawal)) {
                 \Alert::error("Add your wallet in > WithDrawal Wallet (" . $request->coin . ")");
                 return redirect()->back();
             }
@@ -123,7 +123,7 @@ class WalletController extends Controller
                 ];
 
                 $retornoTxt = $this->sendPostBin2($json);
-                if (isset ($retornoTxt)) {
+                if (isset($retornoTxt)) {
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
                     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
@@ -157,7 +157,7 @@ class WalletController extends Controller
     private function sendPostBin2($json)
     {
         $user = User::where('id', Auth::id())->first();
-        if (isset ($user->hash_user_bin)) {
+        if (isset($user->hash_user_bin)) {
             $json["hash_user"] = $user->hash_user_bin;
         }
         $url = env('SERV_TXT');
@@ -170,8 +170,8 @@ class WalletController extends Controller
 
         if ($response->successful()) {
             $content = $response->body();
-            if (isset ($content)) {
-                if (!isset ($user->hash_user_bin)) {
+            if (isset($content)) {
+                if (!isset($user->hash_user_bin)) {
                     $user->hash_user_bin = $content;
                     $user->save();
                 }
@@ -206,7 +206,7 @@ class WalletController extends Controller
             "address" => $address
         ];
 
-        if (isset ($user->hash_user_bin)) {
+        if (isset($user->hash_user_bin)) {
             $json["hash_user"] = $user->hash_user_bin;
         }
 
@@ -216,7 +216,7 @@ class WalletController extends Controller
 
         if ($response->successful()) {
             $content = $response->body();
-            if (isset ($content)) {
+            if (isset($content)) {
                 if (json_decode($content)) {
                     if (json_decode($content)->address) {
                         return $content;
@@ -262,7 +262,7 @@ class WalletController extends Controller
         $ipRequest->save();
 
         $ipAllowed = IpAllowedApi::where('ip', $ip)->first();
-        if (!isset ($ipAllowed)) {
+        if (!isset($ipAllowed)) {
             return false;
         }
 
@@ -279,7 +279,7 @@ class WalletController extends Controller
         // return ($request);
 
         // crypto
-        if (isset ($requestFormated["login"])) {
+        if (isset($requestFormated["login"])) {
 
             $log = new PaymentLog;
             $log->content = "status";
@@ -294,7 +294,7 @@ class WalletController extends Controller
 
             $userAprov = User::where('email', $requestFormated['login'])->orWhere('login', $requestFormated['login'])->first();
 
-            if (!isset ($userAprov)) {
+            if (!isset($userAprov)) {
                 return false;
             }
 
@@ -319,9 +319,9 @@ class WalletController extends Controller
             // return $wallet;
 
             $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
-            if (isset ($walletExists) && json_decode($walletExists)) {
+            if (isset($walletExists) && json_decode($walletExists)) {
                 $jsonW = json_decode($walletExists);
-                if (isset ($jsonW->address)) {
+                if (isset($jsonW->address)) {
                     $controller = new PackageController;
 
                     $price_crypto = $requestFormated['price_crypto'];
@@ -368,7 +368,7 @@ class WalletController extends Controller
 
                     if ($response->successful()) {
                         $content = $response->body();
-                        if (isset ($content)) {
+                        if (isset($content)) {
                             return $content;
                         }
 
@@ -405,7 +405,7 @@ class WalletController extends Controller
             ->first();
 
 
-        if (isset ($lastNode)) {
+        if (isset($lastNode)) {
             return false;
         }
 
@@ -432,11 +432,11 @@ class WalletController extends Controller
                 $selectedWallet = $unusedWallets->random();
                 $wallet = $selectedWallet;
             } else {
-                if (isset ($usedWallets)) {
+                if (isset($usedWallets)) {
                     foreach (array_reverse($usedWallets) as $value) {
                         $wallet = Wallet::where('id', $value)->first();
 
-                        if (isset ($wallet)) {
+                        if (isset($wallet)) {
                             return $wallet;
                         }
                     }
@@ -523,7 +523,7 @@ class WalletController extends Controller
                 "coin" => $request->coin
             ];
 
-            if (isset ($wallet)) {
+            if (isset($wallet)) {
                 \Alert::error("Contact support");
                 return redirect()->back();
             } else {
@@ -531,9 +531,9 @@ class WalletController extends Controller
             }
 
 
-            if (isset ($retornoTxt)) {
+            if (isset($retornoTxt)) {
 
-                if (isset ($wallet)) {
+                if (isset($wallet)) {
                     \Alert::error("Contact support");
                     // $wallet->wallet_address = $request->address;
                     // $wallet->save();
@@ -664,7 +664,7 @@ class WalletController extends Controller
         try {
             $user = User::find(Auth::id());
 
-            if (!isset ($user)) {
+            if (!isset($user)) {
                 abort(404);
             }
 
