@@ -83,6 +83,93 @@
       margin: 0 !important;
       color: black !important;
     }
+
+    .container-wallet {
+      width: 350px;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 1rem;
+      border: #ccc 1px solid;
+      height: fit-content;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .container-wallet .wallet-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgb(216, 216, 216);
+    }
+
+    .wallet-header img {
+      width: 25px;
+    }
+
+    .wallet-header div {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+
+    .wallet-main {
+      width: 90%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      /* gap: .1rem; */
+      align-items: center;
+      text-align: center;
+      background-color: #F8F8FA;
+      padding: 1rem 0;
+    }
+
+    .wallet-main div {
+      display: flex;
+      align-items: flex-start;
+      gap: .2rem;
+    }
+
+    .wallet-main div span {
+      font-weight: 800;
+    }
+
+    .wallet-footer {
+      width: 100%;
+      display: flex;
+    }
+
+    .wallet-footer div {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wallet-footer span {
+      color: #9CA3AF;
+      font-size: .7rem;
+      font-weight: 400;
+    }
+
+    .wallet-footer strong {
+      color: #545557;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+
+    .wallet-footer .left {
+      border-right: 1px solid rgb(216, 216, 216);
+    }
+
+    .wallet-footer .right {
+      border-left: 1px solid rgb(216, 216, 216);
+    }
   </style>
 
   <main id="main" class="main">
@@ -158,62 +245,52 @@
                     +</button>
                 </h3>
               </div>
-              {{-- <div class="card-header bbcolorp"> 
-                <form action="{{ route('wallets.store') }}" method="post" class="d-flex">
-                  @csrf
-                  <select name="coin" id="">
-                    <option value="USDT_TRC20">USDT_TRC20</option>
-                    <option value="TRX">TRX</option>
-                    <option value="ETH">ETH</option>
-                    <option value="BITCOIN">BITCOIN</option>
-                    <option value="USDT_ERC20">USDT_ERC20</option>
-                  </select>
-                  <h3 class="card-title"><button type="submit" style="color:white" class="btn btn-warning">New
-                      +</button>
-                    </h3>
-                  </form>
-              </div> --}}
+
               <div class="container-cards  my-3" style="overflow-x: auto;border-top: #0071C1 1px solid">
 
 
 
-
-                {{-- <table class="table" style="overflow-x: auto">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">address</th>
-                      <th scope="col">coin</th>
-                    </tr>
-                  </thead>
-                  <tbody style="overflow-x: scroll">
-                    @foreach ($wallets as $item)
-                      <tr style="overflow-x: scroll">
-                        <th scope="row">{{ $item->id }}</th>
-                        <td>{{ $item->address }}</td>
-                        <td>{{ $item->coin }}</td>
-                      </tr>
-                    @endforeach
-
-                  </tbody>
-                </table> --}}
-
-                {{-- <div class="container-wallet">
-                  <div class="wallet-header"></div>
-                  <div class="wallet-main"></div>
-                  <div class="wallet-footer"></div>
-                </div> --}}
-
                 @foreach ($wallets as $chave => $valor)
                   @if (isset($icons[$chave]))
-                    <div class="card">
+                    <div class="container-wallet">
+                      <div class="wallet-header">
+                        <div>
+                          <img src="{{ $icons[$chave] }}" alt="">
+                          <strong>{{ $chave }}</strong>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
+                            checked>
+                        </div>
+                      </div>
+                      <div class="wallet-main">
+                        <span style="color: #9CA3AF">Balance</span>
+                        <div>
+                          <strong>{{ $moviment[$chave]['dep'] - $moviment[$chave]['saq'] }}</strong>
+                          <span style="font-size: .7rem">{{ $chave }}</span>
+                        </div>
+                        <span style="color: #0071C1">~${{ $moviment[$chave]['dep'] - $moviment[$chave]['saq'] }}</span>
+                      </div>
+                      <div class="wallet-footer">
+                        <div class="left">
+                          <span>Last Update</span>
+                          <strong>20/03/2024</strong>
+                        </div>
+                        <div class="right">
+                          <span>Last Transaction</span>
+                          <strong>150.25</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    {{-- <div class="card">
                       <span>{{ count($valor) }} / 10</span>
                       <img src="{{ $icons[$chave] }}" alt="CR7">
                       <h1>. . . .</h1>
-                      <h2>{{ $chave }}</h2>
-                      {{-- <h4>1501510.52 / 2840498.01</h4> --}}
-                      <button>{{ $moviment[$chave]['dep'] }} / {{ $moviment[$chave]['saq'] }}</button>
-                    </div>
+                      <h2>{{ $chave }}</h2> --}}
+                    {{-- <h4>1501510.52 / 2840498.01</h4> --}}
+                    {{-- <button>{{ $moviment[$chave]['dep'] }} / {{ $moviment[$chave]['saq'] }}</button>
+                    </div> --}}
                   @endif
                 @endforeach
 
