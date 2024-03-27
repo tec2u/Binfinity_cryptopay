@@ -83,7 +83,9 @@
         </thead>
         <tbody>
           @forelse($transactions as $transaction)
-            @if (strtolower($transaction->status) == 'paid')
+            @if (strtolower($transaction->status) == 'paid' ||
+                    strtolower($transaction->status) == 'overpaid' ||
+                    strtolower($transaction->status) == 'underpaid')
               <tr class="table-success">
               @elseif(strtolower($transaction->status) == 'expired')
               <tr class="table-danger">
@@ -103,7 +105,10 @@
             <th>{{ $transaction->gas_fee }}</th>
             <th>{{ $transaction->payment_of_id }}</th>
             <th style="display: flex;flex-direction: row;gap:1rem">
-              @if ($transaction->type == 1 && strtolower($transaction->status) == 'paid')
+              @if (
+                  ($transaction->type == 1 && strtolower($transaction->status) == 'paid') ||
+                      strtolower($transaction->status) == 'overpaid' ||
+                      strtolower($transaction->status) == 'underpaid')
                 <form action="{{ route('admin.reports.transactionsNodeChangeWithdrawn') }}" method="post">
                   @csrf
                   <input type="hidden" name="id" value="{{ $transaction->id }}">
