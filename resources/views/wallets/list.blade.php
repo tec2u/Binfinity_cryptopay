@@ -76,31 +76,75 @@
       flex-direction: column;
       gap: .5rem;
     }
+
+    .no-style {
+      border: none;
+      background-color: transparent !important;
+      margin: 0 !important;
+      color: black !important;
+    }
   </style>
 
   <main id="main" class="main">
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+
+    <div class="modal fade" id="exampleModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Create wallet</h1>
+            <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Choose coin</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             @foreach ($icons as $chave => $valor)
-              <div class="option-coin">
-                <img src="{{ $valor }}" alt="">
-                <strong>{{ $chave }}</strong>
-              </div>
+              <button data-bs-target="#exampleModalToggle2" data-coin="{{ $chave }}" data-coin-choose="true"
+                data-bs-toggle="modal" class="no-style">
+                <div class="option-coin">
+                  <img src="{{ $valor }}" alt="">
+                  <strong>{{ $chave }}</strong>
+                </div>
+              </button>
             @endforeach
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
           </div>
         </div>
       </div>
     </div>
+    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
+      tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Name of the group <span
+                id="coin-choosed-span"></span></h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="{{ route('wallets.store') }}" method="post" id="form-criar">
+              @csrf
+              <input type="hidden" id="coin-choosed" name="coin" required>
+
+              <div class="mb-3">
+                <label for="basic-url" class="form-label">Write name for you wallets group</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon3">Name:</span>
+                  <input type="text" name="name" class="form-control" id="basic-url" required
+                    aria-describedby="basic-addon3 basic-addon4">
+                </div>
+                <div class="form-text" id="basic-addon4"></div>
+              </div>
+
+              <br>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" form="form-criar" style="color:white" class="btn btn-warning">Create</button>
+            <button class="btn btn-primary" data-bs-target="#exampleModal" data-bs-toggle="modal">Back to
+              first</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     @include('flash::message')
     <section id="userpackageinfo" class="content">
       <div class="fade">
@@ -176,4 +220,22 @@
       </div>
     </section>
   </main>
+
+  <script>
+    var buttons = document.querySelectorAll('[data-coin-choose="true"]');
+    console.log(buttons);
+
+    // Adiciona um evento de clique a cada botão
+    buttons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        // Obtém o valor do atributo "data-coin-value" do botão clicado
+        var coinValue = this.getAttribute('data-coin');
+        console.log(coinValue);
+
+        // Define o valor do input com o ID "coin-choosed" com base no valor obtido
+        document.getElementById("coin-choosed").value = coinValue;
+        document.getElementById("coin-choosed-span").innerText = coinValue;
+      });
+    });
+  </script>
 @endsection

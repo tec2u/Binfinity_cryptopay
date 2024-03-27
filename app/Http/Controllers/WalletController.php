@@ -35,11 +35,11 @@ class WalletController extends Controller
         $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
 
         $icons = [
-            'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
+            // 'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
             'TRX' => 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029',
-            'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
+            // 'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
             'USDT_TRC20' => 'https://crypto.binfinitybank.com/public/images/tron-usdt.png',
-            'USDT_ERC20' => 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029',
+            // 'USDT_ERC20' => 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029',
         ];
 
         $moviment = [];
@@ -88,6 +88,8 @@ class WalletController extends Controller
     {
         try {
 
+            dd($request);
+
             $user = User::find(Auth::id());
 
             $controller = new PackageController;
@@ -126,6 +128,7 @@ class WalletController extends Controller
                 if (isset($retornoTxt)) {
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
+                    $wallet->name = $request->name ?? '';
                     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
 
                     if ($request->coin == "TRX" || $request->coin == "USDT_TRC20") {

@@ -49,7 +49,7 @@
         $img = 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029';
     }
     if ($order[0]['coin'] == 'USDT_TRC20') {
-        $img = 'https://images.ctfassets.net/77lc1lz6p68d/5Z7vveK1yJ7rDvX9K5ywJa/cfa5f74c313594a5a75652f98678578a/tether-usdt-trc20.svg';
+        $img = 'https://crypto.binfinitybank.com/public/images/tron-usdt.png';
     }
     if ($order[0]['coin'] == 'USDT_ERC20') {
         $img = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
