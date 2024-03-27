@@ -434,7 +434,7 @@
               <span><strong>Profile</strong></span>
               <a href="{{ route('users.index') }}">
                 <span>&#9998;</span>
-              </a>;
+              </a>
             </div>
             <div class="profile-card-main">
 
