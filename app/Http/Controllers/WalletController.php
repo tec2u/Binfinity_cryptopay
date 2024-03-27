@@ -88,7 +88,7 @@ class WalletController extends Controller
     {
         try {
 
-            dd($request);
+            // dd($request);
 
             $user = User::find(Auth::id());
 
