@@ -85,6 +85,7 @@ class WalletController extends Controller
         foreach ($wallets as $key => $value) {
             $lastT = NodeOrders::where('coin', $key)
                 ->where('id_user', $user->id)
+                ->where('type', 1)
                 ->where(function ($query) {
                     $query->whereRaw('LOWER(status) = ?', ['paid'])
                         ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
