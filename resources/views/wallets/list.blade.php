@@ -55,14 +55,37 @@
   </style>
 
   <main id="main" class="main">
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Wallet coin {{ $wallet->coin ?? '' }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            {{-- <button type="button" class="btn btn-primary">Save changes</button> --}}
+          </div>
+        </div>
+      </div>
+    </div>
     @include('flash::message')
     <section id="userpackageinfo" class="content">
       <div class="fade">
         <div class="container-fluid">
           <div class="row">
             <div class="col-12">
-              <h1>Wallets</h1>
-              <div class="card-header bbcolorp">
+              <div class="d-flex" style="justify-content: space-between;padding: 0.1rem 1rem;align-items: center;">
+                <h1>Wallets</h1>
+                <h3 class="card-title"> <button type="button" class="btn btn-warning" style="color:white"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal">New
+                    +</button>
+                </h3>
+              </div>
+              {{-- <div class="card-header bbcolorp">
                 <form action="{{ route('wallets.store') }}" method="post" class="d-flex">
                   @csrf
                   <select name="coin" id="">
@@ -74,10 +97,13 @@
                   </select>
                   <h3 class="card-title"><button type="submit" style="color:white" class="btn btn-warning">New
                       +</button>
-                </form>
-                </h3>
-              </div>
-              <div class="container-cards shadow my-3" style="overflow-x: auto">
+                    </h3>
+                  </form>
+              </div> --}}
+              <div class="container-cards  my-3" style="overflow-x: auto;border-top: #0071C1 1px solid">
+
+
+
 
                 {{-- <table class="table" style="overflow-x: auto">
                   <thead>

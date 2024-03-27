@@ -109,7 +109,7 @@ class ApiApp extends Controller
 
             if ($parteAntesDoPipe !== false) {
                 $ttk = PersonalAccessToken::where('id', $parteAntesDoPipe)->first();
-                if (!isset ($ttk)) {
+                if (!isset($ttk)) {
                     return response()->json(['error' => 'Error in generate token'], 401);
                 }
 
@@ -163,13 +163,13 @@ class ApiApp extends Controller
 
             $exists = User::where('email', $request->email)->orWhere('login', $request->login)->first();
 
-            if (isset ($exists)) {
+            if (isset($exists)) {
                 return response()->json(['error' => "User already exists"]);
             }
 
             $user_rec = User::where('id', $request->recommendation_user_id)->orWhere('login', $request->recommendation_user_id)->first();
 
-            if (!isset ($user_rec)) {
+            if (!isset($user_rec)) {
                 return response()->json(['error' => "Referral invalid"]);
             }
 
@@ -302,9 +302,9 @@ class ApiApp extends Controller
 
             $walletExists = $Walletcontroller->walletTxtWexists($user->id, $Walletcontroller->secured_decrypt($wallet->address));
 
-            if (isset ($walletExists) && json_decode($walletExists)) {
+            if (isset($walletExists) && json_decode($walletExists)) {
                 $jsonW = json_decode($walletExists);
-                if (isset ($jsonW->address)) {
+                if (isset($jsonW->address)) {
                     $newOrder = new OrderPackage;
                     $newOrder->user_id = $user->id;
                     $newOrder->reference = $package->name;
@@ -398,7 +398,7 @@ class ApiApp extends Controller
 
                     if ($response->successful()) {
                         $content = $response->body();
-                        if (isset ($content)) {
+                        if (isset($content)) {
                         }
 
                     } else {
@@ -473,9 +473,9 @@ class ApiApp extends Controller
             $ipRequest->request = json_encode($requestFormated);
             $ipRequest->save();
 
-            $nodeOrderSave = NodeOrders::where('id', $request->id)->first();
+            $nodeOrderSave = NodeOrders::where('id', $request->id)->where('type', 1)->first();
 
-            if (!isset ($nodeOrderSave)) {
+            if (!isset($nodeOrderSave)) {
                 return response()->json(['error' => "Invoice not found"]);
             }
 
@@ -500,11 +500,18 @@ class ApiApp extends Controller
             $Walletcontroller = new WalletController;
             $walletDecrypted = $Walletcontroller->secured_decrypt($nodeOrderSave->wallet);
 
+            $hashLink = null;
+
+            if (isset($nodeOrderSave->hash)) {
+                $hashLink = 'https://tronscan.org/#/transaction/' . $nodeOrderSave->hash;
+            }
+
             return response()->json([
                 'id' => $nodeOrderSave->id,
                 'coin' => $nodeOrderSave->coin,
                 'status' => $nodeOrderSave->status,
                 'logo' => $logo,
+                'hash' => $hashLink,
                 'qrcode' => "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=$walletDecrypted",
                 'address' => $walletDecrypted,
                 'value_crypto' => $nodeOrderSave->price_crypto * 1,
@@ -536,7 +543,7 @@ class ApiApp extends Controller
             $ipRequest->request = json_encode($requestFormated);
             $ipRequest->save();
 
-            $nodeOrdersSave = NodeOrders::where('id_user', $user->id)->orderBy('id', 'desc')->get();
+            $nodeOrdersSave = NodeOrders::where('id_user', $user->id)->where('type', 1)->orderBy('id', 'desc')->get();
 
             if (count($nodeOrdersSave) < 1) {
                 return response()->json(['error' => "Invoice not found"]);
@@ -567,11 +574,18 @@ class ApiApp extends Controller
 
                 $walletDecrypted = $Walletcontroller->secured_decrypt($nodeOrderSave->wallet);
 
+                $hashLink = null;
+
+                if (isset($nodeOrderSave->hash)) {
+                    $hashLink = 'https://tronscan.org/#/transaction/' . $nodeOrderSave->hash;
+                }
+
                 array_push($arrReturn, [
                     'id' => $nodeOrderSave->id,
                     'coin' => $nodeOrderSave->coin,
                     'status' => $nodeOrderSave->status,
                     'logo' => $logo,
+                    'hash' => $hashLink,
                     'qrcode' => "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=$walletDecrypted",
                     'address' => $walletDecrypted,
                     'value_crypto' => $nodeOrderSave->price_crypto * 1,
