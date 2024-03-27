@@ -250,9 +250,9 @@ class ApiApp extends Controller
             $ipRequest->save();
 
             if ($request->value < 30) {
-                # code... 
                 return response()->json(['error' => "The value field must be at least 30."], 422);
             }
+
 
             $package = Package::where('id', 20)->first();
 
@@ -603,6 +603,43 @@ class ApiApp extends Controller
             return response()->json($th->getMessage());
         }
     }
+
+    public function retryPay(Request $request)
+    {
+        $user = $this->getUser($request);
+        if ($user == false) {
+            return response()->json(['error' => "Invalid token"]);
+        }
+
+        $validatedData = Validator::make($request->all(), [
+            'id' => 'required|numeric',
+        ]);
+
+        if ($validatedData->fails()) {
+            return response()->json(['error' => $validatedData->errors()], 422);
+        }
+
+        $ip = $request->ip();
+        $requestFormated = $request->all();
+
+        $ipRequest = new IpAccessApi;
+        $ipRequest->ip = $ip;
+        $ipRequest->operation = "api/app/get/invoices";
+        $ipRequest->request = json_encode($requestFormated);
+        $ipRequest->save();
+
+        $nodeOrderSave = NodeOrders::where('id', $request->id)->where('type', 1)->first();
+
+        if (!isset($nodeOrderSave)) {
+            return response()->json(['error' => "Invoice not found"]);
+        }
+
+        $request->merge(['coin' => $nodeOrderSave->coin]);
+        $request->merge(['value' => $nodeOrderSave->price]);
+
+        return $this->createInvoice($request);
+    }
+
 
     public function updateUser(Request $request)
     {
