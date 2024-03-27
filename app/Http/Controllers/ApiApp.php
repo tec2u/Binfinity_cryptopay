@@ -625,7 +625,7 @@ class ApiApp extends Controller
 
         $ipRequest = new IpAccessApi;
         $ipRequest->ip = $ip;
-        $ipRequest->operation = "api/app/get/invoices";
+        $ipRequest->operation = "api/app/retry/invoice";
         $ipRequest->request = json_encode($requestFormated);
         $ipRequest->save();
 
