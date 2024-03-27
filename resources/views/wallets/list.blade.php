@@ -198,11 +198,11 @@
                   </tbody>
                 </table> --}}
 
-                <div class="container-wallet">
+                {{-- <div class="container-wallet">
                   <div class="wallet-header"></div>
                   <div class="wallet-main"></div>
                   <div class="wallet-footer"></div>
-                </div>
+                </div> --}}
 
                 @foreach ($wallets as $chave => $valor)
                   @if (isset($icons[$chave]))
