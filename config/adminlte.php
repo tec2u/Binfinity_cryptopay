@@ -550,17 +550,17 @@ return [
             // ],
          ],
       ],
-      // [
-      //    'text' => 'CMS',
-      //    'url'  => 'admin/settings',
-      //    'icon' => 'fas fa-fw fa-undo',
-      //    'submenu' => [
-      //       [
-      //          'text' => 'Test',
-      //          'url'  => '#',
-      //       ],
-      //    ],
-      // ],
+      [
+         'text' => 'SHUTDOWN',
+         // 'url' => 'admin/settings/shutdown',
+         'icon' => 'fas fa-fw fa-undo',
+         'submenu' => [
+            [
+               'text' => 'config',
+               'url' => 'admin/settings/system',
+            ],
+         ],
+      ],
       [
          'text' => 'change_password',
          'url' => 'admin/users/password',

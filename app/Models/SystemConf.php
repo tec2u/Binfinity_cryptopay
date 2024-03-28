@@ -13,6 +13,12 @@ class SystemConf extends Model
 
    protected $fillable = [
       'is_allowed_btn_box',
+      'app',
+      'api',
+      'internal',
+      'external',
+      'node',
+      'all',
    ];
 
 }

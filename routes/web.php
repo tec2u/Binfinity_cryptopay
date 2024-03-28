@@ -604,6 +604,7 @@ Route::prefix('admin')->middleware(['auth', 'is.admin'])->name('admin')->group(f
          Route::post('/{id}/update', 'updateVideo')->name('.updateVideo');
          Route::get('/system', 'systemuser')->name('.system');
          Route::put('/upsystemconfig', 'upsystemconfig')->name('.upsystemconfig');
+         Route::put('/upsystemconfigPay', 'upsystemconfigPay')->name('.upsystemconfigPay');
       });
    });
 

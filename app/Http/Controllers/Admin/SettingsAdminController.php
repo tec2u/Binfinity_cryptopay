@@ -123,13 +123,12 @@ class SettingsAdminController extends Controller
       $system = SystemConf::first();
       try {
 
-         if(is_null($system)){
+         if (is_null($system)) {
             $system = SystemConf::create($data);
             $this->createLog('System Config created successfully', 200, 'success', auth()->user()->id);
             flash(__('admin_alert.system_created'))->success();
             return redirect()->route('admin.settings.system');
-         }
-         else{
+         } else {
             $system->update($data);
             $this->createLog('System Config updated successfully', 200, 'success', auth()->user()->id);
             flash(__('admin_alert.system_update'))->success();
@@ -137,6 +136,49 @@ class SettingsAdminController extends Controller
          }
 
       } catch (Exception $e) {
+         $this->errorCatch($e->getMessage(), auth()->user()->id);
+         flash(__('admin_alert.system_noupdate'))->error();
+         return redirect()->route('admin.settings.system');
+      }
+   }
+
+   public function upsystemconfigPay(Request $request)
+   {
+
+      $data = $request->only([
+         'is_allowed_btn_box',
+         'all',
+         'app',
+         'api',
+         'node',
+         'external',
+         'internal',
+      ]);
+
+      if ($request->all == 0) {
+         $data['app'] = 0;
+         $data['api'] = 0;
+         $data['node'] = 0;
+         $data['external'] = 0;
+         $data['internal'] = 0;
+      }
+      $system = SystemConf::first();
+      try {
+
+         if (is_null($system)) {
+            $system = SystemConf::create($data);
+            $this->createLog('System Config created successfully', 200, 'success', auth()->user()->id);
+            flash(__('admin_alert.system_created'))->success();
+            return redirect()->route('admin.settings.system');
+         } else {
+            $system->update($data);
+            $this->createLog('System Config updated successfully', 200, 'success', auth()->user()->id);
+            flash(__('admin_alert.system_update'))->success();
+            return redirect()->route('admin.settings.system');
+         }
+
+      } catch (Exception $e) {
+         dd($e);
          $this->errorCatch($e->getMessage(), auth()->user()->id);
          flash(__('admin_alert.system_noupdate'))->error();
          return redirect()->route('admin.settings.system');
