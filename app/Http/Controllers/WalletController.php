@@ -100,11 +100,12 @@ class WalletController extends Controller
                 $lastT = 0;
             }
 
+            $value->name = $key;
             $name = WalletName::where('id', $value[0]->id_name)->first();
             if (isset($name)) {
                 $value->name = $name->name;
             } else {
-                $value->name = $key;
+                $value->name = $value[0]->id_name;
             }
 
             $value->lastT = $lastT;
