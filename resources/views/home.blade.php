@@ -482,11 +482,11 @@
             <div class="profile-card-bottom">
               <div class="income">
                 <span>Income</span>
-                <strong>${{ $income }}</strong>
+                <strong>${{ number_format($income, 2) }}</strong>
               </div>
               <div class="spending">
                 <span>Spending</span>
-                <strong>${{ $spending }}</strong>
+                <strong>${{ number_format($spending, 2) }}</strong>
               </div>
             </div>
           </div>
