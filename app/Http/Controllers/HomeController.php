@@ -229,7 +229,7 @@ class HomeController extends Controller
             "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
          ];
 
-         $spendings = [
+         $incomes = [
             "BITCOIN" => number_format($btc * $dep, 2, '.', ''),
             "ETH" => number_format($eth * $dep, 2, '.', ''),
             "USDT_ERC20" => number_format($erc20 * $dep, 2, '.', ''),
@@ -237,7 +237,7 @@ class HomeController extends Controller
             "USDT_TRC20" => number_format($trc20 * $dep, 2, '.', ''),
          ];
 
-         $incomes = [
+         $spendings = [
             "BITCOIN" => number_format($btc * $saq, 2, '.', ''),
             "ETH" => number_format($eth * $saq, 2, '.', ''),
             "USDT_ERC20" => number_format($erc20 * $saq, 2, '.', ''),
