@@ -70,11 +70,6 @@ class LoginController extends Controller
                     'financial_password' => Hash::make($user->email),
                     'recommendation_user_id' => $master->id,
                     'special_comission' => 1,
-                    'special_comission_active' => 0,
-                    'cell' => '',
-                    'country' => '',
-                    'city' => '',
-                    'last_name' => $user->user->family_name,
                 ]);
 
                 $user = User::find($createUser->id);
@@ -86,7 +81,7 @@ class LoginController extends Controller
                 return redirect()->intended('home');
             }
         } catch (\Throwable $th) {
-            dd($th);
+            // dd($th);
             return redirect()->to('/login');
         }
 
