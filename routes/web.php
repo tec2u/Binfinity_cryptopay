@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\Config;
 #region pagina inicial
 
 Route::controller(LoginController::class)->group(function () {
-   Route::get('/login/google', 'redirectToGoogle');
+   Route::get('/login/google', 'redirectToGoogle')->name('login.google');
    Route::get('/login/google/callback', 'handleGoogleCallback');
 });
 

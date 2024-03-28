@@ -28,7 +28,8 @@
         <form class="login100-form validate-form" method="POST" action="{{ route('login') }}">
           @csrf
           <span class="login100-form-title p-b-48">
-            <img class="imagetest" style="filter: brightness(0) invert(1);" src="{{ asset('/images/tigle_logo2.png') }}" alt="">
+            <img class="imagetest" style="filter: brightness(0) invert(1);" src="{{ asset('/images/tigle_logo2.png') }}"
+              alt="">
           </span>
           <h4 class="title-login limpa-cor" style="color: #fff">{{ __('Login') }}</h4>
           <div class="wrap-input100 validate-input">
@@ -78,13 +79,16 @@
                 {{ __('Login') }}
               </button>
             </div>
-           <!-- <div class="text-center p-t-115 mt-40">
-              @if (Route::has('password.request'))
-                <a class="txt2" href="{{ route('password.request') }}" style="color: #fff">
-                  {{ __('Forgot Your Password?') }}
-                </a>
-              @endif
-            </div> -->
+
+
+
+            <!-- <div class="text-center p-t-115 mt-40">
+                                                                                  @if (Route::has('password.request'))
+  <a class="txt2" href="{{ route('password.request') }}" style="color: #fff">
+                                                                                      {{ __('Forgot Your Password?') }}
+                                                                                    </a>
+  @endif
+                                                                                </div> -->
           </div>
           <div class="text-center p-t-115">
             <span class="txt1" style="color: #fff">
@@ -96,6 +100,21 @@
             </a>
           </div>
         </form>
+
+        <div class="wrap-login100-form-btn" style="margin-top: 1rem;">
+          <a href="{{ route('login.google') }}" style="text-decoration: none">
+
+            <button type="button" class="btn btn-light w-100 d-flex" style="justify-content: center;gap: 1rem">
+              <span style="font-weight: 400">
+                Login with Google
+              </span>
+              <img style="width: 50px;"
+                src="https://lh3.googleusercontent.com/d_S5gxu_S1P6NR1gXeMthZeBzkrQMHdI5uvXrpn3nfJuXpCjlqhLQKH_hbOxTHxFhp5WugVOEcl4WDrv9rmKBDOMExhKU5KmmLFQVg"
+                alt="" srcset="">
+            </button>
+          </a>
+
+        </div>
       </div>
     </div>
   </div>

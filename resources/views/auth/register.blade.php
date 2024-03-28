@@ -912,6 +912,22 @@ style="width: 50%;" alt="...">
             </div>
           </div>
         </form>
+
+        <div class="wrap-login100-form-btn" style="margin-top: 1rem;">
+          <a href="{{ route('login.google') }}" style="text-decoration: none">
+
+            <button type="button" class="btn btn-light w-100 d-flex"
+              style="justify-content: center;gap: 1rem; align-items: center">
+              <span style="font-weight: 400">
+                Register with Google
+              </span>
+              <img style="width: 50px;"
+                src="https://lh3.googleusercontent.com/d_S5gxu_S1P6NR1gXeMthZeBzkrQMHdI5uvXrpn3nfJuXpCjlqhLQKH_hbOxTHxFhp5WugVOEcl4WDrv9rmKBDOMExhKU5KmmLFQVg"
+                alt="" srcset="">
+            </button>
+          </a>
+
+        </div>
       </div>
     </div>
   </div>
