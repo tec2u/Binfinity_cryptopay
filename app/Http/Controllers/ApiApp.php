@@ -665,6 +665,8 @@ class ApiApp extends Controller
             return response()->json(['error' => "Invoice payed"]);
         }
 
+        $nodeOrderSave->status = "Cancelled";
+        $nodeOrderSave->save();
 
         $request->merge(['coin' => $nodeOrderSave->coin]);
         $request->merge(['value' => $nodeOrderSave->price]);
