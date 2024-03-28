@@ -297,7 +297,7 @@ class ApiApp extends Controller
 
             $wallet = $Walletcontroller->returnWallet($request->coin, $user->id);
             if (!$wallet) {
-                return response()->json(['error' => "Invalid wallet"]);
+                return response()->json(['error' => "Invalid wallet or wallet disabled"]);
             }
 
             $walletExists = $Walletcontroller->walletTxtWexists($user->id, $Walletcontroller->secured_decrypt($wallet->address));

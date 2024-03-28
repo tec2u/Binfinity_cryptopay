@@ -496,6 +496,7 @@ class WalletController extends Controller
             });
 
             $unusedWallets = Wallet::where('user_id', $user_id)
+                ->where('active', 1)
                 ->where('coin', $coin)
                 ->whereNotIn('id', $usedWallets)
                 ->get();
@@ -507,7 +508,7 @@ class WalletController extends Controller
             } else {
                 if (isset($usedWallets)) {
                     foreach (array_reverse($usedWallets) as $value) {
-                        $wallet = Wallet::where('id', $value)->first();
+                        $wallet = Wallet::where('id', $value)->where('active', 1)->first();
 
                         if (isset($wallet)) {
                             return $wallet;
@@ -519,7 +520,10 @@ class WalletController extends Controller
             }
 
         } else {
-            $myWallets = Wallet::where('user_id', $user_id)->where('coin', $coin)->get();
+            $myWallets = Wallet::where('user_id', $user_id)
+                ->where('coin', $coin)
+                ->where('active', 1)
+                ->get();
 
             $wallet = null;
 
@@ -532,7 +536,9 @@ class WalletController extends Controller
 
                 $idSorteado = $ids[array_rand($ids)];
 
-                $wallet = Wallet::where('id', $idSorteado)->first();
+                $wallet = Wallet::where('id', $idSorteado)
+                    ->where('active', 1)
+                    ->first();
             } else {
                 return false;
             }
