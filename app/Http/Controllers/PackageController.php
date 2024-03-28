@@ -7,6 +7,7 @@ use App\Models\Documents;
 use App\Models\NodeOrders;
 use App\Models\Package;
 use App\Models\PaymentLog;
+use App\Models\WalletName;
 use GuzzleHttp\Client;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -262,13 +263,33 @@ class PackageController extends Controller
                 ->where('type', 1)->
                 orderBy('id', 'desc')->first();
 
+            $order->name = "Deposit";
+
             if (isset($nodeOrders)) {
+                $order->name = $nodeOrders->coin;
                 $order->coin = $nodeOrders->coin;
                 $order->pstatus = $nodeOrders->status;
                 $order->price_crypto = $nodeOrders->price_crypto * 1;
                 $order->price_crypto_paid = $nodeOrders->price_crypto_paid * 1;
                 $order->hash = $nodeOrders->hash;
+
+                if (isset($nodeOrders->idEncrypt)) {
+                    $wallet = Wallet::where('id', $nodeOrders->id_encript)->first();
+
+                    if (isset($wallet)) {
+                        if (isset($wallet->id_name)) {
+                            $name = WalletName::where('id', $wallet->id_name)->first();
+
+                            if (isset($name)) {
+                                $order->name = $name->name;
+                            } else {
+                                $order->name = $wallet->id_name;
+                            }
+                        }
+                    }
+                }
             }
+
         }
 
 

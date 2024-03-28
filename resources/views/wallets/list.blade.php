@@ -257,7 +257,7 @@
                       <div class="wallet-header">
                         <div>
                           <img src="{{ $icons[$chave] }}" alt="">
-                          <strong>{{ $chave }}</strong>
+                          <strong>{{ $valor->name ?? $chave }}</strong>
                         </div>
                         <div class="form-check form-switch">
                           <form class="form-check form-switch" action="{{ route('wallets.editActive') }}" method="post"
