@@ -276,7 +276,7 @@
                           <strong>{{ $moviment[$chave]['dep'] - $moviment[$chave]['saq'] }}</strong>
                           <span style="font-size: .7rem">{{ $chave }}</span>
                         </div>
-                        <span style="color: #0071C1">~${{ $moviment[$chave]['dep'] - $moviment[$chave]['saq'] }}</span>
+                        <span style="color: #0071C1">~${{ $moviment[$chave]['tt'] }}</span>
                       </div>
                       <div class="wallet-footer">
                         <div class="left">

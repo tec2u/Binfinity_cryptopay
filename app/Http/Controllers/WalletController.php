@@ -53,6 +53,22 @@ class WalletController extends Controller
             'USDT_ERC20' => 2,
         ];
 
+        $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
+
+        $response = Http::withHeaders([
+            'X-CMC_PRO_API_KEY' => $api_key,
+            'Content-Type' => 'application/json',
+        ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+
+        $data = $response->json();
+
+
+        $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
+        $trc20 = 1;
+        $erc20 = 1;
+        $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
+        $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+
         foreach ($icons as $key => $value) {
             $dep = NodeOrders::where('coin', $key)
                 ->where('id_user', $user->id)
@@ -76,16 +92,30 @@ class WalletController extends Controller
                 ->get()
                 ->sum('price_crypto_payed');
 
+
+            $tt = number_format($dep, $decimals[$key], '.', '') - number_format($saq, $decimals[$key], '.', '');
+
+            $moedas = [
+                "BITCOIN" => number_format($btc * $tt, 2, '.', ''),
+                "ETH" => number_format($eth * $tt, 2, '.', ''),
+                "USDT_ERC20" => number_format($erc20 * $tt, 2, '.', ''),
+                "TRX" => number_format($trx * $tt, 2, '.', ''),
+                "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
+            ];
+
             $moviment[$key] = [
                 "dep" => number_format($dep, $decimals[$key], '.', ''),
-                "saq" => number_format($saq, $decimals[$key], '.', '')
+                "saq" => number_format($saq, $decimals[$key], '.', ''),
+                'tt' => $moedas[$key]
             ];
+
+
         }
 
         foreach ($wallets as $key => $value) {
             $lastT = NodeOrders::where('coin', $key)
                 ->where('id_user', $user->id)
-                ->where('type', 1)
+                // ->where('type', 1)
                 ->where(function ($query) {
                     $query->whereRaw('LOWER(status) = ?', ['paid'])
                         ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
@@ -95,10 +125,11 @@ class WalletController extends Controller
                 ->first();
 
             if (isset($lastT)) {
-                $lastT = $lastT->price;
+                $lastT = $lastT->price_crypto_payed ?? $lastT->price_crypto;
             } else {
                 $lastT = 0;
             }
+            $lastT = $lastT * 1;
 
             $value->name = $key;
             $name = WalletName::where('id', $value[0]->id_name)->first();
