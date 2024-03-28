@@ -273,7 +273,7 @@ class PackageController extends Controller
                 $order->price_crypto_paid = $nodeOrders->price_crypto_paid * 1;
                 $order->hash = $nodeOrders->hash;
 
-                if (isset($nodeOrders->idEncrypt)) {
+                if (isset($nodeOrders->id_encript)) {
                     $wallet = Wallet::where('id', $nodeOrders->id_encript)->first();
 
                     if (isset($wallet)) {
