@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Alert;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 
 
@@ -172,6 +173,8 @@ class HomeController extends Controller
       }
 
       $balance = 0;
+      $income = 0;
+      $spending = 0;
 
       $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
 
@@ -226,14 +229,31 @@ class HomeController extends Controller
             "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
          ];
 
+         $spendings = [
+            "BITCOIN" => number_format($btc * $dep, 2, '.', ''),
+            "ETH" => number_format($eth * $dep, 2, '.', ''),
+            "USDT_ERC20" => number_format($erc20 * $dep, 2, '.', ''),
+            "TRX" => number_format($trx * $dep, 2, '.', ''),
+            "USDT_TRC20" => number_format($trc20 * $dep, 2, '.', ''),
+         ];
+
+         $incomes = [
+            "BITCOIN" => number_format($btc * $saq, 2, '.', ''),
+            "ETH" => number_format($eth * $saq, 2, '.', ''),
+            "USDT_ERC20" => number_format($erc20 * $saq, 2, '.', ''),
+            "TRX" => number_format($trx * $saq, 2, '.', ''),
+            "USDT_TRC20" => number_format($trc20 * $saq, 2, '.', ''),
+         ];
+
          $balance += $moedas[$chave];
+         $spending += $spendings[$chave];
+         $income += $incomes[$chave];
 
       }
 
+      $merchant = Crypt::encryptString($user->login);
 
-
-
-      return view('home', compact('balance', 'n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'inactiverights'));
+      return view('home', compact('spending', 'income', 'merchant', 'balance', 'n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'inactiverights'));
    }
 
    public function welcome()

@@ -456,7 +456,7 @@
                   <img src="{{ asset('images/ecomm.png') }}" alt="">
                   <div>
                     <span>Merchant ID:</span>
-                    <strong>6567564564684564684654654</strong>
+                    <strong>{{ $merchant }}</strong>
                   </div>
                 </div>
                 <div class="info-inline">
@@ -482,11 +482,11 @@
             <div class="profile-card-bottom">
               <div class="income">
                 <span>Income</span>
-                <strong>$0.00</strong>
+                <strong>${{ $income }}</strong>
               </div>
               <div class="spending">
                 <span>Spending</span>
-                <strong>$0.00</strong>
+                <strong>${{ $spending }}</strong>
               </div>
             </div>
           </div>
