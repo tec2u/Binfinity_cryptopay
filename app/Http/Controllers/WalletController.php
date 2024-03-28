@@ -199,7 +199,7 @@ class WalletController extends Controller
 
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
-                    $wallet->name = $nn->id ?? '';
+                    $wallet->id_name = $nn->id ?? '';
                     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
 
                     if ($request->coin == "TRX" || $request->coin == "USDT_TRC20") {
@@ -223,7 +223,7 @@ class WalletController extends Controller
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
-            dd($th->getMessage());
+            // dd($th->getMessage());
             \Alert::error("Failed");
             return redirect()->route('wallets.index');
             //throw $th;
