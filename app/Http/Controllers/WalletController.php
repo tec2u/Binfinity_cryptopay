@@ -220,9 +220,11 @@ class WalletController extends Controller
             }
             // dd($wallets);
 
+            \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
             // dd($th->getMessage());
+            \Alert::success("Failed");
             return redirect()->route('wallets.index');
             //throw $th;
         }
