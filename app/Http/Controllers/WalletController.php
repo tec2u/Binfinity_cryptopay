@@ -223,8 +223,8 @@ class WalletController extends Controller
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
-            // dd($th->getMessage());
-            \Alert::success("Failed");
+            dd($th->getMessage());
+            \Alert::error("Failed");
             return redirect()->route('wallets.index');
             //throw $th;
         }
