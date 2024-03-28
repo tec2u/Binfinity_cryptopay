@@ -86,6 +86,7 @@ class LoginController extends Controller
                 return redirect()->intended('home');
             }
         } catch (\Throwable $th) {
+            dd($th);
             return redirect()->to('/login');
         }
 
