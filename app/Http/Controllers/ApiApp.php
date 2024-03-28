@@ -7,6 +7,7 @@ use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\Package;
 use App\Models\Rede;
+use App\Models\SystemConf;
 use App\Models\User;
 use App\Models\Wallet;
 use Carbon\Carbon;
@@ -26,6 +27,12 @@ class ApiApp extends Controller
     {
         try {
             //code...
+            $system = SystemConf::first();
+            if (isset($system)) {
+                if ($system->all == 0 || $system->all == 1 && $system->app == 0) {
+                    return response()->json(['error' => "System disabled"]);
+                }
+            }
 
             $token = $request->header('Authorization');
 
@@ -80,6 +87,7 @@ class ApiApp extends Controller
             return response()->json(['error' => $validatedData->errors()], 422);
         }
 
+
         $ip = $request->ip();
 
         $tryFailed = IpAccessApi::where('operation', 'api/app/validate/login/failed')->where('ip', $ip)->whereDate('created_at', Carbon::today())->get();
@@ -95,6 +103,13 @@ class ApiApp extends Controller
         $ipRequest->operation = "api/app/validate/login";
         $ipRequest->request = json_encode($requestFormated);
         $ipRequest->save();
+
+        $system = SystemConf::first();
+        if (isset($system)) {
+            if ($system->all == 0 || $system->all == 1 && $system->app == 0) {
+                return response()->json(['error' => "System disabled"]);
+            }
+        }
 
         $credentials = $request->only('email', 'password');
 
@@ -161,6 +176,13 @@ class ApiApp extends Controller
             $ipRequest->request = json_encode($requestFormated);
             $ipRequest->save();
 
+            $system = SystemConf::first();
+            if (isset($system)) {
+                if ($system->all == 0 || $system->all == 1 && $system->app == 0) {
+                    return response()->json(['error' => "System disabled"]);
+                }
+            }
+
             $exists = User::where('email', $request->email)->orWhere('login', $request->login)->first();
 
             if (isset($exists)) {
@@ -226,6 +248,13 @@ class ApiApp extends Controller
     public function createInvoice(Request $request)
     {
         try {
+            $system = SystemConf::first();
+            if (isset($system)) {
+                if ($system->all == 0 || $system->all == 1 && $system->app == 0) {
+                    return response()->json(['error' => "System disabled"]);
+                }
+            }
+
             $user = $this->getUser($request);
             if ($user == false) {
                 return response()->json(['error' => "Invalid token"]);

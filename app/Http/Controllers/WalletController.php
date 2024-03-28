@@ -9,6 +9,7 @@ use App\Models\IpWhitelist;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\PaymentLog;
+use App\Models\SystemConf;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletName;
@@ -325,14 +326,19 @@ class WalletController extends Controller
             return false;
         }
 
-        // return "testando";
-
         $ip = $request->ip();
         $ipRequest = new IpAccessApi;
         $ipRequest->ip = $ip;
         $ipRequest->operation = "api/web/get/wallet";
         $ipRequest->request = json_encode($requestFormated);
         $ipRequest->save();
+
+        $system = SystemConf::first();
+        if (isset($system)) {
+            if ($system->all == 0 || $system->all == 1 && $system->api == 0) {
+                return false;
+            }
+        }
 
         $ipAllowed = IpAllowedApi::where('ip', $ip)->first();
         if (!isset($ipAllowed)) {
@@ -469,6 +475,13 @@ class WalletController extends Controller
 
     public function returnWallet($coin, $user_id)
     {
+        $system = SystemConf::first();
+        if (isset($system)) {
+            if ($system->all == 0 || $system->all == 1 && $system->node == 0) {
+                return false;
+            }
+        }
+
         $tempoLimite = Carbon::now()->subSeconds(10);
 
         $lastNode = NodeOrders::where('coin', $coin)

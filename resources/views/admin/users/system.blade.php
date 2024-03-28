@@ -151,7 +151,7 @@
                 </div>
 
                 <div class="col-md-6 mb-6">
-                  <label for="inputState5">Invoice EXTERNAL</label>
+                  <label for="inputState5">INVOICE EXTERNAL</label>
                   <div class="input-group">
                     <select id="external" name="external"
                       class="form-control form-control-lg @error('external') is-invalid @enderror">

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\IpAccessApi;
+use App\Models\SystemConf;
 use Carbon\Carbon;
 use Closure;
 use App\Models\User;
@@ -21,6 +22,13 @@ class TokenAuthentication
             }
 
             $token = $request->bearerToken();
+
+            $system = SystemConf::first();
+            if (isset($system)) {
+                if ($system->all == 0 || $system->all == 1 && $system->app == 0) {
+                    return response()->json(['error' => "System disabled"]);
+                }
+            }
 
             // $token = $request->header('Authorization');
 

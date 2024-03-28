@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OrderPackage;
 use App\Models\Package;
+use App\Models\SystemConf;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Traits\CustomLogTrait;
@@ -99,8 +100,16 @@ class PaymentController extends Controller
         $user = User::find(auth()->user()->id);
         $myWallets = Wallet::where('user_id', $user->id)->count();
 
-        if ($myWallets < 10) {
-            Alert::success('Walltes not found, please create in menu > All My Allocated Wallets ');
+        $system = SystemConf::first();
+        if (isset($system)) {
+            if ($system->all == 0 || $system->all == 1 && $system->internal == 0) {
+                Alert::error('System disabled ');
+                return redirect()->back();
+            }
+        }
+
+        if ($myWallets < 5) {
+            Alert::error('Wallets not found, please create in menu > All My Allocated Wallets ');
             return redirect()->back();
         }
 

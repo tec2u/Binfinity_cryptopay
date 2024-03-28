@@ -7,6 +7,7 @@ use App\Models\Documents;
 use App\Models\NodeOrders;
 use App\Models\Package;
 use App\Models\PaymentLog;
+use App\Models\SystemConf;
 use App\Models\WalletName;
 use GuzzleHttp\Client;
 use Illuminate\Support\Carbon;
@@ -364,6 +365,13 @@ class PackageController extends Controller
 
     public function payCrypto(Request $request)
     {
+        $system = SystemConf::first();
+        if (isset($system)) {
+            if ($system->all == 0 || $system->all == 1 && $system->internal == 0) {
+                return redirect()->back();
+            }
+        }
+
         $order = OrderPackage::where('id', $request->id)->first();
 
         $Walletcontroller = new WalletController;
@@ -467,6 +475,13 @@ class PackageController extends Controller
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
             "api_url" => "$node/api/create/order"
         ];
+
+        $system = SystemConf::first();
+        if (isset($system)) {
+            if ($system->all == 0 || $system->all == 1 && $system->node == 0) {
+                return false;
+            }
+        }
 
 
         $curl = curl_init();
