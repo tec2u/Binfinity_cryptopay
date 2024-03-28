@@ -212,14 +212,7 @@ class ApiApp extends Controller
                 'country' => $request->country,
                 'city' => $request->city,
                 'last_name' => $request->last_name,
-                // 'telephone' => $data['telephone'],
-                // 'gender'   => $data['gender'],
-                // 'address1' => $data['address1'],
-                // 'address2' => $data['address2'],
-                // 'postcode' => $data['postcode'],
-                // 'state'    => $data['state'],
-                // 'birthday' => date('Y-m-d', strtotime($data['birthday'])),
-                // 'id_card' => $data['id_card']
+
             ]);
 
 

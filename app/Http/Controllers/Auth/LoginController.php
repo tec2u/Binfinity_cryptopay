@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Auth;
 use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -47,11 +50,44 @@ class LoginController extends Controller
 
     public function handleGoogleCallback()
     {
-        $user = Socialite::driver('google')->user();
-        dd($user);
+        try {
+            //code...
 
-        // Lógica de autenticação do usuário aqui
+            $user = Socialite::driver('google')->user();
+            // dd($user);
 
-        return redirect()->to('/dashboard');
+            $master = User::where('login', 'master')->first();
+
+            $exists = User::where('email', $user->email)->first();
+
+            if (!isset($exists)) {
+                $createUser = User::create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'login' => $user->email,
+                    'activated' => 0,
+                    'password' => Hash::make($user->email),
+                    'financial_password' => Hash::make($user->email),
+                    'recommendation_user_id' => $master->id,
+                    'special_comission' => 1,
+                    'special_comission_active' => 0,
+                    'cell' => '',
+                    'country' => '',
+                    'city' => '',
+                    'last_name' => $user->user->family_name,
+                ]);
+
+                $user = User::find($createUser->id);
+                Auth::login($user);
+                return redirect()->intended('home');
+
+            } else {
+                Auth::login($exists);
+                return redirect()->intended('home');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->to('/login');
+        }
+
     }
 }
