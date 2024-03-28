@@ -664,6 +664,15 @@ class ApiApp extends Controller
             return response()->json(['error' => "Invoice not found"]);
         }
 
+        if (
+            strtolower($nodeOrderSave->status) == 'paid' ||
+            strtolower($nodeOrderSave->status) == 'overpaid' ||
+            strtolower($nodeOrderSave->status) == 'underpaid'
+        ) {
+            return response()->json(['error' => "Invoice payed"]);
+        }
+
+
         $request->merge(['coin' => $nodeOrderSave->coin]);
         $request->merge(['value' => $nodeOrderSave->price]);
 
