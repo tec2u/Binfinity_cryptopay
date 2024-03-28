@@ -285,7 +285,8 @@
                         </div>
                         <div class="right">
                           <span>Last Transaction</span>
-                          <strong>${{ $valor->lastT }}</strong>
+                          <strong>{{ $valor->lastT }} <strong style="font-size: .5rem"> {{ $chave }}
+                            </strong></strong>
                         </div>
                       </div>
                     </div>

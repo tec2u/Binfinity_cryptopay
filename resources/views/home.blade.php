@@ -446,7 +446,7 @@
                   <strong>{{ ucwords(auth()->user()->name) }}</strong>
                   <div>
                     <span>Total balance</span>
-                    <strong>*****</strong>
+                    <strong>${{ $balance }}</strong>
                   </div>
                 </div>
               </div>

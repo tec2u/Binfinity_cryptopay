@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Banco;
 
+use App\Models\NodeOrders;
 use App\Models\Package;
 use App\Models\User;
 
 use App\Models\OrderPackage;
+use App\Models\Wallet;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Alert;
+use Illuminate\Support\Facades\Http;
 
 
 class HomeController extends Controller
@@ -168,8 +171,69 @@ class HomeController extends Controller
          }
       }
 
+      $balance = 0;
 
-      return view('home', compact('n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'inactiverights'));
+      $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
+
+      $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
+
+      $response = Http::withHeaders([
+         'X-CMC_PRO_API_KEY' => $api_key,
+         'Content-Type' => 'application/json',
+      ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+
+      $data = $response->json();
+
+
+      $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
+      $trc20 = 1;
+      $erc20 = 1;
+      $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
+      $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+
+
+      foreach ($wallets as $chave => $valor) {
+
+         $dep = NodeOrders::where('id_user', $user->id)
+            ->where('coin', $chave)
+            ->where(function ($query) {
+               $query->whereRaw('LOWER(status) = ?', ['paid'])
+                  ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+                  ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+            })
+            ->where('type', 1)
+            ->get()
+            ->sum('price_crypto_payed');
+
+         $saq = NodeOrders::where('id_user', $user->id)
+            ->where('coin', $chave)
+            ->where(function ($query) {
+               $query->whereRaw('LOWER(status) = ?', ['paid'])
+                  ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+                  ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+            })
+            ->where('type', 2)
+            ->get()
+            ->sum('price_crypto_payed');
+
+         $tt = $dep - $saq;
+
+         $moedas = [
+            "BITCOIN" => number_format($btc * $tt, 2, '.', ''),
+            "ETH" => number_format($eth * $tt, 2, '.', ''),
+            "USDT_ERC20" => number_format($erc20 * $tt, 2, '.', ''),
+            "TRX" => number_format($trx * $tt, 2, '.', ''),
+            "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
+         ];
+
+         $balance += $moedas[$chave];
+
+      }
+
+
+
+
+      return view('home', compact('balance', 'n_pago', 'packages', 'orderpackages', 'name', 'user', 'data', 'label', 'datasaida', 'totalbanco', 'bonusdaily', 'saque', 'inactiverights'));
    }
 
    public function welcome()
