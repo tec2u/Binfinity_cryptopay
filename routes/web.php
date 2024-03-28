@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\VideoAdminController;
 use App\Http\Controllers\Admin\DocumentsAdminController;
 use App\Http\Controllers\ApiApp;
 use App\Http\Controllers\ApiDoc;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\HistoricScoreController;
@@ -51,6 +52,13 @@ use Illuminate\Support\Facades\Config;
 */
 
 #region pagina inicial
+
+Route::controller(LoginController::class)->group(function () {
+   Route::get('/login/google', 'redirectToGoogle');
+   Route::get('/login/google/callback', 'handleGoogleCallback');
+});
+
+
 
 Route::get('setlocale/{locale}', function ($locale) {
    if (in_array($locale, Config::get('app.locales'))) {
