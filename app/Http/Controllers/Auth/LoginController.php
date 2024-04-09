@@ -9,6 +9,7 @@ use Auth;
 use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -86,4 +87,5 @@ class LoginController extends Controller
         }
 
     }
+
 }

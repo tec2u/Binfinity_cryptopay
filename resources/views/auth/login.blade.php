@@ -22,10 +22,12 @@
     }
   </style>
 
+
+
   <div id="loginform" class="limiter">
     <div class="container-login100">
       <div class="wrap-login100" style="background-color: #000000">
-        <form class="login100-form validate-form" method="POST" action="{{ route('login') }}">
+        <form class="login100-form validate-form" id="form-login" method="POST" action="{{ route('login') }}">
           @csrf
           <span class="login100-form-title p-b-48">
             <img class="imagetest" style="filter: brightness(0) invert(1);" src="{{ asset('/images/tigle_logo2.png') }}"
@@ -61,6 +63,11 @@
             @enderror
           </div>
 
+          {{-- <button class="g-recaptcha" data-sitekey="6Lfr9LQpAAAAAGcWC8VLY-hK3Koyr_0Acj8JqFwT" data-callback='onSubmit'
+            data-action='submit'>
+            Submit
+          </button> --}}
+
           <div class="contact100-form-checkbox">
             <div class="input100">
               <input class="form-check-input checkcheck" type="checkbox" name="remember" id="remember"
@@ -75,7 +82,8 @@
           <div class="container-login100-form-btn">
             <div class="wrap-login100-form-btn">
               <div class="login100-form-bgbtn "></div>
-              <button type="submit" class="login100-form-btn btn btn-primary rounded-pill">
+              <button type="submit" class="login100-form-btn btn btn-primary rounded-pill g-recaptcha"
+                data-sitekey="6Lfr9LQpAAAAAGcWC8VLY-hK3Koyr_0Acj8JqFwT" data-callback='onSubmit' data-action='submit'>
                 {{ __('Login') }}
               </button>
             </div>
@@ -83,12 +91,12 @@
 
 
             <!-- <div class="text-center p-t-115 mt-40">
-                                                                                  @if (Route::has('password.request'))
+                                                                                                                        @if (Route::has('password.request'))
   <a class="txt2" href="{{ route('password.request') }}" style="color: #fff">
-                                                                                      {{ __('Forgot Your Password?') }}
-                                                                                    </a>
+                                                                                                                            {{ __('Forgot Your Password?') }}
+                                                                                                                          </a>
   @endif
-                                                                                </div> -->
+                                                                                                                      </div> -->
           </div>
           <div class="text-center p-t-115">
             <span class="txt1" style="color: #fff">
@@ -102,7 +110,7 @@
         </form>
 
         <div class="wrap-login100-form-btn" style="margin-top: 1rem;">
-          <a href="{{ route('login.google') }}" style="text-decoration: none">
+          {{-- <a href="{{ route('login.google') }}" style="text-decoration: none">
 
             <button type="button" class="btn btn-light w-100 d-flex" style="justify-content: center;gap: 1rem">
               <span style="font-weight: 400">
@@ -112,12 +120,22 @@
                 src="https://lh3.googleusercontent.com/d_S5gxu_S1P6NR1gXeMthZeBzkrQMHdI5uvXrpn3nfJuXpCjlqhLQKH_hbOxTHxFhp5WugVOEcl4WDrv9rmKBDOMExhKU5KmmLFQVg"
                 alt="" srcset="">
             </button>
-          </a>
+          </a> --}}
+
 
         </div>
       </div>
     </div>
   </div>
+
+
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lfr9LQpAAAAAGcWC8VLY-hK3Koyr_0Acj8JqFwT"></script>
+  <!-- Replace the variables below. -->
+  <script>
+    function onSubmit(token) {
+      document.getElementById("form-login").submit();
+    }
+  </script>
 
   <script>
     $('#flash-overlay-modal').modal();
