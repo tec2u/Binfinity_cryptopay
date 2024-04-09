@@ -35,7 +35,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.7/flipclock.js"></script>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-
+  <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
 
 </head>
 

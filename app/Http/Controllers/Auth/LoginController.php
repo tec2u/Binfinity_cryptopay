@@ -9,7 +9,8 @@ use Auth;
 use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
@@ -88,4 +89,31 @@ class LoginController extends Controller
 
     }
 
+    public function recaptcha(Request $request)
+    {
+        $request->validate([
+            'g-recaptcha-response' => 'required',
+        ]);
+
+        $token = $request->get('g-recaptcha-response');
+
+
+        $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
+        $data = [
+            "event" => [
+                "token" => $token,
+                "expectedAction" => "LOGIN",
+                "siteKey" => env('RECAPTCHA_SITE_KEY'),
+            ]
+        ];
+        $response = Http::post($url, $data);
+        $body = json_decode($response->body());
+
+        if ($body->tokenProperties->valid == true) {
+            return $this->login($request);
+        }
+
+        return redirect()->back();
+
+    }
 }

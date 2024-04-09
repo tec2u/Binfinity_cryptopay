@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -218,6 +219,34 @@ class RegisterController extends Controller
       }
       return $user;
       // }
+   }
+
+   public function registerRecaptcha(Request $request)
+   {
+      $request->validate([
+         'g-recaptcha-response' => 'required',
+      ]);
+
+      $token = $request->get('g-recaptcha-response');
+
+
+      $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
+      $data = [
+         "event" => [
+            "token" => $token,
+            "expectedAction" => "LOGIN",
+            "siteKey" => env('RECAPTCHA_SITE_KEY'),
+         ]
+      ];
+      $response = Http::post($url, $data);
+      $body = $response->body();
+      $body = json_decode($response->body());
+
+      if ($body->tokenProperties->valid == true) {
+         return $this->register($request);
+      }
+
+      return redirect()->back();
    }
 
 

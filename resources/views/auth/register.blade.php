@@ -49,7 +49,7 @@
   <div class="limiter py-5">
     <div class="container-login100">
       <div class="wrap-login100" style="width: 800px;">
-        <form class="login100-form validate-form" method="POST" action="{{ route('register') }}">
+        <form class="login100-form validate-form" method="POST" action="{{ route('registerRecaptcha') }}">
           @csrf
           <span class="login100-form-title p-b-48">
             <img class="imagetest2" style="filter: brightness(0) invert(1);" src="{{ asset('images/tigle_logo2.png') }}"
@@ -903,6 +903,8 @@ style="width: 50%;" alt="...">
                                                                             </div> -->
 </div>
 </div> --}}
+          <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" data-action="LOGIN"></div>
+
           <div class="container-login100-form-btn">
             <div class="wrap-login100-form-btn">
               <div class="login100-form-bgbtn"></div>
@@ -913,7 +915,7 @@ style="width: 50%;" alt="...">
           </div>
         </form>
 
-        <div class="wrap-login100-form-btn" style="margin-top: 1rem;">
+        {{-- <div class="wrap-login100-form-btn" style="margin-top: 1rem;">
           <a href="{{ route('login.google') }}" style="text-decoration: none">
 
             <button type="button" class="btn btn-light w-100 d-flex"
@@ -926,8 +928,8 @@ style="width: 50%;" alt="...">
                 alt="" srcset="">
             </button>
           </a>
+        </div> --}}
 
-        </div>
       </div>
     </div>
   </div>

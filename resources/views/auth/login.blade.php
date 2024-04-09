@@ -4,6 +4,8 @@
     <source src="/videos/tigervideo1.mp4" type="video/mp4">
   </video>
 
+
+
   @include('flash::message')
 
   <style>
@@ -22,12 +24,10 @@
     }
   </style>
 
-
-
   <div id="loginform" class="limiter">
     <div class="container-login100">
       <div class="wrap-login100" style="background-color: #000000">
-        <form class="login100-form validate-form" id="form-login" method="POST" action="{{ route('login') }}">
+        <form class="login100-form validate-form" id="login-form" method="POST" action="{{ route('recaptcha') }}">
           @csrf
           <span class="login100-form-title p-b-48">
             <img class="imagetest" style="filter: brightness(0) invert(1);" src="{{ asset('/images/tigle_logo2.png') }}"
@@ -63,10 +63,7 @@
             @enderror
           </div>
 
-          {{-- <button class="g-recaptcha" data-sitekey="6Lfr9LQpAAAAAGcWC8VLY-hK3Koyr_0Acj8JqFwT" data-callback='onSubmit'
-            data-action='submit'>
-            Submit
-          </button> --}}
+          <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" data-action="LOGIN"></div>
 
           <div class="contact100-form-checkbox">
             <div class="input100">
@@ -82,8 +79,7 @@
           <div class="container-login100-form-btn">
             <div class="wrap-login100-form-btn">
               <div class="login100-form-bgbtn "></div>
-              <button type="submit" class="login100-form-btn btn btn-primary rounded-pill g-recaptcha"
-                data-sitekey="6Lfr9LQpAAAAAGcWC8VLY-hK3Koyr_0Acj8JqFwT" data-callback='onSubmit' data-action='submit'>
+              <button type="submit" class="login100-form-btn btn btn-primary rounded-pill">
                 {{ __('Login') }}
               </button>
             </div>
@@ -91,12 +87,12 @@
 
 
             <!-- <div class="text-center p-t-115 mt-40">
-                                                                                                                        @if (Route::has('password.request'))
+                                                                                          @if (Route::has('password.request'))
   <a class="txt2" href="{{ route('password.request') }}" style="color: #fff">
-                                                                                                                            {{ __('Forgot Your Password?') }}
-                                                                                                                          </a>
+                                                                                              {{ __('Forgot Your Password?') }}
+                                                                                            </a>
   @endif
-                                                                                                                      </div> -->
+                                                                                        </div> -->
           </div>
           <div class="text-center p-t-115">
             <span class="txt1" style="color: #fff">
@@ -122,19 +118,18 @@
             </button>
           </a> --}}
 
-
         </div>
       </div>
     </div>
   </div>
 
-
-  <script src="https://www.google.com/recaptcha/enterprise.js?render=6Lfr9LQpAAAAAGcWC8VLY-hK3Koyr_0Acj8JqFwT"></script>
-  <!-- Replace the variables below. -->
   <script>
-    function onSubmit(token) {
-      document.getElementById("form-login").submit();
-    }
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+      if (grecaptcha.getResponse() == "") {
+        event.preventDefault(); // Impede o envio do formulário
+        alert("Please, confirm captcha.");
+      }
+    });
   </script>
 
   <script>
