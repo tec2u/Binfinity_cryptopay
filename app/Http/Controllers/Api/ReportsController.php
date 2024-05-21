@@ -43,13 +43,13 @@ class ReportsController extends Controller
                         ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
                         ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
                 })
-                ->selectRaw('YEAR(createdAt) as year, MONTH(createdAt) as month, SUM(price) as total_price')
+                ->selectRaw('YEAR(createdAt) as date, MONTH(createdAt) as month, SUM(price) as total')
                 ->groupBy(DB::raw('YEAR(createdAt)'), DB::raw('MONTH(createdAt)'))
                 ->get();
 
             foreach ($transactions as $trans) {
                 $date = Carbon::create(null, $trans->month, 1);
-                $trans->month_name = $date->format('M');
+                $trans->month = $date->format('M');
             }
 
             return response()->json([
