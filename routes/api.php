@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReportsController;
+use App\Http\Controllers\Api\SupportController;
 use App\Http\Controllers\ApiApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,12 @@ Route::prefix('/app')->name('api.app')->group(function () {
     Route::controller(ReportsController::class)->group(function () {
         Route::middleware('token.auth')->group(function () {
             Route::post('/reports/home', 'reportsHome')->name('.reportsHome');
+        });
+    });
+
+    Route::controller(SupportController::class)->group(function () {
+        Route::middleware('token.auth')->group(function () {
+            Route::post('/support/list', 'supportList')->name('.supportList');
         });
     });
 });
