@@ -37,7 +37,11 @@ class ReportsController extends Controller
 
             $transactions = NodeOrders::where('id_user', $user->id)
                 ->where('type', 1)
-                ->whereRaw('LOWER(status) = ?', ['paid'])
+                ->where(function ($query) {
+                    $query->whereRaw('LOWER(status) = ?', ['paid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+                        ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+                })
                 ->selectRaw('YEAR(createdAt) as year, MONTH(createdAt) as month, SUM(price) as total_price')
                 ->groupBy(DB::raw('YEAR(createdAt)'), DB::raw('MONTH(createdAt)'))
                 ->get();
