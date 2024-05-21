@@ -7,6 +7,7 @@ use App\Models\NodeOrders;
 use App\Traits\ApiUser;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class ReportsController extends Controller
 {
@@ -45,6 +46,11 @@ class ReportsController extends Controller
                 ->selectRaw('YEAR(createdAt) as year, MONTH(createdAt) as month, SUM(price) as total_price')
                 ->groupBy(DB::raw('YEAR(createdAt)'), DB::raw('MONTH(createdAt)'))
                 ->get();
+
+            foreach ($transactions as $trans) {
+                $date = Carbon::create(null, $trans->month, 1);
+                $trans->month_name = $date->format('M');
+            }
 
             return response()->json([
                 'per_status' => $percentageByStatus,
