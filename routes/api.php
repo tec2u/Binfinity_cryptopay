@@ -50,6 +50,7 @@ Route::prefix('/app')->name('api.app')->group(function () {
     Route::controller(SupportController::class)->group(function () {
         Route::middleware('token.auth')->group(function () {
             Route::post('/support/list', 'supportList')->name('.supportList');
+            Route::post('/support/store', 'supportStore')->name('.supportStore');
         });
     });
 });
