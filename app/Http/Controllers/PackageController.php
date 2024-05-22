@@ -600,7 +600,9 @@ class PackageController extends Controller
             ) {
                 // price_crypto_payed
                 $payment->payment = $requestFormated["status"];
-                $payment->price_crypto_paid = $requestFormated["price_crypto_payed"];
+                if (isset($requestFormated["price_crypto_payed"])) {
+                    $payment->price_crypto_paid = $requestFormated["price_crypto_payed"];
+                }
                 $payment->payment_status = 1;
                 $payment->status = 1;
             }
