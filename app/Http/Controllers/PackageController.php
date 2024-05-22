@@ -324,7 +324,7 @@ class PackageController extends Controller
             "USDT_ERC20" => "api/create/wallet/ethereum",
             "TRX" => "api/create/wallet/tron",
             "ETH" => "api/create/wallet/ethereum",
-            "SOL" => "api/create/wallet/ethereum"
+            "SOL" => "api/create/wallet/sol"
         ];
 
         $urlTotal = env('SERV_NODE') . '/' . $urls[$mt];
