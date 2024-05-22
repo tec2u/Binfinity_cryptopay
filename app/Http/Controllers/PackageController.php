@@ -563,10 +563,6 @@ class PackageController extends Controller
             if (strtolower($requestFormated["status"]) == 'paid') {
                 $payment->payment_status = 1;
                 $payment->status = 1;
-
-                if ($payment->package_id == 20) {
-                    $this->sendPostPayOrder($payment->id);
-                }
             }
 
             if (strtolower($requestFormated["status"]) == 'cancelled' || strtolower($requestFormated["status"]) == 'expired') {
@@ -602,7 +598,9 @@ class PackageController extends Controller
                 || strtolower($requestFormated["status"]) == 'overpaid'
                 || strtolower($requestFormated["status"]) == 'underpaid'
             ) {
+                // price_crypto_payed
                 $payment->payment = $requestFormated["status"];
+                $payment->price_crypto_paid = $requestFormated["price_crypto_payed"];
                 $payment->payment_status = 1;
                 $payment->status = 1;
             }
@@ -645,57 +643,6 @@ class PackageController extends Controller
 
         return response("OK", 200);
     }
-
-    public function sendPostPayOrder($id_order)
-    {
-
-        $client = new \GuzzleHttp\Client();
-        $Orderpackage = OrderPackage::find($id_order);
-
-        $headers = [
-            'Content-Type' => 'application/x-www-form-urlencoded',
-            'Accept' => 'application/json'
-        ];
-
-        $data = [
-            "type" => "bonificacao",
-            "param" => "GeraBonusPedidoInterno",
-            "idpedido" => "$id_order",
-            "prod" => 1
-        ];
-
-        $url = 'https://ai-nextlevel.com/public/compensacao/bonificacao.php';
-
-        try {
-            $resposta = $client->post($url, [
-                'form_params' => $data,
-                // 'headers' => $headers,
-
-            ]);
-
-            $statusCode = $resposta->getStatusCode();
-            $body = $resposta->getBody()->getContents();
-
-            parse_str($body, $responseData);
-
-            $log = new CustomLog;
-            $log->content = json_encode($responseData);
-            $log->user_id = $Orderpackage->user_id;
-            $log->operation = $data['type'] . "/" . $data['param'] . "/" . $data['idpedido'];
-            $log->controller = "app/controller/admin/PackageAdminController";
-            $log->http_code = 200;
-            $log->route = "payd order by admin";
-            $log->status = "SUCCESS";
-            $log->save();
-
-        } catch (\Throwable $th) {
-            return false;
-        }
-
-
-
-    }
-
     public function invoice($id)
     {
         if (!$id) {
