@@ -54,7 +54,9 @@
     if ($order[0]['coin'] == 'USDT_ERC20') {
         $img = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
     }
-
+    if ($order[0]['coin'] == 'SOL') {
+        $img = 'https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png';
+    }
   @endphp
 
   <!-- partial:index.partial.html -->

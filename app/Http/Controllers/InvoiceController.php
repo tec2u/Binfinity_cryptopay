@@ -97,7 +97,8 @@ class InvoiceController extends Controller
                 "ETH",
                 "TRX",
                 "USDT_TRC20",
-                "USDT_ERC20"
+                "USDT_ERC20",
+                "SOL"
             ];
 
             if (!in_array(strtoupper($request->method), $metodos)) {
@@ -135,7 +136,7 @@ class InvoiceController extends Controller
                 $response = Http::withHeaders([
                     'X-CMC_PRO_API_KEY' => $api_key,
                     'Content-Type' => 'application/json',
-                ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+                ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
 
                 $data = $response->json();
                 // dd($data['data']['TRX'][0]['quote']['USD']['price']);
@@ -151,6 +152,7 @@ class InvoiceController extends Controller
                 $erc20 = 1;
                 $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
                 $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+                $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
 
                 $moedas = [
                     "BITCOIN" => number_format($price_order / $btc, 5),
@@ -158,6 +160,7 @@ class InvoiceController extends Controller
                     "USDT_ERC20" => number_format($price_order / $erc20, 2),
                     "TRX" => number_format($price_order / $trx, 2),
                     "USDT_TRC20" => number_format($price_order / $trc20, 2),
+                    "SOL" => number_format($price_order / $sol, 3),
                 ];
             }
 

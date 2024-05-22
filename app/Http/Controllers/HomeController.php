@@ -183,7 +183,7 @@ class HomeController extends Controller
       $response = Http::withHeaders([
          'X-CMC_PRO_API_KEY' => $api_key,
          'Content-Type' => 'application/json',
-      ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+      ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
 
       $data = $response->json();
 
@@ -193,6 +193,7 @@ class HomeController extends Controller
       $erc20 = 1;
       $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
       $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+      $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
 
 
       foreach ($wallets as $chave => $valor) {
@@ -227,6 +228,7 @@ class HomeController extends Controller
             "USDT_ERC20" => number_format($erc20 * $tt, 2, '.', ''),
             "TRX" => number_format($trx * $tt, 2, '.', ''),
             "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
+            "SOL" => number_format($sol * $tt, 3, '.', ''),
          ];
 
          $incomes = [
@@ -235,6 +237,7 @@ class HomeController extends Controller
             "USDT_ERC20" => number_format($erc20 * $dep, 2, '.', ''),
             "TRX" => number_format($trx * $dep, 2, '.', ''),
             "USDT_TRC20" => number_format($trc20 * $dep, 2, '.', ''),
+            "SOL" => number_format($sol * $dep, 2, '.', ''),
          ];
 
          $spendings = [
@@ -243,6 +246,7 @@ class HomeController extends Controller
             "USDT_ERC20" => number_format($erc20 * $saq, 2, '.', ''),
             "TRX" => number_format($trx * $saq, 2, '.', ''),
             "USDT_TRC20" => number_format($trc20 * $saq, 2, '.', ''),
+            "SOL" => number_format($sol * $saq, 2, '.', ''),
          ];
 
          $balance += $moedas[$chave];

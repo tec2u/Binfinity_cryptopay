@@ -72,6 +72,7 @@
                         <option value="TRX">TRX</option>
                         {{-- <option value="ETH">ETH</option> --}}
                         <option value="USDT_TRC20">USDT TRC20</option>
+                        <option value="SOL">SOL</option>
                       </select>
                       <button type="submit" class="btn btn-success" style="margin-top: 1rem">Choose</button>
                     </form>

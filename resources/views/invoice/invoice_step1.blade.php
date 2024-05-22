@@ -52,6 +52,7 @@
             <option value="TRX">TRX</option>
             <option value="USDT_TRC20">USDT TRC20</option>
             <option value="USDT_ERC20">USDT ERC20</option>
+            <option value="SOL">SOL</option>
           </select>
         </div>
       </div>
@@ -121,6 +122,7 @@
                   <option value="TRX">TRX</option>
                   <option value="USDT_TRC20">USDT TRC20</option>
                   <option value="USDT_ERC20">USDT ERC20</option>
+                  <option value="SOL">SOL</option>
                 </select>
               </div>
             </div>

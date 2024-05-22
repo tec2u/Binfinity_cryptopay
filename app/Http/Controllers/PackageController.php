@@ -137,7 +137,7 @@ class PackageController extends Controller
             $response = Http::withHeaders([
                 'X-CMC_PRO_API_KEY' => $api_key,
                 'Content-Type' => 'application/json',
-            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
 
             $data = $response->json();
 
@@ -152,6 +152,7 @@ class PackageController extends Controller
             $erc20 = 1;
             $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
             $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+            $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
 
             $moedas = [
                 // "BITCOIN" => number_format($price_order / $btc, 5),
@@ -159,6 +160,7 @@ class PackageController extends Controller
                 "USDT_ERC20" => number_format($price_order / $erc20, 2),
                 "TRX" => number_format($price_order / $trx, 2),
                 "USDT_TRC20" => number_format($price_order / $trc20, 2),
+                "SOL" => number_format($price_order / $sol, 3),
             ];
 
         }
@@ -321,7 +323,8 @@ class PackageController extends Controller
             "BITCOIN" => "api/create/wallet/btc",
             "USDT_ERC20" => "api/create/wallet/ethereum",
             "TRX" => "api/create/wallet/tron",
-            "ETH" => "api/create/wallet/ethereum"
+            "ETH" => "api/create/wallet/ethereum",
+            "SOL" => "api/create/wallet/ethereum"
         ];
 
         $urlTotal = env('SERV_NODE') . '/' . $urls[$mt];
@@ -350,6 +353,14 @@ class PackageController extends Controller
                 "privateKey" => $result->Key,
                 "address" => $result->Address,
                 "mnemonic" => $result->Mnemonic,
+            ];
+        }
+
+        if ($mt == "SOL") {
+            return [
+                "privateKey" => $result->key,
+                "address" => $result->address,
+                "mnemonic" => $result->address,
             ];
         }
 

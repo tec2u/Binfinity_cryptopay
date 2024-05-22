@@ -37,6 +37,7 @@ class WalletController extends Controller
         $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
 
         $icons = [
+            'SOL' => 'https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png',
             // 'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
             'TRX' => 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029',
             // 'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
@@ -52,6 +53,7 @@ class WalletController extends Controller
             'ETH' => 6,
             'USDT_TRC20' => 2,
             'USDT_ERC20' => 2,
+            'SOL' => 3,
         ];
 
         $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
@@ -59,16 +61,16 @@ class WalletController extends Controller
         $response = Http::withHeaders([
             'X-CMC_PRO_API_KEY' => $api_key,
             'Content-Type' => 'application/json',
-        ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT');
+        ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,sol');
 
         $data = $response->json();
-
 
         $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
         $trc20 = 1;
         $erc20 = 1;
         $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
         $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+        $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
 
         foreach ($icons as $key => $value) {
             $dep = NodeOrders::where('coin', $key)
@@ -102,6 +104,7 @@ class WalletController extends Controller
                 "USDT_ERC20" => number_format($erc20 * $tt, 2, '.', ''),
                 "TRX" => number_format($trx * $tt, 2, '.', ''),
                 "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
+                "SOL" => number_format($sol * $tt, 2, '.', ''),
             ];
 
             $moviment[$key] = [
@@ -577,7 +580,7 @@ class WalletController extends Controller
 
         $wallets = WithdrawWallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
 
-        $coins = ['USDT_TRC20', 'TRX', 'ETH', 'BITCOIN', 'USDT_ERC20'];
+        $coins = ['USDT_TRC20', 'TRX', 'ETH', 'BITCOIN', 'USDT_ERC20', 'SOL'];
 
         $walletbyCoin = [];
 
