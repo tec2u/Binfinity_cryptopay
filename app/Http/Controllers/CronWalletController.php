@@ -3,90 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomLog;
+use App\Models\PriceCoin;
 use App\Models\User;
 use App\Models\Wallet;
+use Http;
 use Illuminate\Http\Request;
 
 class CronWalletController extends Controller
 {
     public function index()
     {
-        $log = new CustomLog;
-        $log->content = "rodou cron";
-        $log->user_id = 1;
-        $log->operation = "CRON";
-        $log->controller = "app/controller/WalletController";
-        $log->http_code = 200;
-        $log->route = "cron";
-        $log->status = "success";
-        $log->save();
-
-        ini_set('max_execution_time', 240);
-
-
-        $wallets = Wallet::all();
-
-        foreach ($wallets as $wallet) {
-            $user = User::where('id', $wallet->user_id)->first();
-            if (!isset($user)) {
-                $walletdel = Wallet::where('id', $wallet->id)->first();
-                $walletdel->delete();
-
-                $log = new CustomLog;
-                $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
-                $log->user_id = $wallet->user_id;
-                $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
-                $log->controller = "app/controller/WalletController";
-                $log->http_code = 200;
-                $log->route = "WALLET DANGER";
-                $log->status = "success";
-                $log->save();
-            } else {
-                $this->verifica($wallet, $user);
-            }
-        }
-
-    }
-
-    public function verifica($wallet, $userAprov)
-    {
-        $Walletcontroller = new WalletController;
 
         try {
-            $walletExists = $Walletcontroller->walletTxtWexists($userAprov->id, $Walletcontroller->secured_decrypt($wallet->address));
-            if (isset($walletExists) && json_decode($walletExists)) {
-                $jsonW = json_decode($walletExists);
-                if (isset($jsonW->address)) {
-                    return true;
-                }
-            } else {
-                $walletdel = Wallet::where('id', $wallet->id)->first();
-                $walletdel->delete();
+            $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
 
-                $log = new CustomLog;
-                $log->content = "WALLET NOT FOUND IN TXT - $wallet->address";
-                $log->user_id = $userAprov->id;
-                $log->operation = "VERIFICATION WALLET IN TXT, NOT FOUND";
-                $log->controller = "app/controller/WalletController";
-                $log->http_code = 200;
-                $log->route = "WALLET DANGER";
-                $log->status = "success";
-                $log->save();
+            $response = Http::withHeaders([
+                'X-CMC_PRO_API_KEY' => $api_key,
+                'Content-Type' => 'application/json',
+            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
+
+            $data = $response->json();
+
+            $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
+            $trc20 = 1;
+            $erc20 = 1;
+            $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
+            $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
+            $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
+
+            $coins = [
+                "BTC" => $btc,
+                "TRC20" => $trc20,
+                "ERC20" => $erc20,
+                "TRX" => $trx,
+                "ETH" => $eth,
+                "SOL" => $sol,
+            ];
+
+            foreach ($coins as $coin => $value) {
+                $coinSave = PriceCoin::where('name', $coin)->first();
+                if (isset($coinSave)) {
+                    $coinSave->one_in_usd = $value;
+                    $coinSave->save();
+                } else {
+                    $coinSave = new PriceCoin;
+                    $coinSave->name = $coin;
+                    $coinSave->one_in_usd = $value;
+                    $coinSave->save();
+                }
             }
 
+
         } catch (\Throwable $th) {
-            dd($th);
-            $log = new CustomLog;
-            $log->content = $th->getMessage();
-            $log->user_id = 1;
-            $log->operation = "erro cron";
-            $log->controller = "app/controller/WalletController";
-            $log->http_code = 200;
-            $log->route = "erro cron";
-            $log->status = "success";
-            $log->save();
+
         }
     }
-
 
 }

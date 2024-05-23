@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('inspire')->hourly();
         // $schedule->call(function () {
         //     PayWithdrawAdminController::update();
         // })->everyFiveMinutes();
@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $controller = new CronWalletController;
             $controller->index();
-        })->everyFiveMinutese();
+        })->hourly();
     }
 
     /**

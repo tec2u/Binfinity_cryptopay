@@ -6,6 +6,7 @@ use App\Models\Banco;
 
 use App\Models\NodeOrders;
 use App\Models\Package;
+use App\Models\PriceCoin;
 use App\Models\User;
 
 use App\Models\OrderPackage;
@@ -37,6 +38,10 @@ class HomeController extends Controller
     */
    public function index()
    {
+      $controllerCoin = new CronWalletController();
+      $controllerCoin->index();
+
+
       $id_user = Auth::id();
       $packages = OrderPackage::where('user_id', $id_user)->where('payment_status', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
       $orderpackages = OrderPackage::where('user_id', $id_user)->orderBy('id', 'DESC')->limit(5)->get();
@@ -178,22 +183,21 @@ class HomeController extends Controller
 
       $wallets = Wallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get()->groupBy('coin');
 
-      $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
+      // $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
 
-      $response = Http::withHeaders([
-         'X-CMC_PRO_API_KEY' => $api_key,
-         'Content-Type' => 'application/json',
-      ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
+      // $response = Http::withHeaders([
+      //    'X-CMC_PRO_API_KEY' => $api_key,
+      //    'Content-Type' => 'application/json',
+      // ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
 
-      $data = $response->json();
+      // $data = $response->json();
 
-
-      $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
-      $trc20 = 1;
-      $erc20 = 1;
-      $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
-      $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
-      $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
+      $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
+      $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
+      $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
+      $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
+      $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
+      $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
 
 
       foreach ($wallets as $chave => $valor) {

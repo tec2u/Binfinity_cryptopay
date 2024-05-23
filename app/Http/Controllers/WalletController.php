@@ -9,6 +9,7 @@ use App\Models\IpWhitelist;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\PaymentLog;
+use App\Models\PriceCoin;
 use App\Models\SystemConf;
 use App\Models\User;
 use App\Models\Wallet;
@@ -56,21 +57,12 @@ class WalletController extends Controller
             'SOL' => 3,
         ];
 
-        $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
-
-        $response = Http::withHeaders([
-            'X-CMC_PRO_API_KEY' => $api_key,
-            'Content-Type' => 'application/json',
-        ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,sol');
-
-        $data = $response->json();
-
-        $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
-        $trc20 = 1;
-        $erc20 = 1;
-        $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
-        $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
-        $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
+        $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
+        $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
+        $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
+        $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
+        $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
+        $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
 
         foreach ($icons as $key => $value) {
             $dep = NodeOrders::where('coin', $key)

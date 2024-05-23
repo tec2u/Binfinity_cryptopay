@@ -6,6 +6,7 @@ use App\Models\CustomLog;
 use App\Models\NodeOrders;
 use App\Models\OrderPackage;
 use App\Models\Package;
+use App\Models\PriceCoin;
 use App\Models\SystemConf;
 use App\Models\User;
 use App\Models\Wallet;
@@ -120,49 +121,26 @@ class InvoiceController extends Controller
 
             }
 
-            if ($request->method == 'USDT_TRC20' || $request->method == 'USDT_ERC20') {
-                $trc20 = 1;
-                $erc20 = 1;
 
-                $price_order = $request->value;
+            $price_order = $request->value;
 
-                $moedas = [
-                    "USDT_ERC20" => number_format($price_order / $erc20, 2),
-                    "USDT_TRC20" => number_format($price_order / $trc20, 2),
-                ];
-            } else {
-                $api_key = 'ca699a34-d3c2-4efc-81e9-6544578433f8';
 
-                $response = Http::withHeaders([
-                    'X-CMC_PRO_API_KEY' => $api_key,
-                    'Content-Type' => 'application/json',
-                ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
+            $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
+            $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
+            $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
+            $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
+            $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
+            $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
 
-                $data = $response->json();
-                // dd($data['data']['TRX'][0]['quote']['USD']['price']);
+            $moedas = [
+                "BITCOIN" => number_format($price_order / $btc, 5),
+                "ETH" => number_format($price_order / $eth, 4),
+                "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                "TRX" => number_format($price_order / $trx, 2),
+                "USDT_TRC20" => number_format($price_order / $trc20, 2),
+                "SOL" => number_format($price_order / $sol, 3),
+            ];
 
-                // $bitcoin = $result->bitcoin->usd;
-                $price_order = $request->value;
-                // $value_btc = $price_order / $bitcoin;
-
-                $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
-                // $erc20 = $data['data']['ERC20'][0]['quote']['USD']['price'];
-                // $trc20 = $data['data']['USDT'][0]['quote']['USD']['price'];
-                $trc20 = 1;
-                $erc20 = 1;
-                $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
-                $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
-                $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
-
-                $moedas = [
-                    "BITCOIN" => number_format($price_order / $btc, 5),
-                    "ETH" => number_format($price_order / $eth, 4),
-                    "USDT_ERC20" => number_format($price_order / $erc20, 2),
-                    "TRX" => number_format($price_order / $trx, 2),
-                    "USDT_TRC20" => number_format($price_order / $trc20, 2),
-                    "SOL" => number_format($price_order / $sol, 3),
-                ];
-            }
 
             $Walletcontroller = new WalletController;
 
