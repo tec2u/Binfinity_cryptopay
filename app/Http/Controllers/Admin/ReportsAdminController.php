@@ -411,14 +411,14 @@ class ReportsAdminController extends Controller
          $trans->user = $user->login ?? '';
 
          $wallet = $walletController->secured_decrypt($trans->wallet);
-         if (isset ($wallet) && $wallet) {
+         if (isset($wallet) && $wallet) {
             $trans->wallet = $wallet;
          }
 
          if ($trans->type == 1) {
             $myWithdrawn = NodeOrders::where('payment_of_id', $trans->id)->first();
 
-            if (isset ($myWithdrawn)) {
+            if (isset($myWithdrawn)) {
                $trans->hashWithdrawn = $myWithdrawn->hash;
             }
          }
@@ -432,7 +432,7 @@ class ReportsAdminController extends Controller
    {
       try {
          $transaction = NodeOrders::where('id', $request->id)->first();
-         if (isset ($transaction)) {
+         if (isset($transaction)) {
             if ($transaction->withdrawn == 1) {
                $transaction->withdrawn = 0;
             } else {
@@ -464,7 +464,11 @@ class ReportsAdminController extends Controller
       //    ->paginate(25);
 
       $transactions = NodeOrders::where('type', 1)
-         ->where(DB::raw('LOWER(status)'), 'paid')
+         ->where(function ($query) {
+            $query->whereRaw('LOWER(status) = ?', ['paid'])
+               ->orWhereRaw('LOWER(status) = ?', ['underpaid'])
+               ->orWhereRaw('LOWER(status) = ?', ['overpaid']);
+         })
          ->where('withdrawn', 0)
          ->orderBy('id', 'desc')
          ->paginate(25);
@@ -475,14 +479,14 @@ class ReportsAdminController extends Controller
          $trans->user = $user->login ?? '';
 
          $wallet = $walletController->secured_decrypt($trans->wallet);
-         if (isset ($wallet) && $wallet) {
+         if (isset($wallet) && $wallet) {
             $trans->wallet = $wallet;
          }
 
          if ($trans->type == 1) {
             $myWithdrawn = NodeOrders::where('payment_of_id', $trans->id)->first();
 
-            if (isset ($myWithdrawn)) {
+            if (isset($myWithdrawn)) {
                $trans->hashWithdrawn = $myWithdrawn->hash;
             }
          }
@@ -502,7 +506,7 @@ class ReportsAdminController extends Controller
          $w->user = $user->login ?? '';
 
          $wallet = $walletController->secured_decrypt($w->address);
-         if (isset ($wallet) && $wallet) {
+         if (isset($wallet) && $wallet) {
             $w->address = $wallet;
          }
 
