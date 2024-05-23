@@ -273,7 +273,7 @@ class PackageController extends Controller
                 $order->coin = $nodeOrders->coin;
                 $order->pstatus = $nodeOrders->status;
                 $order->price_crypto = $nodeOrders->price_crypto * 1;
-                $order->price_crypto_paid = $nodeOrders->price_crypto_paid * 1;
+                $order->price_crypto_paid = $nodeOrders->price_crypto_payed * 1;
                 $order->hash = $nodeOrders->hash;
 
                 if (isset($nodeOrders->id_encript)) {
