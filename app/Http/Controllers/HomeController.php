@@ -38,8 +38,8 @@ class HomeController extends Controller
     */
    public function index()
    {
-      $controllerCoin = new CronWalletController();
-      $controllerCoin->index();
+      // $controllerCoin = new CronWalletController();
+      // $controllerCoin->index();
 
       // return;
       $id_user = Auth::id();
