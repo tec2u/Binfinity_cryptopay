@@ -116,14 +116,42 @@
                 </form>
               @endif
               @if (isset($transaction->hash))
-                <a target="_blank" href="https://tronscan.org/#/transaction/{{ $transaction->hash }}">
-                  <button type="button" class="btn btn-primary">Link Hash</button>
-                </a>
+                @if ($transaction->coin == 'TRX' || $transaction->coin == 'USDT_TRC20')
+                  <a target="_blank" href="https://tronscan.org/#/transaction/{{ $transaction->hash }}">
+                    <button type="button" class="btn btn-primary">Link Hash</button>
+                  </a>
+                @endif
+
+                @if ($transaction->coin == 'BNB')
+                  <a target="_blank" href="https://bscscan.com/tx/{{ $transaction->hash }}">
+                    <button type="button" class="btn btn-primary">Link Hash</button>
+                  </a>
+                @endif
+
+                @if ($transaction->coin == 'SOL')
+                  <a target="_blank" href="https://solscan.io/tx/{{ $transaction->hash }}">
+                    <button type="button" class="btn btn-primary">Link Hash</button>
+                  </a>
+                @endif
               @endif
               @if (isset($transaction->hashWithdrawn))
-                <a target="_blank" href="https://tronscan.org/#/transaction/{{ $transaction->hashWithdrawn }}">
-                  <button type="button" class="btn btn-primary">Withdrawn Link Hash</button>
-                </a>
+                @if ($transaction->coin == 'TRX' || $transaction->coin == 'USDT_TRC20')
+                  <a target="_blank" href="https://tronscan.org/#/transaction/{{ $transaction->hashWithdrawn }}">
+                    <button type="button" class="btn btn-primary">Withdrawn Link Hash</button>
+                  </a>
+                @endif
+
+                @if ($transaction->coin == 'BNB')
+                  <a target="_blank" href="https://bscscan.com/tx/{{ $transaction->hashWithdrawn }}">
+                    <button type="button" class="btn btn-primary">Link Hash</button>
+                  </a>
+                @endif
+
+                @if ($transaction->coin == 'SOL')
+                  <a target="_blank" href="https://solscan.io/tx/{{ $transaction->hashWithdrawn }}">
+                    <button type="button" class="btn btn-primary">Link Hash</button>
+                  </a>
+                @endif
               @endif
             </th>
             </tr>
