@@ -57,6 +57,10 @@
     if ($order[0]['coin'] == 'SOL') {
         $img = 'https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png';
     }
+    if ($order[0]['coin'] == 'BNB') {
+        $img = 'https://cryptologos.cc/logos/bnb-bnb-logo.png';
+    }
+
   @endphp
 
   <!-- partial:index.partial.html -->
