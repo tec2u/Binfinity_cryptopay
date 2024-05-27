@@ -197,29 +197,29 @@
   const datePart = dateParts[0].split('-');
   const timePart = dateParts[1].split(':');
 
-  // Construa um novo objeto de data com as partes da data e hora
   const date1 = new Date(
-    parseInt(datePart[0]), // ano
-    parseInt(datePart[1]) - 1, // mês (0-11)
-    parseInt(datePart[2]), // dia
-    parseInt(timePart[0]), // hora
-    parseInt(timePart[1]), // minutos
-    parseInt(timePart[2]) // segundos
+    parseInt(datePart[0]),
+    parseInt(datePart[1]) - 1,
+    parseInt(datePart[2]),
+    parseInt(timePart[0]),
+    parseInt(timePart[1]),
+    parseInt(timePart[2])
   );
   const date2 = addHours(date1, 1);
   console.log(date2);
 
   const targetDate = date2.getTime();
 
-  // Update the countdown every second
   const countdownInterval = setInterval(() => {
-    // Get the current date and time
     const now = new Date().getTime();
-
-    // Calculate the time difference between the current date/time and the target date/time
     const timeDifference = targetDate - now;
 
-    // Calculate days, hours, minutes, and seconds
+    if (timeDifference < 0) {
+      clearInterval(countdownInterval);
+      document.getElementById("timer").innerHTML = "Countdown expired";
+      return;
+    }
+
     const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
       (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -227,13 +227,57 @@
     const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-    // Display the calculated time in the HTML elements
+    // Atualiza os elementos do DOM com os valores do countdown
     //document.getElementById("days").textContent = days;
     //document.getElementById("hours").textContent = hours;
     document.getElementById("minutes").textContent = minutes;
     document.getElementById("seconds").textContent = seconds;
 
-    // Check if the countdown has expired
+  }, 1000);
+
+  function addHours(date, hours) {
+    date.setTime(date.getTime() + hours * 60 * 60 * 1000);
+    return date;
+  }
+</script>
+
+
+{{-- <script>
+  const dateParts = '{{ $order[0]['createdAt'] }}'.split(' ');
+  const datePart = dateParts[0].split('-');
+  const timePart = dateParts[1].split(':');
+
+  
+  const date1 = new Date(
+    parseInt(datePart[0]), 
+    parseInt(datePart[1]) - 1, 
+    parseInt(datePart[2]), 
+    parseInt(timePart[0]), 
+    parseInt(timePart[1]), 
+    parseInt(timePart[2]) 
+  );
+  const date2 = addHours(date1, 1);
+  console.log(date2);
+
+  const targetDate = date2.getTime();
+
+
+  const countdownInterval = setInterval(() => {
+    const now = new Date().getTime();
+    const timeDifference = targetDate - now;
+
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    //document.getElementById("days").textContent = days;
+    //document.getElementById("hours").textContent = hours;
+    document.getElementById("minutes").textContent = minutes;
+    document.getElementById("seconds").textContent = seconds;
+
+   
     if (timeDifference < 0) {
       clearInterval(countdownInterval);
       document.getElementById("timer").innerHTML = "Countdown expired";
@@ -246,7 +290,7 @@
 
     return date;
   }
-</script>
+</script> --}}
 
 
 {{-- <script>
