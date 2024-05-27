@@ -143,13 +143,13 @@
 
                 @if ($transaction->coin == 'BNB')
                   <a target="_blank" href="https://bscscan.com/tx/{{ $transaction->hashWithdrawn }}">
-                    <button type="button" class="btn btn-primary">Link Hash</button>
+                    <button type="button" class="btn btn-primary">Withdrawn Link Hash</button>
                   </a>
                 @endif
 
                 @if ($transaction->coin == 'SOL')
                   <a target="_blank" href="https://solscan.io/tx/{{ $transaction->hashWithdrawn }}">
-                    <button type="button" class="btn btn-primary">Link Hash</button>
+                    <button type="button" class="btn btn-primary">Withdrawn Link Hash</button>
                   </a>
                 @endif
               @endif
