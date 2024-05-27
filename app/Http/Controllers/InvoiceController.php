@@ -99,7 +99,8 @@ class InvoiceController extends Controller
                 "TRX",
                 "USDT_TRC20",
                 "USDT_ERC20",
-                "SOL"
+                "SOL",
+                "BNB"
             ];
 
             if (!in_array(strtoupper($request->method), $metodos)) {
@@ -131,6 +132,7 @@ class InvoiceController extends Controller
             $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
             $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
             $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+            $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
             $moedas = [
                 "BITCOIN" => number_format($price_order / $btc, 5),
@@ -139,6 +141,7 @@ class InvoiceController extends Controller
                 "TRX" => number_format($price_order / $trx, 2),
                 "USDT_TRC20" => number_format($price_order / $trc20, 2),
                 "SOL" => number_format($price_order / $sol, 3),
+                "BNB" => number_format($price_order / $bnb, 4),
             ];
 
 

@@ -327,6 +327,9 @@ class ApiApp extends Controller
                     if ($nodeOrderSave->coin == 'SOL') {
                         $logo = 'https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png';
                     }
+                    if ($nodeOrderSave->coin == 'BNB') {
+                        $logo = 'https://cryptologos.cc/logos/bnb-bnb-logo.png';
+                    }
 
                     $walletDecrypted = $Walletcontroller->secured_decrypt($wallet->address);
 
@@ -456,6 +459,9 @@ class ApiApp extends Controller
             if ($nodeOrderSave->coin == 'USDT_ERC20') {
                 $logo = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
             }
+            if ($nodeOrderSave->coin == 'BNB') {
+                $logo = 'https://cryptologos.cc/logos/bnb-bnb-logo.png';
+            }
 
             $Walletcontroller = new WalletController;
             $walletDecrypted = $Walletcontroller->secured_decrypt($nodeOrderSave->wallet);
@@ -530,6 +536,9 @@ class ApiApp extends Controller
                 }
                 if ($nodeOrderSave->coin == 'USDT_ERC20') {
                     $logo = 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029';
+                }
+                if ($nodeOrderSave->coin == 'BNB') {
+                    $logo = 'https://cryptologos.cc/logos/bnb-bnb-logo.png';
                 }
 
                 $walletDecrypted = $Walletcontroller->secured_decrypt($nodeOrderSave->wallet);

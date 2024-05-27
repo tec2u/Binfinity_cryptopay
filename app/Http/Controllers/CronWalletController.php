@@ -20,16 +20,17 @@ class CronWalletController extends Controller
             $response = Http::withHeaders([
                 'X-CMC_PRO_API_KEY' => $api_key,
                 'Content-Type' => 'application/json',
-            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL');
+            ])->get('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=btc,eth,trx,erc20,USDT,SOL,BNB');
 
             $data = $response->json();
-
+            // dd($data);
             $btc = $data['data']['BTC'][0]['quote']['USD']['price'];
             $trc20 = 1;
             $erc20 = 1;
             $trx = $data['data']['TRX'][0]['quote']['USD']['price'];
             $eth = $data['data']['ETH'][0]['quote']['USD']['price'];
             $sol = $data['data']['SOL'][0]['quote']['USD']['price'];
+            $bnb = $data['data']['BNB'][0]['quote']['USD']['price'];
 
             $coins = [
                 "BTC" => $btc,
@@ -38,6 +39,7 @@ class CronWalletController extends Controller
                 "TRX" => $trx,
                 "ETH" => $eth,
                 "SOL" => $sol,
+                "BNB" => $bnb,
             ];
 
             foreach ($coins as $coin => $value) {
@@ -52,7 +54,7 @@ class CronWalletController extends Controller
                     $coinSave->save();
                 }
             }
-
+            ;
 
         } catch (\Throwable $th) {
 

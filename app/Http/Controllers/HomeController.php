@@ -38,10 +38,10 @@ class HomeController extends Controller
     */
    public function index()
    {
-      // $controllerCoin = new CronWalletController();
-      // $controllerCoin->index();
+      $controllerCoin = new CronWalletController();
+      $controllerCoin->index();
 
-
+      // return;
       $id_user = Auth::id();
       $packages = OrderPackage::where('user_id', $id_user)->where('payment_status', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
       $orderpackages = OrderPackage::where('user_id', $id_user)->orderBy('id', 'DESC')->limit(5)->get();
@@ -198,6 +198,7 @@ class HomeController extends Controller
       $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
       $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
       $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+      $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
 
       foreach ($wallets as $chave => $valor) {
@@ -233,6 +234,7 @@ class HomeController extends Controller
             "TRX" => number_format($trx * $tt, 2, '.', ''),
             "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
             "SOL" => number_format($sol * $tt, 3, '.', ''),
+            "BNB" => number_format($bnb * $tt, 4, '.', ''),
          ];
 
          $incomes = [
@@ -242,6 +244,7 @@ class HomeController extends Controller
             "TRX" => number_format($trx * $dep, 2, '.', ''),
             "USDT_TRC20" => number_format($trc20 * $dep, 2, '.', ''),
             "SOL" => number_format($sol * $dep, 2, '.', ''),
+            "BNB" => number_format($bnb * $dep, 2, '.', ''),
          ];
 
          $spendings = [
@@ -250,7 +253,8 @@ class HomeController extends Controller
             "USDT_ERC20" => number_format($erc20 * $saq, 2, '.', ''),
             "TRX" => number_format($trx * $saq, 2, '.', ''),
             "USDT_TRC20" => number_format($trc20 * $saq, 2, '.', ''),
-            "SOL" => number_format($sol * $saq, 2, '.', ''),
+            "SOL" => number_format($sol * $dep, 2, '.', ''),
+            "BNB" => number_format($bnb * $saq, 2, '.', ''),
          ];
 
          $balance += $moedas[$chave];

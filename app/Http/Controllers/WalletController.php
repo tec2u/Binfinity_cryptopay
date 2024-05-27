@@ -39,6 +39,7 @@ class WalletController extends Controller
 
         $icons = [
             'SOL' => 'https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png',
+            'BNB' => 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
             // 'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
             'TRX' => 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029',
             // 'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
@@ -55,6 +56,7 @@ class WalletController extends Controller
             'USDT_TRC20' => 2,
             'USDT_ERC20' => 2,
             'SOL' => 3,
+            'BNB' => 4,
         ];
 
         $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
@@ -63,6 +65,7 @@ class WalletController extends Controller
         $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
         $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
         $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+        $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
         foreach ($icons as $key => $value) {
             $dep = NodeOrders::where('coin', $key)
@@ -97,6 +100,7 @@ class WalletController extends Controller
                 "TRX" => number_format($trx * $tt, 2, '.', ''),
                 "USDT_TRC20" => number_format($trc20 * $tt, 2, '.', ''),
                 "SOL" => number_format($sol * $tt, 2, '.', ''),
+                "BNB" => number_format($bnb * $tt, 2, '.', ''),
             ];
 
             $moviment[$key] = [
@@ -572,7 +576,7 @@ class WalletController extends Controller
 
         $wallets = WithdrawWallet::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
 
-        $coins = ['USDT_TRC20', 'TRX', 'ETH', 'BITCOIN', 'USDT_ERC20', 'SOL'];
+        $coins = ['USDT_TRC20', 'TRX', 'ETH', 'BITCOIN', 'USDT_ERC20', 'SOL', 'BNB'];
 
         $walletbyCoin = [];
 

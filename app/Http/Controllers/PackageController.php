@@ -144,6 +144,7 @@ class PackageController extends Controller
             $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
             $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
             $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+            $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
             $moedas = [
                 // "BITCOIN" => number_format($price_order / $btc, 5),
@@ -152,6 +153,7 @@ class PackageController extends Controller
                 "TRX" => number_format($price_order / $trx, 2),
                 "USDT_TRC20" => number_format($price_order / $trc20, 2),
                 "SOL" => number_format($price_order / $sol, 3),
+                "BNB" => number_format($price_order / $bnb, 4),
             ];
 
         }
@@ -315,7 +317,8 @@ class PackageController extends Controller
             "USDT_ERC20" => "api/create/wallet/ethereum",
             "TRX" => "api/create/wallet/tron",
             "ETH" => "api/create/wallet/ethereum",
-            "SOL" => "api/create/wallet/sol"
+            "SOL" => "api/create/wallet/sol",
+            "BNB" => "api/create/wallet/bnb"
         ];
 
         $urlTotal = env('SERV_NODE') . '/' . $urls[$mt];
@@ -361,6 +364,14 @@ class PackageController extends Controller
                 "address" => $result->address->base58,
                 "addressHex" => $result->address->hex,
                 "mnemonic" => "",
+            ];
+        }
+
+        if ($mt == "BNB") {
+            return [
+                "privateKey" => $result->key,
+                "address" => $result->address,
+                "mnemonic" => $result->address,
             ];
         }
     }
