@@ -62,8 +62,9 @@
               </span>
             @enderror
           </div>
-
-          <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" data-action="LOGIN"></div>
+          @if (request()->getHost() != 'localhost' && request()->getHost() != '127.0.0.1')
+            <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}" data-action="LOGIN"></div>
+          @endif
 
           <div class="contact100-form-checkbox">
             <div class="input100">
@@ -87,12 +88,12 @@
 
 
             <!-- <div class="text-center p-t-115 mt-40">
-                                                                                          @if (Route::has('password.request'))
+                                                                                                          @if (Route::has('password.request'))
   <a class="txt2" href="{{ route('password.request') }}" style="color: #fff">
-                                                                                              {{ __('Forgot Your Password?') }}
-                                                                                            </a>
+                                                                                                              {{ __('Forgot Your Password?') }}
+                                                                                                            </a>
   @endif
-                                                                                        </div> -->
+                                                                                                        </div> -->
           </div>
           <div class="text-center p-t-115">
             <span class="txt1" style="color: #fff">
