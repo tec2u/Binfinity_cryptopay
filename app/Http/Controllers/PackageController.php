@@ -525,6 +525,9 @@ class PackageController extends Controller
                 "wallet": "' . $order->wallet . '",
                 "validity": "' . 60 . '",
                 "coin": "' . $method . '",
+                "receiver_address": "' . $order->receiver_address ?? null . '",
+                "crypto_bought": "' . $order->crypto_bought ?? null . '",
+                "crypto_name_purchased": "' . $order->crypto_name_purchased ?? null . '",
                 "notify_url" : "' . $url . '"
 
             }',

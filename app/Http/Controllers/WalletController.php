@@ -318,7 +318,10 @@ class WalletController extends Controller
             'login' => 'required|email',
             'password' => 'required|string|max:255',
             'coin' => 'required|string|max:255',
-            'notify_url' => 'required|url'
+            'notify_url' => 'required|url',
+            'receiver_address' => 'nullable|string',
+            'crypto_bought' => 'nullable',
+            'crypto_name_purchased' => 'nullable|string',
         ]);
 
         $requestFormated = $request->all();
@@ -418,6 +421,20 @@ class WalletController extends Controller
                     $order->wallet = $wallet->address;
                     $order->notify_url = $requestFormated['notify_url'];
                     $order->id_encript = $wallet->id;
+                    if (
+                        isset($requestFormated['crypto_bought']) &&
+                        isset($requestFormated['crypto_name_purchased'])
+                    ) {
+                        $crypto_bought = $requestFormated['crypto_bought'];
+                        if (strpos($requestFormated['crypto_bought'], ',') !== false) {
+                            $crypto_bought = str_replace(",", "", $requestFormated['crypto_bought']);
+                        }
+
+                        $order->is_crypto_purchased = 1;
+                        $order->crypto_bought = $crypto_bought;
+                        $order->crypto_name_purchased
+                            = $requestFormated['crypto_name_purchased'];
+                    }
 
                     // return json_encode($order);
                     $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
