@@ -466,19 +466,19 @@ class WalletController extends Controller
                     if ($response->successful()) {
                         $content = $response->body();
                         if (isset($content)) {
-                            return $content;
+                            return response()->json(['error' => "Error intern in get wallet"], 422);
                         }
 
                     } else {
                         $status = $response->status();
                         $content = $response->body();
-                        return false;
+                        return response()->json(['error' => "Error intern in get wallet"], 422);
                     }
-                    return;
+                    return response()->json(['error' => "Error intern in get wallet"], 422);
 
 
                 } catch (\Throwable $th) {
-                    // throw $th;
+                    return response()->json(['error' => "Error intern in get wallet"], 422);
                 }
 
 
