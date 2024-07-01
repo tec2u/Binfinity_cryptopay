@@ -344,10 +344,7 @@ class WalletController extends Controller
             }
         }
 
-        $ipAllowed = IpAllowedApi::where('ip', $ip)->first();
-        if (!isset($ipAllowed)) {
-            return response()->json(['error' => "IP not allowed"], 422);
-        }
+
 
 
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
@@ -389,7 +386,8 @@ class WalletController extends Controller
                 return response()->json(['error' => "User not allowed"], 422);
             }
 
-            if ($userAprov->id != $ipAllowed->user_id) {
+            $ipAllowed = IpAllowedApi::where('ip', $ip)->where('user_id', $userAprov->id)->first();
+            if (!isset($ipAllowed)) {
                 return response()->json(['error' => "Ip not allowed"], 422);
             }
 
