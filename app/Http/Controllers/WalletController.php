@@ -327,7 +327,7 @@ class WalletController extends Controller
         $requestFormated = $request->all();
 
         if ($validator->fails()) {
-            return false;
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
         $ip = $request->ip();
@@ -340,13 +340,13 @@ class WalletController extends Controller
         $system = SystemConf::first();
         if (isset($system)) {
             if ($system->all == 0 || $system->all == 1 && $system->api == 0) {
-                return false;
+                return response()->json(['error' => "System disabled"], 422);
             }
         }
 
         $ipAllowed = IpAllowedApi::where('ip', $ip)->first();
         if (!isset($ipAllowed)) {
-            return false;
+            return response()->json(['error' => "IP not allowed"], 422);
         }
 
 
@@ -378,25 +378,25 @@ class WalletController extends Controller
             $userAprov = User::where('email', $requestFormated['login'])->orWhere('login', $requestFormated['login'])->first();
 
             if (!isset($userAprov)) {
-                return false;
+                return response()->json(['error' => "User not allowed"], 422);
             }
 
             if (!Hash::check($requestFormated['password'], $userAprov->password)) {
-                return "User Not Found";
+                return response()->json(['error' => "User not found"], 422);
             }
 
             if ($userAprov->activated == null || $userAprov->activated == 0) {
-                return false;
+                return response()->json(['error' => "User not allowed"], 422);
             }
 
             if ($userAprov->id != $ipAllowed->user_id) {
-                return false;
+                return response()->json(['error' => "Ip not allowed"], 422);
             }
 
             $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
             // return $wallet;
             if (!$wallet) {
-                return false;
+                return response()->json(['error' => "Error in get wallet"], 422);
             }
 
             // return $wallet;
