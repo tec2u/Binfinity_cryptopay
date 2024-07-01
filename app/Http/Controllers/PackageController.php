@@ -421,7 +421,7 @@ class PackageController extends Controller
                     $order->price_crypto = $request->{$request->method};
                 }
 
-                dd($wallet);
+                // dd($wallet);
 
                 $order->save();
 
@@ -485,6 +485,7 @@ class PackageController extends Controller
 
     public function genUrlCrypto($method, $order)
     {
+        // dd($order);
         $node = env('SERV_NODE');
         $paymentConfig = [
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
@@ -507,6 +508,10 @@ class PackageController extends Controller
             $url = route('notify.payment');
         }
 
+        $receiver_address = $order->receiver_address ?? null;
+        $crypto_bought = $order->crypto_bought ?? null;
+        $crypto_name_purchased = $order->crypto_name_purchased ?? null;
+
         curl_setopt_array(
             $curl,
             array(
@@ -527,9 +532,9 @@ class PackageController extends Controller
                 "wallet": "' . $order->wallet . '",
                 "validity": "' . 60 . '",
                 "coin": "' . $method . '",
-                "receiver_address": "' . $order->receiver_address ?? null . '",
-                "crypto_bought": "' . $order->crypto_bought ?? null . '",
-                "crypto_name_purchased": "' . $order->crypto_name_purchased ?? null . '",
+                "receiver_address": "' . $receiver_address . '",
+                "crypto_bought": "' . $crypto_bought . '",
+                "crypto_name_purchased": "' . $crypto_name_purchased . '",
                 "notify_url" : "' . $url . '"
 
             }',
