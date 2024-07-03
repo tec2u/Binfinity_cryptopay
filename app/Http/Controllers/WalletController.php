@@ -623,7 +623,7 @@ class WalletController extends Controller
         $wtlist = IpWhitelist::where('ip', $request->ip())->get();
 
         if (count($wtlist) < 1) {
-            return redirect()->route('wallets.WithdrawWallet');
+            // return redirect()->route('wallets.WithdrawWallet');
         }
 
         try {
