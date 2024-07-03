@@ -322,7 +322,7 @@ class WalletController extends Controller
         $validator = Validator::make($request->all(), [
             'id_order' => 'required|string|max:255',
             'price' => 'required',
-            'price_crypto' => 'required',
+            'price_crypto' => 'nullable',
             'login' => 'required|email',
             'password' => 'required|string|max:255',
             'coin' => 'required|string|max:255',
@@ -353,9 +353,6 @@ class WalletController extends Controller
                 return response()->json(['error' => "System disabled"], 422);
             }
         }
-
-
-
 
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
             $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
@@ -415,10 +412,34 @@ class WalletController extends Controller
                 if (isset($jsonW->address)) {
                     $controller = new PackageController;
 
-                    $price_crypto = $requestFormated['price_crypto'];
+                    if (isset($requestFormated['price_crypto'])) {
+                        $price_crypto = $requestFormated['price_crypto'];
 
-                    if (strpos($requestFormated['price_crypto'], ',') !== false) {
-                        $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+                        if (strpos($requestFormated['price_crypto'], ',') !== false) {
+                            $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+                        }
+                    } else {
+                        $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
+                        $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
+                        $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
+                        $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
+                        $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
+                        $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+                        $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
+
+                        $moedas = [
+                            "BITCOIN" => number_format($price_ / $btc, 5),
+                            "BTC" => number_format($price_ / $btc, 5),
+                            "ETH" => number_format($price_ / $eth, 4),
+                            "USDT_ERC20" => number_format($price_ / $erc20, 2),
+                            "TRX" => number_format($price_ / $trx, 2),
+                            "USDT_TRC20" => number_format($price_ / $trc20, 2),
+                            "SOL" => number_format($price_ / $sol, 3),
+                            "BNB" => number_format($price_ / $bnb, 4),
+                        ];
+
+                        $coinRequest = $requestFormated['coin'];
+                        $price_crypto = $moedas[$coinRequest];
                     }
 
                     $order = new stdClass();
