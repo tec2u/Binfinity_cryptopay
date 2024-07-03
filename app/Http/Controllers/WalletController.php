@@ -319,207 +319,213 @@ class WalletController extends Controller
 
     public function notify(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'id_order' => 'required|string|max:255',
-            'price' => 'required',
-            'price_crypto' => 'nullable',
-            'login' => 'required|email',
-            'password' => 'required|string|max:255',
-            'coin' => 'required|string|max:255',
-            'notify_url' => 'required|url',
-            'receiver_address' => 'nullable|string',
-            'crypto_bought' => 'nullable',
-            'crypto_name_purchased' => 'nullable|string',
-            'custom_data1' => 'nullable|string',
-            'custom_data2' => 'nullable|string',
-        ]);
+        try {
+            //code...
 
-        $requestFormated = $request->all();
+            $validator = Validator::make($request->all(), [
+                'id_order' => 'required|string|max:255',
+                'price' => 'required',
+                'price_crypto' => 'nullable',
+                'login' => 'required|email',
+                'password' => 'required|string|max:255',
+                'coin' => 'required|string|max:255',
+                'notify_url' => 'required|url',
+                'receiver_address' => 'nullable|string',
+                'crypto_bought' => 'nullable',
+                'crypto_name_purchased' => 'nullable|string',
+                'custom_data1' => 'nullable|string',
+                'custom_data2' => 'nullable|string',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
+            $requestFormated = $request->all();
 
-        $ip = $request->ip();
-        $ipRequest = new IpAccessApi;
-        $ipRequest->ip = $ip;
-        $ipRequest->operation = "api/web/get/wallet";
-        $ipRequest->request = json_encode($requestFormated);
-        $ipRequest->save();
-
-        $system = SystemConf::first();
-        if (isset($system)) {
-            if ($system->all == 0 || $system->all == 1 && $system->api == 0) {
-                return response()->json(['error' => "System disabled"], 422);
-            }
-        }
-
-        if (strpos($requestFormated['price_crypto'], ',') !== false) {
-            $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
-        }
-
-        $price_ = $requestFormated['price'];
-        if (strpos($requestFormated['price'], ',') !== false) {
-            $price_ = str_replace(",", "", $requestFormated['price']);
-        }
-
-        // return ($request);
-
-        // crypto
-        if (isset($requestFormated["login"])) {
-
-            $log = new PaymentLog;
-            $log->content = "status";
-            $log->order_package_id = $requestFormated['id_order'];
-            $log->operation = "payment package";
-            $log->controller = "packageController";
-            $log->http_code = "200";
-            $log->route = "/packages/packagepay/notify";
-            $log->status = "success";
-            $log->json = json_encode($request->all());
-            $log->save();
-
-            $userAprov = User::where('email', $requestFormated['login'])->orWhere('login', $requestFormated['login'])->first();
-
-            if (!isset($userAprov)) {
-                return response()->json(['error' => "User not allowed"], 422);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 422);
             }
 
-            if (!Hash::check($requestFormated['password'], $userAprov->password)) {
-                return response()->json(['error' => "User not found"], 422);
+            $ip = $request->ip();
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/web/get/wallet";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
+
+            $system = SystemConf::first();
+            if (isset($system)) {
+                if ($system->all == 0 || $system->all == 1 && $system->api == 0) {
+                    return response()->json(['error' => "System disabled"], 422);
+                }
             }
 
-            if ($userAprov->activated == null || $userAprov->activated == 0) {
-                return response()->json(['error' => "User not allowed"], 422);
+            if (strpos($requestFormated['price_crypto'], ',') !== false) {
+                $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
             }
 
-            $ipAllowed = IpAllowedApi::where('ip', $ip)->where('user_id', $userAprov->id)->first();
-            if (!isset($ipAllowed)) {
-                return response()->json(['error' => "Ip not allowed"], 422);
+            $price_ = $requestFormated['price'];
+            if (strpos($requestFormated['price'], ',') !== false) {
+                $price_ = str_replace(",", "", $requestFormated['price']);
             }
 
-            $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
-            // return $wallet;
-            if (!$wallet) {
-                return response()->json(['error' => "Error in get wallet"], 422);
-            }
+            // return ($request);
 
-            // return $wallet;
+            // crypto
+            if (isset($requestFormated["login"])) {
 
-            $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
-            if (isset($walletExists) && json_decode($walletExists)) {
-                $jsonW = json_decode($walletExists);
-                if (isset($jsonW->address)) {
-                    $controller = new PackageController;
+                $log = new PaymentLog;
+                $log->content = "status";
+                $log->order_package_id = $requestFormated['id_order'];
+                $log->operation = "payment package";
+                $log->controller = "packageController";
+                $log->http_code = "200";
+                $log->route = "/packages/packagepay/notify";
+                $log->status = "success";
+                $log->json = json_encode($request->all());
+                $log->save();
 
-                    if (isset($requestFormated['price_crypto'])) {
-                        $price_crypto = $requestFormated['price_crypto'];
+                $userAprov = User::where('email', $requestFormated['login'])->orWhere('login', $requestFormated['login'])->first();
 
-                        if (strpos($requestFormated['price_crypto'], ',') !== false) {
-                            $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+                if (!isset($userAprov)) {
+                    return response()->json(['error' => "User not allowed"], 422);
+                }
+
+                if (!Hash::check($requestFormated['password'], $userAprov->password)) {
+                    return response()->json(['error' => "User not found"], 422);
+                }
+
+                if ($userAprov->activated == null || $userAprov->activated == 0) {
+                    return response()->json(['error' => "User not allowed"], 422);
+                }
+
+                $ipAllowed = IpAllowedApi::where('ip', $ip)->where('user_id', $userAprov->id)->first();
+                if (!isset($ipAllowed)) {
+                    return response()->json(['error' => "Ip not allowed"], 422);
+                }
+
+                $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
+                // return $wallet;
+                if (!$wallet) {
+                    return response()->json(['error' => "Error in get wallet"], 422);
+                }
+
+                // return $wallet;
+
+                $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
+                if (isset($walletExists) && json_decode($walletExists)) {
+                    $jsonW = json_decode($walletExists);
+                    if (isset($jsonW->address)) {
+                        $controller = new PackageController;
+
+                        if (isset($requestFormated['price_crypto'])) {
+                            $price_crypto = $requestFormated['price_crypto'];
+
+                            if (strpos($requestFormated['price_crypto'], ',') !== false) {
+                                $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+                            }
+                        } else {
+                            $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
+                            $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
+                            $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
+                            $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
+                            $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
+                            $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+                            $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
+
+                            $moedas = [
+                                "BITCOIN" => number_format($price_ / $btc, 5),
+                                "BTC" => number_format($price_ / $btc, 5),
+                                "ETH" => number_format($price_ / $eth, 4),
+                                "USDT_ERC20" => number_format($price_ / $erc20, 2),
+                                "TRX" => number_format($price_ / $trx, 2),
+                                "USDT_TRC20" => number_format($price_ / $trc20, 2),
+                                "SOL" => number_format($price_ / $sol, 3),
+                                "BNB" => number_format($price_ / $bnb, 4),
+                            ];
+
+                            $coinRequest = $requestFormated['coin'];
+                            $price_crypto = $moedas[$coinRequest];
                         }
-                    } else {
-                        $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
-                        $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
-                        $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
-                        $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
-                        $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
-                        $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
-                        $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
-                        $moedas = [
-                            "BITCOIN" => number_format($price_ / $btc, 5),
-                            "BTC" => number_format($price_ / $btc, 5),
-                            "ETH" => number_format($price_ / $eth, 4),
-                            "USDT_ERC20" => number_format($price_ / $erc20, 2),
-                            "TRX" => number_format($price_ / $trx, 2),
-                            "USDT_TRC20" => number_format($price_ / $trc20, 2),
-                            "SOL" => number_format($price_ / $sol, 3),
-                            "BNB" => number_format($price_ / $bnb, 4),
+                        $order = new stdClass();
+                        $order->id = $requestFormated['id_order'];
+                        $order->id_user = $userAprov->id;
+                        $order->price = $price_;
+                        $order->price_crypto = $price_crypto;
+                        $order->wallet = $wallet->address;
+                        $order->notify_url = $requestFormated['notify_url'];
+                        $order->id_encript = $wallet->id;
+                        $order->custom_data1 = isset($requestFormated['custom_data1']) ? $requestFormated['custom_data1'] : '';
+                        $order->custom_data2 = isset($requestFormated['custom_data2']) ? $requestFormated['custom_data2'] : '';
+                        if (
+                            isset($requestFormated['crypto_bought']) &&
+                            isset($requestFormated['crypto_name_purchased'])
+                        ) {
+                            $crypto_bought = $requestFormated['crypto_bought'];
+                            if (strpos($requestFormated['crypto_bought'], ',') !== false) {
+                                $crypto_bought = str_replace(",", "", $requestFormated['crypto_bought']);
+                            }
+
+                            $order->is_crypto_purchased = 1;
+                            $order->crypto_bought = $crypto_bought;
+                            $order->crypto_name_purchased
+                                = $requestFormated['crypto_name_purchased'];
+                        }
+
+                        // return json_encode($order);
+                        $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
+                        // return $postNode;
+
+                        return [
+                            "id" => $postNode->id,
+                            "merchant_id" => $postNode->merchant_id,
+                            "wallet" => $this->secured_decrypt($postNode->wallet)
                         ];
 
-                        $coinRequest = $requestFormated['coin'];
-                        $price_crypto = $moedas[$coinRequest];
                     }
+                } else {
+                    try {
 
-                    $order = new stdClass();
-                    $order->id = $requestFormated['id_order'];
-                    $order->id_user = $userAprov->id;
-                    $order->price = $price_;
-                    $order->price_crypto = $price_crypto;
-                    $order->wallet = $wallet->address;
-                    $order->notify_url = $requestFormated['notify_url'];
-                    $order->id_encript = $wallet->id;
-                    $order->custom_data1 = isset($requestFormated['custom_data1']) ? $requestFormated['custom_data1'] : '';
-                    $order->custom_data2 = isset($requestFormated['custom_data2']) ? $requestFormated['custom_data2'] : '';
-                    if (
-                        isset($requestFormated['crypto_bought']) &&
-                        isset($requestFormated['crypto_name_purchased'])
-                    ) {
-                        $crypto_bought = $requestFormated['crypto_bought'];
-                        if (strpos($requestFormated['crypto_bought'], ',') !== false) {
-                            $crypto_bought = str_replace(",", "", $requestFormated['crypto_bought']);
-                        }
+                        $walletdel = Wallet::where('id', $wallet->id)->first();
+                        $walletdel->delete();
 
-                        $order->is_crypto_purchased = 1;
-                        $order->crypto_bought = $crypto_bought;
-                        $order->crypto_name_purchased
-                            = $requestFormated['crypto_name_purchased'];
-                    }
+                        $url = env('SERV_TXT');
+                        $json = [
+                            "action" => "saveLog",
+                            "content" => "(API) Email: $userAprov->email - Coin: " . $requestFormated["coin"] . " - Wallet: $wallet->address - PriceCrypto: " . $requestFormated['price_crypto'] . " - priceDol: " . $price_,
+                            "operation" => "Wallet not found",
+                            "user_id" => $userAprov->id
+                        ];
 
-                    // return json_encode($order);
-                    $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
-                    // return $postNode;
+                        $response = Http::post("$url/", $json);
 
-                    return [
-                        "id" => $postNode->id,
-                        "merchant_id" => $postNode->merchant_id,
-                        "wallet" => $this->secured_decrypt($postNode->wallet)
-                    ];
+                        if ($response->successful()) {
+                            $content = $response->body();
+                            if (isset($content)) {
+                                return response()->json(['error' => "Error intern in get wallet"], 422);
+                            }
 
-                }
-            } else {
-                try {
-
-                    $walletdel = Wallet::where('id', $wallet->id)->first();
-                    $walletdel->delete();
-
-                    $url = env('SERV_TXT');
-                    $json = [
-                        "action" => "saveLog",
-                        "content" => "(API) Email: $userAprov->email - Coin: " . $requestFormated["coin"] . " - Wallet: $wallet->address - PriceCrypto: " . $requestFormated['price_crypto'] . " - priceDol: " . $price_,
-                        "operation" => "Wallet not found",
-                        "user_id" => $userAprov->id
-                    ];
-
-                    $response = Http::post("$url/", $json);
-
-                    if ($response->successful()) {
-                        $content = $response->body();
-                        if (isset($content)) {
+                        } else {
+                            $status = $response->status();
+                            $content = $response->body();
                             return response()->json(['error' => "Error intern in get wallet"], 422);
                         }
+                        return response()->json(['error' => "Error intern in get wallet"], 422);
 
-                    } else {
-                        $status = $response->status();
-                        $content = $response->body();
+
+                    } catch (\Throwable $th) {
                         return response()->json(['error' => "Error intern in get wallet"], 422);
                     }
-                    return response()->json(['error' => "Error intern in get wallet"], 422);
 
 
-                } catch (\Throwable $th) {
-                    return response()->json(['error' => "Error intern in get wallet"], 422);
                 }
-
+                return $this->notify($request);
 
             }
-            return $this->notify($request);
 
+
+            return response("OK", 200);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => "Error in create transaction"], 422);
         }
-
-
-        return response("OK", 200);
     }
 
     public function returnWallet($coin, $user_id)
