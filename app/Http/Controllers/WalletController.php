@@ -356,9 +356,10 @@ class WalletController extends Controller
                     return response()->json(['error' => "System disabled"], 422);
                 }
             }
-
-            if (strpos($requestFormated['price_crypto'], ',') !== false) {
-                $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+            if (isset($requestFormated['price_crypto'])) {
+                if (strpos($requestFormated['price_crypto'], ',') !== false) {
+                    $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
+                }
             }
 
             $price_ = $requestFormated['price'];
