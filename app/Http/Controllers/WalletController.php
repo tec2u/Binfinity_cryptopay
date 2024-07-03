@@ -40,11 +40,11 @@ class WalletController extends Controller
         $icons = [
             'SOL' => 'https://seeklogo.com/images/S/solana-sol-logo-12828AD23D-seeklogo.com.png',
             'BNB' => 'https://cryptologos.cc/logos/bnb-bnb-logo.png',
-            // 'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
+            'BITCOIN' => 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029',
             'TRX' => 'https://cryptologos.cc/logos/tron-trx-logo.png?v=029',
-            // 'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
+            'ETH' => 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029',
             'USDT_TRC20' => 'https://crypto.binfinitybank.com/public/images/tron-usdt.png',
-            // 'USDT_ERC20' => 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029',
+            'USDT_ERC20' => 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=029',
         ];
 
         $moviment = [];
@@ -170,6 +170,13 @@ class WalletController extends Controller
                 return redirect()->route('wallets.index');
             }
 
+            $nn = new WalletName;
+            $nn->id_user = Auth::id();
+            $nn->name = $request->name;
+            $nn->coin = $request->coin;
+            $nn->active = 1;
+            $nn->save();
+
             while (count($wallets) < 10) {
 
                 $walletGen = $controller->filterWallet($request->coin);
@@ -189,12 +196,7 @@ class WalletController extends Controller
 
                 $retornoTxt = $this->sendPostBin2($json);
                 if (isset($retornoTxt)) {
-                    $nn = new WalletName;
-                    $nn->id_user = Auth::id();
-                    $nn->name = $request->name;
-                    $nn->coin = $request->coin;
-                    $nn->active = 1;
-                    $nn->save();
+
 
                     $wallet = new Wallet;
                     $wallet->user_id = Auth::id();
@@ -343,9 +345,6 @@ class WalletController extends Controller
                 return response()->json(['error' => "System disabled"], 422);
             }
         }
-
-
-
 
         if (strpos($requestFormated['price_crypto'], ',') !== false) {
             $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
