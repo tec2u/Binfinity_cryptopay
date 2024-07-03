@@ -511,6 +511,8 @@ class PackageController extends Controller
         $receiver_address = $order->receiver_address ?? null;
         $crypto_bought = $order->crypto_bought ?? null;
         $crypto_name_purchased = $order->crypto_name_purchased ?? null;
+        $custom_data1 = $order->custom_data1 ?? null;
+        $custom_data2 = $order->custom_data2 ?? null;
 
         curl_setopt_array(
             $curl,
@@ -530,6 +532,8 @@ class PackageController extends Controller
                 "price": "' . $order->price . '",
                 "price_crypto": "' . $order->price_crypto . '",
                 "wallet": "' . $order->wallet . '",
+                "custom_data1": "' . $custom_data1 . '",
+                "custom_data2": "' . $custom_data2 . '",
                 "validity": "' . 60 . '",
                 "coin": "' . $method . '",
                 "receiver_address": "' . $receiver_address . '",

@@ -330,6 +330,8 @@ class WalletController extends Controller
             'receiver_address' => 'nullable|string',
             'crypto_bought' => 'nullable',
             'crypto_name_purchased' => 'nullable|string',
+            'custom_data1' => 'nullable|string',
+            'custom_data2' => 'nullable|string',
         ]);
 
         $requestFormated = $request->all();
@@ -427,6 +429,8 @@ class WalletController extends Controller
                     $order->wallet = $wallet->address;
                     $order->notify_url = $requestFormated['notify_url'];
                     $order->id_encript = $wallet->id;
+                    $order->custom_data1 = isset($requestFormated['custom_data1']) ? $requestFormated['custom_data1'] : '';
+                    $order->custom_data2 = isset($requestFormated['custom_data2']) ? $requestFormated['custom_data2'] : '';
                     if (
                         isset($requestFormated['crypto_bought']) &&
                         isset($requestFormated['crypto_name_purchased'])
