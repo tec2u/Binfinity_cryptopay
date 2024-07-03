@@ -13,7 +13,6 @@ use Alert;
 use App\Models\Package;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\Auth;
-use PragmaRX\Google2FALaravel\Google2FA;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use App\Http\Controllers\ClubSwanController;
 
@@ -130,7 +129,7 @@ class UserController extends Controller
       } catch (Exception $e) {
          dd($e);
          $error = json_decode($e->getMessage(), true);
-         if (isset($error['status']) && $error['status'] == 'fail') {
+         if (isset ($error['status']) && $error['status'] == 'fail') {
             $this->errorCatch($error['message'] . ' - PayLoad: ' . json_encode($data) . ' - Response: ' . $e->getMessage(), auth()->user()->id);
             $q = '';
             if ($error['message'] == 'Invalid parameter(s)') {
@@ -149,8 +148,6 @@ class UserController extends Controller
 
    public function changePassword(Request $request)
    {
-      // return $this->setup2FA($request);
-
       $data = $request->only([
          'password',
          'old_password'
@@ -220,7 +217,7 @@ class UserController extends Controller
       $packages = Package::where('activated', 1)->where('type', '!=', 'activator')->orderBy('price')->get();
 
       $user = User::where('id', $id)->orWhere('login', $id)->first();
-      if (!isset($user)) {
+      if (!isset ($user)) {
          Alert::error('User not found!');
          return view('auth.register_must_active');
       }
@@ -245,7 +242,7 @@ class UserController extends Controller
       try {
          $ips = IpAllowedApi::where('ip', $request->id)->where('user_id', Auth::id())->first();
 
-         if (!isset($ips)) {
+         if (!isset ($ips)) {
             $nIp = new IpAllowedApi;
             $nIp->ip = $request->ip;
             $nIp->user_id = Auth::id();
@@ -267,40 +264,4 @@ class UserController extends Controller
 
       return redirect()->back();
    }
-
-   public function setup2FA(Request $request)
-   {
-      return $this->verify2FA($request);
-      $user = $request->user();
-      $google2fa = app('pragmarx.google2fa');
-      if (empty($user->google2fa_secret)) {
-         $user->google2fa_secret = $google2fa->generateSecretKey();
-         $user->save();
-      }
-
-      $QRImage = $google2fa->getQRCodeInline(
-         "B Infinity Bank",
-         $user->email,
-         $user->google2fa_secret
-      );
-      // echo ($QRImage);
-      return view('2fa.qrcode', ['QRImage' => $QRImage]);
-   }
-
-   public function verify2FA(Request $request)
-   {
-      $user = $request->user();
-      $google2fa = app('pragmarx.google2fa');
-      // $valid = $google2fa->verifyKey($user->google2fa_secret, $request->input('2fa_code'));
-      $valid = $google2fa->verifyKey($user->google2fa_secret, "588676");
-      dd($valid);
-      if ($valid) {
-         // Logic to handle a successful 2FA verification
-         return redirect()->route('home');
-      } else {
-         // Logic to handle a failed 2FA verification
-         return back()->withErrors(['2fa_error' => 'The provided 2FA code is invalid.']);
-      }
-   }
-
 }
