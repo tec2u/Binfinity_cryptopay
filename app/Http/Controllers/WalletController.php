@@ -433,8 +433,8 @@ class WalletController extends Controller
 
                             $moedas = [
                                 "BITCOIN" => number_format($price_ / $btc, 5),
-                                "BTC" => number_format($price_ / $btc, 5),
-                                "ETH" => number_format($price_ / $eth, 4),
+                                "BTC" => number_format($price_ / $btc, 6),
+                                "ETH" => number_format($price_ / $eth, 5),
                                 "USDT_ERC20" => number_format($price_ / $erc20, 2),
                                 "TRX" => number_format($price_ / $trx, 2),
                                 "USDT_TRC20" => number_format($price_ / $trc20, 2),
