@@ -524,7 +524,7 @@ class WalletController extends Controller
 
             return response("OK", 200);
         } catch (\Throwable $th) {
-            return response()->json(['error' => "Error in create transaction"], 422);
+            return response()->json(['error' => "Error in create transaction" . $th->getMessage()], 422);
         }
     }
 
