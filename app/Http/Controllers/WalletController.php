@@ -373,8 +373,8 @@ class WalletController extends Controller
             if (isset($requestFormated["login"])) {
 
                 $log = new PaymentLog;
-                $log->content = "status";
-                $log->order_package_id = $requestFormated['id_order'];
+                $log->content = $requestFormated['id_order'];
+                $log->order_package_id = 1;
                 $log->operation = "payment package";
                 $log->controller = "packageController";
                 $log->http_code = "200";
