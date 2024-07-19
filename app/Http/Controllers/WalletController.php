@@ -540,7 +540,7 @@ class WalletController extends Controller
             }
         }
 
-        $tempoLimite = Carbon::now()->subSeconds(10);
+        $tempoLimite = Carbon::now()->subSeconds(5);
 
         $lastNode = NodeOrders::where('coin', $coin)
             ->where('id_user', $user_id)
