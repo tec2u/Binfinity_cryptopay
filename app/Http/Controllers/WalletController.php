@@ -320,7 +320,14 @@ class WalletController extends Controller
     public function notify(Request $request)
     {
         try {
-            //code...
+            $requestFormated = $request->all();
+
+            $ip = $request->ip();
+            $ipRequest = new IpAccessApi;
+            $ipRequest->ip = $ip;
+            $ipRequest->operation = "api/web/get/wallet";
+            $ipRequest->request = json_encode($requestFormated);
+            $ipRequest->save();
 
             $validator = Validator::make($request->all(), [
                 'id_order' => 'required|string|max:255',
@@ -337,18 +344,12 @@ class WalletController extends Controller
                 'custom_data2' => 'nullable|string',
             ]);
 
-            $requestFormated = $request->all();
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 422);
             }
 
-            $ip = $request->ip();
-            $ipRequest = new IpAccessApi;
-            $ipRequest->ip = $ip;
-            $ipRequest->operation = "api/web/get/wallet";
-            $ipRequest->request = json_encode($requestFormated);
-            $ipRequest->save();
+
 
             $system = SystemConf::first();
             if (isset($system)) {
