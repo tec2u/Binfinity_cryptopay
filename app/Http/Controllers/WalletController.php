@@ -536,6 +536,16 @@ class WalletController extends Controller
         $system = SystemConf::first();
         if (isset($system)) {
             if ($system->all == 0 || $system->all == 1 && $system->node == 0) {
+
+                $log = new CustomLog();
+                $log->content = 'API System disabled';
+                $log->user_id = 1;
+                $log->operation = 'get wallet api';
+                $log->controller = "app/controller/WalletController";
+                $log->http_code = 200;
+                $log->route = "API";
+                $log->status = "ERROR";
+                $log->save();
                 return false;
             }
         }
@@ -550,6 +560,16 @@ class WalletController extends Controller
 
 
         if (isset($lastNode)) {
+            $log = new CustomLog();
+            $log->content = 'api usada nos ultimos segundos';
+            $log->user_id = 1;
+            $log->operation = 'get wallet api';
+            $log->controller = "app/controller/WalletController";
+            $log->http_code = 200;
+            $log->route = "API";
+            $log->status = "ERROR";
+            $log->save();
+
             return false;
         }
 
@@ -587,6 +607,15 @@ class WalletController extends Controller
                     }
                 }
 
+                $log = new CustomLog();
+                $log->content = 'nenhuma carteira ativa encontrada';
+                $log->user_id = 1;
+                $log->operation = 'get wallet api';
+                $log->controller = "app/controller/WalletController";
+                $log->http_code = 200;
+                $log->route = "API";
+                $log->status = "ERROR";
+                $log->save();
                 return false;
             }
 
@@ -611,6 +640,15 @@ class WalletController extends Controller
                     ->where('active', 1)
                     ->first();
             } else {
+                $log = new CustomLog();
+                $log->content = 'nenhuma carteira encontrada';
+                $log->user_id = 1;
+                $log->operation = 'get wallet api';
+                $log->controller = "app/controller/WalletController";
+                $log->http_code = 200;
+                $log->route = "API";
+                $log->status = "ERROR";
+                $log->save();
                 return false;
             }
         }
