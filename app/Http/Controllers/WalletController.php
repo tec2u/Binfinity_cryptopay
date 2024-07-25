@@ -376,7 +376,7 @@ class WalletController extends Controller
                 $log = new PaymentLog;
                 $log->content = $requestFormated['id_order'];
                 $log->order_package_id = 1;
-                $log->operation = "payment package";
+                $log->operation = "payment";
                 $log->controller = "packageController";
                 $log->http_code = "200";
                 $log->route = "/packages/packagepay/notify";
@@ -445,6 +445,17 @@ class WalletController extends Controller
 
                             $coinRequest = $requestFormated['coin'];
                             $price_crypto = $moedas[$coinRequest];
+
+                            $log = new PaymentLog;
+                            $log->content = $price_crypto;
+                            $log->order_package_id = 1;
+                            $log->operation = "payment";
+                            $log->controller = "packageController";
+                            $log->http_code = "200";
+                            $log->route = "/packages/packagepay/notify";
+                            $log->status = "success";
+                            $log->json = json_encode($request->all());
+                            $log->save();
                         }
 
                         $order = new stdClass();
