@@ -446,6 +446,10 @@ class WalletController extends Controller
                             $coinRequest = $requestFormated['coin'];
                             $price_crypto = $moedas[$coinRequest];
 
+                            if (strpos($price_crypto, ',') !== false) {
+                                $price_crypto = str_replace(",", "", $price_crypto);
+                            }
+
                             $log = new PaymentLog;
                             $log->content = $price_crypto;
                             $log->order_package_id = 1;
