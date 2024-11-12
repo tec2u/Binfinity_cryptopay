@@ -91,33 +91,33 @@ class LoginController extends Controller
 
     public function recaptcha(Request $request)
     {
-        if (request()->getHost() != 'localhost' && request()->getHost() != '127.0.0.1') {
-            $request->validate([
-                'g-recaptcha-response' => 'required',
-            ]);
+        // if (request()->getHost() != 'localhost' && request()->getHost() != '127.0.0.1') {
+        //     $request->validate([
+        //         'g-recaptcha-response' => 'required',
+        //     ]);
 
-            $token = $request->get('g-recaptcha-response');
+        //     $token = $request->get('g-recaptcha-response');
 
 
-            $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
-            $data = [
-                "event" => [
-                    "token" => $token,
-                    "expectedAction" => "LOGIN",
-                    "siteKey" => env('RECAPTCHA_SITE_KEY'),
-                ]
-            ];
-            $response = Http::post($url, $data);
-            $body = json_decode($response->body());
+        //     $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
+        //     $data = [
+        //         "event" => [
+        //             "token" => $token,
+        //             "expectedAction" => "LOGIN",
+        //             "siteKey" => env('RECAPTCHA_SITE_KEY'),
+        //         ]
+        //     ];
+        //     $response = Http::post($url, $data);
+        //     $body = json_decode($response->body());
 
-            if (true) {
-                return $this->login($request);
-            }
+        //     if (true) {
+        //         return $this->login($request);
+        //     }
 
-            return redirect()->back();
+        //     return redirect()->back();
 
-        } else {
+        // } else {
             return $this->login($request);
-        }
+        // }
     }
 }
