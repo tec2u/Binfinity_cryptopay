@@ -56,7 +56,7 @@ use Illuminate\Support\Facades\Config;
 
 Route::controller(LoginController::class)->group(function () {
    Route::get('/login/google', 'redirectToGoogle')->name('login.google');
-   Route::post('/login/google/recaptcha', 'recaptcha')->name('recaptcha');
+   Route::post('/login/google/recaptcha', 'login')->name('recaptcha');
    Route::get('/login/google/callback', 'handleGoogleCallback');
 });
 
