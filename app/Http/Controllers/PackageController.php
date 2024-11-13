@@ -147,9 +147,9 @@ class PackageController extends Controller
             $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
             $moedas = [
-                // "BITCOIN" => number_format($price_order / $btc, 5),
-                // "ETH" => number_format($price_order / $eth, 4),
-                // "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                 "BITCOIN" => number_format($price_order / $btc, 5),
+                 "ETH" => number_format($price_order / $eth, 4),
+                 "USDT_ERC20" => number_format($price_order / $erc20, 2),
                 "TRX" => number_format($price_order / $trx, 2),
                 "USDT_TRC20" => number_format($price_order / $trc20, 2),
                 "SOL" => number_format($price_order / $sol, 3),
