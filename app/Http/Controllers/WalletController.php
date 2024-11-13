@@ -230,7 +230,7 @@ class WalletController extends Controller
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
-             dd($th->getMessage());
+           //  dd($th->getMessage());
             \Alert::error("Failed");
             return redirect()->route('wallets.index');
             //throw $th;
@@ -247,7 +247,7 @@ class WalletController extends Controller
 
         $json["first"] = env('FIRSTKEY');
         $json["second"] = env('SECONDKEY');
-        dd($json);
+        //dd($json);
 
         $response = Http::post("$url/", $json);
 
