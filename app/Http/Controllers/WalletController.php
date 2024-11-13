@@ -183,6 +183,8 @@ class WalletController extends Controller
                 $nn->active = 1;
                 $nn->save();
             }
+            
+            dd($wallets);
 
             while (count($wallets) < 10) {
 
