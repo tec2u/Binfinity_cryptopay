@@ -188,6 +188,8 @@ class WalletController extends Controller
 
                 $walletGen = $controller->filterWallet($request->coin);
 
+                dd($walletGen);
+
                 $first_key = env('FIRSTKEY');
                 $second_key = env('SECONDKEY');
 
