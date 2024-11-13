@@ -225,12 +225,12 @@ class WalletController extends Controller
 
                 $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
-            // dd($wallets);
+             dd($wallets);
 
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
-            // dd($th->getMessage());
+             dd($th->getMessage());
             \Alert::error("Failed");
             return redirect()->route('wallets.index');
             //throw $th;
@@ -327,6 +327,7 @@ class WalletController extends Controller
             $ipRequest->ip = $ip;
             $ipRequest->operation = "api/web/get/wallet";
             $ipRequest->request = json_encode($requestFormated);
+           // dd($ipRequest);
             $ipRequest->save();
 
             $validator = Validator::make($request->all(), [
