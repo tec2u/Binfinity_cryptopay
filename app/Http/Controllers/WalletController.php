@@ -183,14 +183,10 @@ class WalletController extends Controller
                 $nn->active = 1;
                 $nn->save();
             }
-            
-            dd(count($wallets));
 
             while (count($wallets) < 10) {
 
                 $walletGen = $controller->filterWallet($request->coin);
-
-                dd($walletGen);
 
                 $first_key = env('FIRSTKEY');
                 $second_key = env('SECONDKEY');
