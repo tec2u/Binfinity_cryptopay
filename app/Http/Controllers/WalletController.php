@@ -225,7 +225,7 @@ class WalletController extends Controller
 
                 $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
-             dd($wallets);
+            // dd($wallets);
 
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
@@ -247,7 +247,7 @@ class WalletController extends Controller
 
         $json["first"] = env('FIRSTKEY');
         $json["second"] = env('SECONDKEY');
-        // dd($json);
+        dd($json);
 
         $response = Http::post("$url/", $json);
 
