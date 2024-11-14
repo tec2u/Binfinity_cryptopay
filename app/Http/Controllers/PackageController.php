@@ -493,6 +493,8 @@ class PackageController extends Controller
             "api_url" => "$node/api/create/order"
         ];
 
+        dd($paymentConfig['api_url']);
+
         $system = SystemConf::first();
         if (isset($system)) {
             if ($system->all == 0 || $system->all == 1 && $system->node == 0) {
@@ -553,7 +555,7 @@ class PackageController extends Controller
 
         curl_close($curl);
 
-         dd($raw);
+        
 
         if ($raw) {
             return $raw;
