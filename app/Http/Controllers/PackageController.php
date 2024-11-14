@@ -487,7 +487,7 @@ class PackageController extends Controller
     {
         
         $node = env('SERV_NODE');
-        dd($node);
+        
         $paymentConfig = [
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
             "api_url" => "$node/api/create/order"
@@ -553,7 +553,7 @@ class PackageController extends Controller
 
         curl_close($curl);
 
-         //return($raw);
+         dd($raw);
 
         if ($raw) {
             return $raw;
