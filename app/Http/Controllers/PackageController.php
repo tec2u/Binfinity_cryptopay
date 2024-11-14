@@ -485,8 +485,9 @@ class PackageController extends Controller
 
     public function genUrlCrypto($method, $order)
     {
-         dd($order);
+        
         $node = env('SERV_NODE');
+        dd($node);
         $paymentConfig = [
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
             "api_url" => "$node/api/create/order"
