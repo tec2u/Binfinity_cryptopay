@@ -138,7 +138,7 @@ class PackageController extends Controller
 
 
 
-            $btc = :where('name', "BTC")->first()->one_in_usd;
+            $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
             $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
             $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
             $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
