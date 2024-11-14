@@ -555,7 +555,7 @@ class PackageController extends Controller
 
         curl_close($curl);
 
-        dd($raw);
+       // dd($raw);
 
         if ($raw) {
             return $raw;
