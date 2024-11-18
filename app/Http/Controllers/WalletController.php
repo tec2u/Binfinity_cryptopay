@@ -224,7 +224,6 @@ class WalletController extends Controller
                 //     $wallet->save();
                 //     // dd($wallet);
                 // }
-break;
                 // $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
             // dd($wallets);
