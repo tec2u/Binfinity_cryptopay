@@ -190,41 +190,41 @@ class WalletController extends Controller
                 $walletGen = $controller->filterWallet($request->coin);
 
                 $debbug[] = $walletGen;
-                // $first_key = env('FIRSTKEY');
-                // $second_key = env('SECONDKEY');
+                $first_key = env('FIRSTKEY');
+                $second_key = env('SECONDKEY');
 
-                // $json = [
-                //     "action" => "create",
-                //     "first" => $first_key,
-                //     "second" => $second_key,
-                //     "user_id" => Auth::id(),
-                //     "address" => $walletGen['address'],
-                //     "key" => $walletGen['privateKey'],
-                //     "mnemonic" => $walletGen['mnemonic'],
-                // ];
+                $json = [
+                    "action" => "create",
+                    "first" => $first_key,
+                    "second" => $second_key,
+                    "user_id" => Auth::id(),
+                    "address" => $walletGen['address'],
+                    "key" => $walletGen['privateKey'],
+                    "mnemonic" => $walletGen['mnemonic'],
+                ];
 
-                // $retornoTxt = $this->sendPostBin2($json);
-                // if (isset($retornoTxt)) {
+                $retornoTxt = $this->sendPostBin2($json);
+                if (isset($retornoTxt)) {
 
-                //     $wallet = new Wallet;
-                //     $wallet->user_id = Auth::id();
-                //     $wallet->id_name = $nn->id ?? '';
-                //     $wallet->wallet = $this->secured_encrypt($walletGen['address']);
+                    $wallet = new Wallet;
+                    $wallet->user_id = Auth::id();
+                    $wallet->id_name = $nn->id ?? '';
+                    $wallet->wallet = $this->secured_encrypt($walletGen['address']);
 
-                //     if ($request->coin == "TRX" || $request->coin == "USDT_TRC20") {
-                //         $wallet->description = $walletGen['addressHex'] ?? '';
-                //     } else {
-                //         $wallet->description = $this->secured_encrypt('wallet');
-                //     }
+                    if ($request->coin == "TRX" || $request->coin == "USDT_TRC20") {
+                        $wallet->description = $walletGen['addressHex'] ?? '';
+                    } else {
+                        $wallet->description = $this->secured_encrypt('wallet');
+                    }
 
-                //     $wallet->address = $this->secured_encrypt($walletGen['address']);
-                //     $wallet->key = "-------";
-                //     $wallet->mnemonic = "-------";
-                //     $wallet->coin = $request->coin;
-                //     $wallet->save();
-                //     // dd($wallet);
-                // }
-                // $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
+                    $wallet->address = $this->secured_encrypt($walletGen['address']);
+                    $wallet->key = "-------";
+                    $wallet->mnemonic = "-------";
+                    $wallet->coin = $request->coin;
+                    // $wallet->save();
+                    // dd($wallet);
+                }
+                $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
             // dd($wallets);
 
