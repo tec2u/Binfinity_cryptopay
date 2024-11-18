@@ -147,9 +147,9 @@ class PackageController extends Controller
             $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
             $moedas = [
-                 "BITCOIN" => number_format($price_order / $btc, 5),
-                 "ETH" => number_format($price_order / $eth, 4),
-                 "USDT_ERC20" => number_format($price_order / $erc20, 2),
+                // "BITCOIN" => number_format($price_order / $btc, 5),
+                // "ETH" => number_format($price_order / $eth, 4),
+                // "USDT_ERC20" => number_format($price_order / $erc20, 2),
                 "TRX" => number_format($price_order / $trx, 2),
                 "USDT_TRC20" => number_format($price_order / $trc20, 2),
                 "SOL" => number_format($price_order / $sol, 3),
@@ -485,15 +485,12 @@ class PackageController extends Controller
 
     public function genUrlCrypto($method, $order)
     {
-        
+        // dd($order);
         $node = env('SERV_NODE');
-        
         $paymentConfig = [
             // "api_url" => "http://127.0.0.1:3000/api/create/order"
             "api_url" => "$node/api/create/order"
         ];
-
-        
 
         $system = SystemConf::first();
         if (isset($system)) {
@@ -555,7 +552,7 @@ class PackageController extends Controller
 
         curl_close($curl);
 
-       // dd($raw);
+        // return($raw);
 
         if ($raw) {
             return $raw;
