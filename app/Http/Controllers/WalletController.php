@@ -221,16 +221,15 @@ class WalletController extends Controller
                     $wallet->key = "-------";
                     $wallet->mnemonic = "-------";
                     $wallet->coin = $request->coin;
-                    // $wallet->save();
+                    $wallet->save();
                     // dd($wallet);
                 }
                 $wallets = Wallet::where('user_id', $user->id)->where('coin', $request->coin)->get();
             }
             // dd($wallets);
 
-            return response()->json($walletGen);
-            // \Alert::success("Sucessfully");
-            // return redirect()->route('wallets.index');
+            \Alert::success("Sucessfully");
+            return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
            //  dd($th->getMessage());
             \Alert::error("Failed");
