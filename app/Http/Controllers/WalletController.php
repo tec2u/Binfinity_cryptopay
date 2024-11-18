@@ -149,7 +149,7 @@ class WalletController extends Controller
 
     public function store(Request $request)
     {
-        try {
+        // try {
 
             // dd($request);
 
@@ -229,12 +229,12 @@ class WalletController extends Controller
 
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
-        } catch (\Throwable $th) {
-           //  dd($th->getMessage());
-            \Alert::error("Failed");
-            return redirect()->route('wallets.index');
-            //throw $th;
-        }
+        // } catch (\Throwable $th) {
+        //    //  dd($th->getMessage());
+        //     \Alert::error("Failed");
+        //     return redirect()->route('wallets.index');
+        //     //throw $th;
+        // }
     }
 
     private function sendPostBin2($json)
