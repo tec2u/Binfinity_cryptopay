@@ -320,6 +320,8 @@ class WalletController extends Controller
 
     public function notify(Request $request)
     {
+        return response()->json(['ip' => $request->ip()]);
+        exit;
         try {
             $requestFormated = $request->all();
 
