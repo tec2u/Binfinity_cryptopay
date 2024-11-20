@@ -159,7 +159,7 @@ class WalletController extends Controller
 
             $WithDrawal = WithdrawWallet::where('user_id', $user->id)->where('crypto', $request->coin)->first();
 
-            if (isset($WithDrawal)) {
+            if (!isset($WithDrawal)) {
                 \Alert::error("Add your wallet in > WithDrawal Wallet (" . $request->coin . ")");
                 return redirect()->back();
             }
