@@ -320,8 +320,6 @@ class WalletController extends Controller
 
     public function notify(Request $request)
     {
-        return response()->json(['ip' => $request->ip()]);
-        exit;
         try {
             $requestFormated = $request->all();
 
@@ -404,7 +402,7 @@ class WalletController extends Controller
 
                 $ipAllowed = IpAllowedApi::where('ip', $ip)->where('user_id', $userAprov->id)->first();
                 if (!isset($ipAllowed)) {
-                    return response()->json(['error' => "Ip not allowed"], 422);
+                    return response()->json(['error' => "Ip not allowed", 'ipallowed' => $ipAllowed], 422);
                 }
 
                 $wallet = $this->returnWallet($requestFormated["coin"], $userAprov->id);
