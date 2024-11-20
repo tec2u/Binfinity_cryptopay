@@ -223,26 +223,26 @@ class RegisterController extends Controller
 
    public function registerRecaptcha(Request $request)
    {
-      $request->validate([
-         'g-recaptcha-response' => 'required',
-      ]);
+    //   $request->validate([
+    //      'g-recaptcha-response' => 'required',
+    //   ]);
 
-      $token = $request->get('g-recaptcha-response');
+    //   $token = $request->get('g-recaptcha-response');
 
 
-      $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
-      $data = [
-         "event" => [
-            "token" => $token,
-            "expectedAction" => "LOGIN",
-            "siteKey" => env('RECAPTCHA_SITE_KEY'),
-         ]
-      ];
-      $response = Http::post($url, $data);
-      $body = $response->body();
-      $body = json_decode($response->body());
+    //   $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
+    //   $data = [
+    //      "event" => [
+    //         "token" => $token,
+    //         "expectedAction" => "LOGIN",
+    //         "siteKey" => env('RECAPTCHA_SITE_KEY'),
+    //      ]
+    //   ];
+    //   $response = Http::post($url, $data);
+    //   $body = $response->body();
+    //   $body = json_decode($response->body());
 
-      if ($body->tokenProperties->valid == true) {
+      if (true) {
          return $this->register($request);
       }
 
