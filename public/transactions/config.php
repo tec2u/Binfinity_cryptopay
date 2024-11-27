@@ -1,8 +1,8 @@
 <?php
 
-$banco_user = 'binfinit_cryptopay';
-$banco_senha = 'Hnash@kjPbab@';
-$con = @mysqli_connect("localhost", $banco_user, $banco_senha, "binfinit_cryptopay");
+$banco_user = 'tecnol15_binfinitycrypto';
+$banco_senha = 'tecnol15_binfinitycrypto';
+$con = @mysqli_connect("localhost", $banco_user, $banco_senha, "tecnol15_binfinitycrypto");
 
 
 @mysqli_query($con, "SET NAMES 'utf8'");
