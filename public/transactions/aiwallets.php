@@ -16,7 +16,7 @@ error_reporting(E_ERROR | E_PARSE);
 include "config.php";
 
 
-$sql = mysqli_query($con,"select distinct(wallet) as wallet from node_orders where id_user=115875 and coin in ('USDT_TRC20')");
+$sql = mysqli_query($con,"select distinct(wallet) as wallet from node_orders where id_user=115876 and coin in ('USDT_TRC20')");
 echo "<table>";
 while($loop = mysqli_fetch_array($sql)){
 	
