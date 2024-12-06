@@ -8,6 +8,7 @@ use App\Models\Banco;
 use App\Models\HistoricScore;
 use App\Models\OrderPackage;
 use App\Models\Rede;
+use App\Models\TaxCrypto;
 use App\Models\User;
 use App\Traits\CustomLogTrait;
 use Exception;
@@ -132,6 +133,70 @@ class UserAdminController extends Controller
         return view('admin.users.myinfo', compact('user', 'ordersPackages'));
     }
 
+    public function editTax($id)
+    {
+        $user = User::find($id);
+
+        $createTaxCrypto = new TaxCrypto();
+        $createTaxCrypto->createDefaultTax($id);
+        $coins = $createTaxCrypto->availableCryptos;
+
+        $tax = TaxCrypto::where('user_id', $id)->get();
+        $taxByCoin = $tax->groupBy('coin');
+
+        return view('admin.users.taxControl', compact('user', 'coins', 'taxByCoin'));
+    }
+
+    public function updateTax(Request $request, $id)
+    {
+        $coins = $request->all(); // Obtém todos os dados da requisição, incluindo os dados dos campos
+
+        // Loop para atualizar as taxas para cada moeda
+        foreach ($coins as $key => $value) {
+            if (strpos($key, '_tx_bin') !== false) {  // Verificando se é um campo de tx_bin
+                $coin = str_replace('_tx_bin', '', $key);  // Recuperando o nome da moeda
+                $taxCrypto = TaxCrypto::where('user_id', $id)->where('coin', $coin)->first();
+
+                if ($taxCrypto) {
+                    if ($value < 0) {
+                        $value = 0;
+                    }
+                    $taxCrypto->tx_bin = $value; // Atualizando o valor de tx_bin
+                    $taxCrypto->save();
+                }
+            }
+
+            if (strpos($key, '_tx_gas') !== false) {  // Verificando se é um campo de tx_gas
+                $coin = str_replace('_tx_gas', '', $key);  // Recuperando o nome da moeda
+                $taxCrypto = TaxCrypto::where('user_id', $id)->where('coin', $coin)->first();
+
+                if ($taxCrypto) {
+                    if ($value < 0) {
+                        $value = 0;
+                    }
+                    $taxCrypto->tx_gas = $value; // Atualizando o valor de tx_gas
+                    $taxCrypto->save();
+                }
+            }
+
+            if (strpos($key, '_verification_margin_dol') !== false) {  // Verificando se é um campo de verification_margin_dol
+                $coin = str_replace('_verification_margin_dol', '', $key);  // Recuperando o nome da moeda
+                $taxCrypto = TaxCrypto::where('user_id', $id)->where('coin', $coin)->first();
+
+                if ($taxCrypto) {
+                    if ($value < 0) {
+                        $value = 0;
+                    }
+                    $taxCrypto->verification_margin_dol = $value; // Atualizando o valor de verification_margin_dol
+                    $taxCrypto->save();
+                }
+            }
+
+        }
+        return redirect()->route('admin.users.editTax', ['id' => $id])
+            ->with('success', 'Tax information updated successfully');
+    }
+
     public function transactions($id)
     {
         $transactions = Banco::where('description', '<>', 3)->where('user_id', $id)->paginate(9);
@@ -223,7 +288,7 @@ class UserAdminController extends Controller
     public function networkuser($parameter)
     {
         $rede = Rede::where('user_id', $parameter)->first();
-        $name = empty ($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->name;
+        $name = empty($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->name;
         $redename = $rede->user->login;
         $id = $rede->id;
         $qty = $rede->qty;
@@ -286,7 +351,7 @@ class UserAdminController extends Controller
     public function networkuserdiferente($parameter)
     {
         $rede = Rede::where('user_id', $parameter)->first();
-        $name = empty ($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->login;
+        $name = empty($rede->upline_id) ? "" : Rede::find($rede->upline_id)->user->login;
         $redename = $rede->user->login;
         $id = $rede->id;
         $network = $this->getNetworkDiferente($rede->id);
@@ -386,11 +451,11 @@ class UserAdminController extends Controller
     }
     private function getNetwork($id, $cont = '')
     {
-        $cont = empty ($cont) ? 1 : $cont;
+        $cont = empty($cont) ? 1 : $cont;
         $rede_users = Rede::where('upline_id', $id)->get();
         $networks = array();
         foreach ($rede_users as $rede) {
-            $name = empty (Rede::find($rede->upline_id)) ? "" : Rede::find($rede->upline_id)->first()->user->name;
+            $name = empty(Rede::find($rede->upline_id)) ? "" : Rede::find($rede->upline_id)->first()->user->name;
             $redename = $rede->user->login;
             $id = $rede->id;
             $qty = $rede->qty;
@@ -441,7 +506,7 @@ class UserAdminController extends Controller
             $id = $rede->id;
             $network = $this->getNetworkDiferente($rede->id);
             if ($network != NULL) {
-                if (isset ($networks['tree'])) {
+                if (isset($networks['tree'])) {
                     $networks['tree'] = $networks['tree'] + array($id => $network['tree']);
                     $networks['params'] = $networks['params'] + array(
                         $id => array(
@@ -474,7 +539,7 @@ class UserAdminController extends Controller
                 }
                 $networks['params'] = $network['params'] + $networks['params'];
             } else {
-                if (isset ($networks['tree'])) {
+                if (isset($networks['tree'])) {
                     $networks['tree'] = $networks['tree'] + array($id => '');
                     $networks['params'] = $networks['params'] + array(
                         $id => array(

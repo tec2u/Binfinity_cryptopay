@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\UserRegisteredEmail;
 use App\Models\HistoricScore;
 use App\Models\Rede;
+use App\Models\TaxCrypto;
 use App\Models\Wallet;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
@@ -211,6 +212,8 @@ class RegisterController extends Controller
       // ini_set('max_execution_time', '60');
 
       //Mail::to($user->email)->send(new UserRegisteredEmail($user));
+      $createTaxCrypto = new TaxCrypto();
+      $createTaxCrypto->createDefaultTax($user->id);
 
       try {
          // $this->geraCarteira($user->id);
@@ -223,24 +226,24 @@ class RegisterController extends Controller
 
    public function registerRecaptcha(Request $request)
    {
-    //   $request->validate([
-    //      'g-recaptcha-response' => 'required',
-    //   ]);
+      //   $request->validate([
+      //      'g-recaptcha-response' => 'required',
+      //   ]);
 
-    //   $token = $request->get('g-recaptcha-response');
+      //   $token = $request->get('g-recaptcha-response');
 
 
-    //   $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
-    //   $data = [
-    //      "event" => [
-    //         "token" => $token,
-    //         "expectedAction" => "LOGIN",
-    //         "siteKey" => env('RECAPTCHA_SITE_KEY'),
-    //      ]
-    //   ];
-    //   $response = Http::post($url, $data);
-    //   $body = $response->body();
-    //   $body = json_decode($response->body());
+      //   $url = 'https://recaptchaenterprise.googleapis.com/v1/projects/loginbin/assessments?key=' . env('RECAPTCHA_SECRET_KEY');
+      //   $data = [
+      //      "event" => [
+      //         "token" => $token,
+      //         "expectedAction" => "LOGIN",
+      //         "siteKey" => env('RECAPTCHA_SITE_KEY'),
+      //      ]
+      //   ];
+      //   $response = Http::post($url, $data);
+      //   $body = $response->body();
+      //   $body = json_decode($response->body());
 
       if (true) {
          return $this->register($request);

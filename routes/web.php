@@ -547,7 +547,9 @@ Route::prefix('admin')->middleware(['auth', 'is.admin'])->name('admin')->group(f
          Route::get('/{id}/activeUser', 'activeUser')->name('.activeUser');
          Route::get('/myinfo', 'myinfo')->name('.myinfo');
          Route::get('/{id}/edit', 'edit')->name('.edit');
+         Route::get('/{id}/editTax', 'editTax')->name('.editTax');
          Route::put('/{id}/update', 'update')->name('.update');
+         Route::put('/{id}/updateTax', 'updateTax')->name('.updateTax');
          Route::get('/{id}/dashboard', 'dashboard')->name('.dashboard');
          Route::post('/', 'store')->name('.store');
          Route::post('/search', 'search')->name('.search');

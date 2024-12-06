@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\IpWhitelist;
+use App\Models\TaxCrypto;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -19,6 +20,10 @@ class IsAdmin
     public function handle(Request $request, Closure $next)
     {
         if (auth()->user()->rule === 'RULE_USER') {
+
+            $createTaxCrypto = new TaxCrypto();
+            $createTaxCrypto->createDefaultTax(auth()->id());
+
             // $user = User::find(auth()->user()->id);
             // if($user->getAdessao($user->id) >= 1){
             // $this->saveIp()

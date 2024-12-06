@@ -127,9 +127,9 @@ class UserController extends Controller
          return redirect()->route('users.index');
 
       } catch (Exception $e) {
-         dd($e);
+         // dd($e);
          $error = json_decode($e->getMessage(), true);
-         if (isset ($error['status']) && $error['status'] == 'fail') {
+         if (isset($error['status']) && $error['status'] == 'fail') {
             $this->errorCatch($error['message'] . ' - PayLoad: ' . json_encode($data) . ' - Response: ' . $e->getMessage(), auth()->user()->id);
             $q = '';
             if ($error['message'] == 'Invalid parameter(s)') {
@@ -217,7 +217,7 @@ class UserController extends Controller
       $packages = Package::where('activated', 1)->where('type', '!=', 'activator')->orderBy('price')->get();
 
       $user = User::where('id', $id)->orWhere('login', $id)->first();
-      if (!isset ($user)) {
+      if (!isset($user)) {
          Alert::error('User not found!');
          return view('auth.register_must_active');
       }
@@ -242,7 +242,7 @@ class UserController extends Controller
       try {
          $ips = IpAllowedApi::where('ip', $request->id)->where('user_id', Auth::id())->first();
 
-         if (!isset ($ips)) {
+         if (!isset($ips)) {
             $nIp = new IpAllowedApi;
             $nIp->ip = $request->ip;
             $nIp->user_id = Auth::id();

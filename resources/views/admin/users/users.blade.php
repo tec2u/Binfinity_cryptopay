@@ -60,7 +60,7 @@
             <th>@lang('admin.members.memberlist.col4')</th>
             {{-- <th>@lang('admin.members.memberlist.col5')</th> --}}
             <!-- <th>@lang('admin.members.memberlist.col6')</th>
-                     <th>@lang('admin.members.memberlist.col7')</th> -->
+                           <th>@lang('admin.members.memberlist.col7')</th> -->
             <th>@lang('admin.members.memberlist.col8')</th>
             <th>@lang('admin.members.memberlist.col9')</th>
           </tr>
@@ -87,7 +87,7 @@
               <!-- <td>{{ number_format($user->special_comission, 2, ',', '.') }} % @if ($user->special_comission_active == 1)
 <i class="fa fa-check" style="color:green" aria-hidden="true"></i> @else<i class="fa fa-times" style="color: red" aria-hidden="true"></i>
   @endif
-      </td> -->
+            </td> -->
               {{-- <td>
                 @if ($user->getTypeActivated($user->id) == 'AllCards')
                   <button class="btn btn-success btn-sm m-0">@lang('admin.members.btn_active')</button>
@@ -112,6 +112,10 @@
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{{ route('admin.users.edit', ['id' => $user->id]) }}"><i
                           class="fa fa-eye"></i>&ensp;@lang('admin.members.active.view')</a></li>
+
+                    <li><a class="dropdown-item" href="{{ route('admin.users.editTax', ['id' => $user->id]) }}"><i
+                          class="fa fa-eye"></i>&ensp;@lang('admin.members.active.view') Control Tax</a></li>
+
                     <li><a class="dropdown-item" href="{{ route('admin.users.dashboard', ['id' => $user->id]) }}"><i
                           class="fa fa-home"></i>&ensp;@lang('admin.members.active.dashboard')</a></li>
                     <li><a class="dropdown-item" href="{{ route('admin.users.network', ['parameter' => $user->id]) }}"><i
