@@ -34,12 +34,12 @@
                       <tr>
                         <th scope="row">{{ $item }}</th>
                         <td>
-                          <input min="0" type="number" step="0.01" name="{{ $item }}_tx_bin"
+                          <input min="0" type="number" step="0.1" name="{{ $item }}_tx_bin"
                             value="{{ $taxByCoin[$item][0]->tx_bin }}">
                         </td>
 
                         <td>
-                          <input min="0" type="number" step="0.01" name="{{ $item }}_tx_gas"
+                          <input min="0" type="number" step="0.1" name="{{ $item }}_tx_gas"
                             value="{{ $taxByCoin[$item][0]->tx_gas }}">
                         </td>
 
