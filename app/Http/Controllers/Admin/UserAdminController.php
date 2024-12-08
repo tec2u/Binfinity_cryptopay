@@ -185,7 +185,7 @@ class UserAdminController extends Controller
 
                 if ($taxCrypto) {
                     if ($value < 0) {
-                        $value = 0;
+                        $value = 1;
                     }
                     $taxCrypto->verification_margin_dol = $value; // Atualizando o valor de verification_margin_dol
                     $taxCrypto->save();

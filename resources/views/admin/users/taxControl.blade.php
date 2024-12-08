@@ -44,7 +44,7 @@
                         </td>
 
                         <td>
-                          <input min="0" type="number" step="0.01"
+                          <input min="1" type="number" step="0.01"
                             name="{{ $item }}_verification_margin_dol"
                             value="{{ $taxByCoin[$item][0]->verification_margin_dol }}">
                         </td>
