@@ -54,8 +54,6 @@ class CronWalletController extends Controller
                     $coinSave->save();
                 }
             }
-            ;
-
         } catch (\Throwable $th) {
 
         }

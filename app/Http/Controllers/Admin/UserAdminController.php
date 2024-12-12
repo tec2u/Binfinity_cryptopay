@@ -139,6 +139,7 @@ class UserAdminController extends Controller
         $user = User::find($id);
 
         $test = new WalletController();
+        // dd($test->calculateExtraValue(50, "BNB", 115879));
 
         $createTaxCrypto = new TaxCrypto();
         $createTaxCrypto->createDefaultTax($id);
