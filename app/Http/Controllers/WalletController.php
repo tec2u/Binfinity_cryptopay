@@ -503,7 +503,7 @@ class WalletController extends Controller
                                 "BNB" => number_format($extra_price / $bnb, 5),
                             ];
 
-                            $order->extra_crypto = $newTaxCrypto[$coinRequest];
+                            $order->extra_crypto = $newTaxCrypto[$requestFormated['coin']];
                         }
 
                         $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
@@ -560,7 +560,7 @@ class WalletController extends Controller
             return response("OK", 200);
         } catch (\Throwable $th) {
             // return response()->json(['error' => "Error in create transaction"], 422);
-            return response()->json(['error' => "Error in create transaction" . $th->getMessage()], 422);
+            return response()->json(['error' => "Error in create transaction " . $th->getMessage()], 422);
         }
     }
 
