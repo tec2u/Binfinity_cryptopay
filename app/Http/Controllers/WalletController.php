@@ -507,7 +507,7 @@ class WalletController extends Controller
                         }
 
                         if ($userAprov->id == 115879) {
-                            dd($order);
+                            dd($order, $price_);
                         }
 
                         $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
