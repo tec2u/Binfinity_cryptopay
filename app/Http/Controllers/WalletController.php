@@ -572,7 +572,7 @@ class WalletController extends Controller
     {
         $user = User::find($user_id);
         $tax = TaxCrypto::where('user_id', $user->id)->where('coin', $coin)->first();
-
+        dd($tax);
         $taxa_fixa = $tax->tx_bin ?? 4; // Taxa fixa (valor padrão de 4 se não encontrado no banco)
         $taxa_percentual = $tax->tx_gas ?? 1; // Taxa percentual (valor padrão de 1% se não encontrado)
 
