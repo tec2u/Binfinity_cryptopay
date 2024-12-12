@@ -506,10 +506,6 @@ class WalletController extends Controller
                             $order->extra_crypto = $taxCrypto[$coinRequest];
                         }
 
-                        if ($userAprov->id == 115879) {
-                            dd($order, $price_);
-                        }
-
                         $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
                         // return $postNode;
 
