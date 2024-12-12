@@ -573,17 +573,15 @@ class WalletController extends Controller
         $user = User::find($user_id);
         $tax = TaxCrypto::where('user_id', $user->id)->where('coin', $coin)->first();
 
-        // Garantir que os valores sejam numéricos
-        $taxa_fixa = (float) ($tax->tx_bin ?? 4); // Taxa fixa
-        $taxa_percentual = (float) ($tax->tx_gas ?? 1); // Taxa percentual
+        $taxa_fixa = (float) ($tax->tx_bin ?? 4); // Taxa fixa (valor padrão de 4 se não encontrado no banco)
+        $taxa_percentual = (float) ($tax->tx_gas ?? 1); // Taxa percentual (valor padrão de 1% se não encontrado)
 
         // Aplica a taxa percentual primeiro
-        $valor_com_taxa_percentual = (float) $amount_to_receive * ($taxa_percentual / 100);
+        $valor_com_taxa_percentual = $amount_to_receive * ($taxa_percentual / 100);
 
         // Agora, adiciona a taxa fixa
         $extra_value = $valor_com_taxa_percentual + $taxa_fixa;
 
-        // Debug para verificar os valores
         dd($extra_value, $amount_to_receive, $taxa_percentual, $taxa_fixa);
 
         return $extra_value;
