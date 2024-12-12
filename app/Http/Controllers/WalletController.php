@@ -577,9 +577,6 @@ class WalletController extends Controller
         $taxa_fixa = (float) ($tax->tx_bin ?? 4); // Taxa fixa (valor padrão de 4 se não encontrado)
         $taxa_percentual = (float) ($tax->tx_gas ?? 1); // Taxa percentual (valor padrão de 1% se não encontrado)
 
-        // Verificar se os valores são numéricos
-        dd($tax->tx_bin, $tax->tx_gas);
-
         // Aplica a taxa percentual primeiro
         $valor_com_taxa_percentual = $amount_to_receive * ($taxa_percentual / 100);
 
@@ -587,7 +584,7 @@ class WalletController extends Controller
         $extra_value = $valor_com_taxa_percentual + $taxa_fixa;
 
         // Debug dos valores finais
-        dd($extra_value, $amount_to_receive, $taxa_percentual, $taxa_fixa);
+        dd($extra_value, $amount_to_receive, $taxa_percentual, $taxa_fixa, $valor_com_taxa_percentual);
 
         return $extra_value;
     }
