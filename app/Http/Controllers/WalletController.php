@@ -583,6 +583,17 @@ class WalletController extends Controller
         // Agora, adiciona a taxa fixa
         $extra_value = $valor_com_taxa_percentual + $taxa_fixa;
 
+
+        $amount_to_receive = 200;
+        $taxa_percentual = 1; // 1% de taxa
+        $taxa_fixa = 4; // Taxa fixa
+
+        // Calculando a taxa percentual
+        $valor_com_taxa_percentual = $amount_to_receive * (1 / 100);  // 200 * 0.01 = 2
+
+        // Somando a taxa fixa
+        $extra_value = $valor_com_taxa_percentual + $taxa_fixa;  // 2 + 4 = 6
+
         // Debug dos valores finais
         dd($extra_value, $amount_to_receive, $taxa_percentual, $taxa_fixa, $valor_com_taxa_percentual);
 
