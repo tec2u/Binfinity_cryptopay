@@ -418,7 +418,7 @@ class WalletController extends Controller
                 $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
                 $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
                 $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
-
+                dd($wallet);
                 $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
                 if (isset($walletExists) && json_decode($walletExists)) {
                     $jsonW = json_decode($walletExists);
