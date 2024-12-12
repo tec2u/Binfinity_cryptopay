@@ -489,10 +489,10 @@ class WalletController extends Controller
                         }
 
                         if (isset($requestFormated['fee_included']) && $requestFormated['fee_included'] == false) {
-                            $extra_price = $this->calculateExtraValue($price_, $requestFormated['coin'], $userAprov->id);
+                            $extra_price = $this->calculateExtraValue($order->price, $requestFormated['coin'], $userAprov->id);
                             $order->extra_price = $extra_price;
 
-                            $taxCrypto = [
+                            $newTaxCrypto = [
                                 "BITCOIN" => number_format($extra_price / $btc, 5),
                                 "BTC" => number_format($extra_price / $btc, 6),
                                 "ETH" => number_format($extra_price / $eth, 5),
@@ -503,7 +503,7 @@ class WalletController extends Controller
                                 "BNB" => number_format($extra_price / $bnb, 5),
                             ];
 
-                            $order->extra_crypto = $taxCrypto[$coinRequest];
+                            $order->extra_crypto = $newTaxCrypto[$coinRequest];
                         }
 
                         $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
