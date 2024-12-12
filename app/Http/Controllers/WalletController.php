@@ -411,6 +411,13 @@ class WalletController extends Controller
                 }
 
                 // return $wallet;
+                $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
+                $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
+                $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
+                $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
+                $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
+                $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
+                $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
                 $walletExists = $this->walletTxtWexists($userAprov->id, $this->secured_decrypt($wallet->address));
                 if (isset($walletExists) && json_decode($walletExists)) {
@@ -425,13 +432,6 @@ class WalletController extends Controller
                                 $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
                             }
                         } else {
-                            $btc = PriceCoin::where('name', "BTC")->first()->one_in_usd;
-                            $trc20 = PriceCoin::where('name', "TRC20")->first()->one_in_usd;
-                            $erc20 = PriceCoin::where('name', "ERC20")->first()->one_in_usd;
-                            $trx = PriceCoin::where('name', "TRX")->first()->one_in_usd;
-                            $eth = PriceCoin::where('name', "ETH")->first()->one_in_usd;
-                            $sol = PriceCoin::where('name', "SOL")->first()->one_in_usd;
-                            $bnb = PriceCoin::where('name', "BNB")->first()->one_in_usd;
 
                             $moedas = [
                                 "BITCOIN" => number_format($price_ / $btc, 5),
