@@ -345,7 +345,7 @@ class WalletController extends Controller
                 'crypto_name_purchased' => 'nullable|string',
                 'custom_data1' => 'nullable|string',
                 'custom_data2' => 'nullable|string',
-                'fee_included' => 'nullable|boolean',
+                'fee_included' => 'nullable',
             ]);
 
 
