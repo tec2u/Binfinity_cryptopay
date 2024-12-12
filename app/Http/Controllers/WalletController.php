@@ -473,6 +473,8 @@ class WalletController extends Controller
                         $order->id_encript = $wallet->id;
                         $order->custom_data1 = isset($requestFormated['custom_data1']) ? $requestFormated['custom_data1'] : '';
                         $order->custom_data2 = isset($requestFormated['custom_data2']) ? $requestFormated['custom_data2'] : '';
+                        $order->extra_price = 0;
+                        $order->extra_crypto = 0;
                         if (
                             isset($requestFormated['crypto_bought']) &&
                             isset($requestFormated['crypto_name_purchased'])
@@ -512,7 +514,10 @@ class WalletController extends Controller
                         return [
                             "id" => $postNode->id,
                             "merchant_id" => $postNode->merchant_id,
-                            "wallet" => $this->secured_decrypt($postNode->wallet)
+                            "wallet" => $this->secured_decrypt($postNode->wallet),
+                            "url" => route('invoice.index', $postNode->id),
+                            "extra_price_usd" => $order->extra_price,
+                            "extra_crypto" => $order->extra_crypto
                         ];
 
                     }
