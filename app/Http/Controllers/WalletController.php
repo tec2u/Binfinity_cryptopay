@@ -589,7 +589,7 @@ class WalletController extends Controller
         $taxa_fixa = 4; // Taxa fixa
 
         // Calculando a taxa percentual
-        $valor_com_taxa_percentual = $amount_to_receive * (1 / 100);  // 200 * 0.01 = 2
+        $valor_com_taxa_percentual = $amount_to_receive * ($taxa_percentual / 100);  // 200 * 0.01 = 2
 
         // Somando a taxa fixa
         $extra_value = $valor_com_taxa_percentual + $taxa_fixa;  // 2 + 4 = 6
