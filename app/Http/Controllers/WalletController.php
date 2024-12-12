@@ -345,7 +345,7 @@ class WalletController extends Controller
                 'crypto_name_purchased' => 'nullable|string',
                 'custom_data1' => 'nullable|string',
                 'custom_data2' => 'nullable|string',
-                'fee_included' => 'nullable|integer',
+                'fee_included' => 'nullable|boolean',
             ]);
 
 
@@ -488,7 +488,7 @@ class WalletController extends Controller
                                 = $requestFormated['crypto_name_purchased'];
                         }
 
-                        if (isset($requestFormated['fee_included']) && $requestFormated['fee_included'] == 0) {
+                        if (isset($requestFormated['fee_included']) && $requestFormated['fee_included'] == false) {
                             $extra_price = $this->calculateExtraValue($price_, $requestFormated['coin'], $userAprov->id);
                             $order->extra_price = $extra_price;
 
@@ -497,10 +497,10 @@ class WalletController extends Controller
                                 "BTC" => number_format($extra_price / $btc, 6),
                                 "ETH" => number_format($extra_price / $eth, 5),
                                 "USDT_ERC20" => number_format($extra_price / $erc20, 2),
-                                "TRX" => number_format($extra_price / $trx, 2),
+                                "TRX" => number_format($extra_price / $trx, 3),
                                 "USDT_TRC20" => number_format($extra_price / $trc20, 2),
-                                "SOL" => number_format($extra_price / $sol, 3),
-                                "BNB" => number_format($extra_price / $bnb, 4),
+                                "SOL" => number_format($extra_price / $sol, 5),
+                                "BNB" => number_format($extra_price / $bnb, 5),
                             ];
 
                             $order->extra_crypto = $taxCrypto[$coinRequest];
