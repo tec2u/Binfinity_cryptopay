@@ -576,7 +576,8 @@ class WalletController extends Controller
         // Forçar a conversão para float
         $taxa_fixa = $tax->tx_bin ?? 4; // Taxa fixa (valor padrão de 4 se não encontrado)
         $taxa_percentual = $tax->tx_gas ?? 1; // Taxa percentual (valor padrão de 1% se não encontrado)
-
+        $taxa_fixa = $taxa_fixa * 1;
+        $taxa_percentual = $taxa_fixa * 1;
         // // Aplica a taxa percentual primeiro
         // $valor_com_taxa_percentual = $amount_to_receive * ($taxa_percentual / 100);
 
