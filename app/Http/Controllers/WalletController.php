@@ -516,6 +516,8 @@ class WalletController extends Controller
                             "merchant_id" => $postNode->merchant_id,
                             "wallet" => $this->secured_decrypt($postNode->wallet),
                             "url" => route('invoice.index', $postNode->id),
+                            "price_usd" => $postNode->price_usd,
+                            "price_crypto" => $postNode->price_crypto,
                             "extra_price_usd" => $order->extra_price,
                             "extra_crypto" => $order->extra_crypto
                         ];
