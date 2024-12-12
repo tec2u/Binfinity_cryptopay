@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\WalletController;
 use App\Http\Requests\Admin\SearchRequest;
 use App\Models\Banco;
 use App\Models\HistoricScore;
@@ -136,6 +137,8 @@ class UserAdminController extends Controller
     public function editTax($id)
     {
         $user = User::find($id);
+
+        $test = new WalletController();
 
         $createTaxCrypto = new TaxCrypto();
         $createTaxCrypto->createDefaultTax($id);

@@ -514,6 +514,9 @@ class PackageController extends Controller
         $custom_data1 = $order->custom_data1 ?? null;
         $custom_data2 = $order->custom_data2 ?? null;
 
+        $extra_price = $order->extra_price ?? null;
+        $extra_crypto = $order->extra_crypto ?? null;
+
         curl_setopt_array(
             $curl,
             array(
@@ -539,6 +542,8 @@ class PackageController extends Controller
                 "receiver_address": "' . $receiver_address . '",
                 "crypto_bought": "' . $crypto_bought . '",
                 "crypto_name_purchased": "' . $crypto_name_purchased . '",
+                "extra_price": "' . $extra_price . '",
+                "extra_crypto": "' . $extra_crypto . '",
                 "notify_url" : "' . $url . '"
 
             }',

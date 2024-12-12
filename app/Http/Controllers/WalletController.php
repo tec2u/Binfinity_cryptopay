@@ -11,6 +11,7 @@ use App\Models\OrderPackage;
 use App\Models\PaymentLog;
 use App\Models\PriceCoin;
 use App\Models\SystemConf;
+use App\Models\TaxCrypto;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletName;
@@ -184,7 +185,7 @@ class WalletController extends Controller
                 $nn->save();
             }
 
-        $debbug = [];
+            $debbug = [];
             while (count($wallets) < 10) {
 
                 $walletGen = $controller->filterWallet($request->coin);
@@ -231,7 +232,7 @@ class WalletController extends Controller
             \Alert::success("Sucessfully");
             return redirect()->route('wallets.index');
         } catch (\Throwable $th) {
-           //  dd($th->getMessage());
+            //  dd($th->getMessage());
             \Alert::error("Failed");
             return redirect()->route('wallets.index');
             //throw $th;
@@ -328,7 +329,7 @@ class WalletController extends Controller
             $ipRequest->ip = $ip;
             $ipRequest->operation = "api/web/get/wallet";
             $ipRequest->request = json_encode($requestFormated);
-           // dd($ipRequest);
+            // dd($ipRequest);
             $ipRequest->save();
 
             $validator = Validator::make($request->all(), [
@@ -344,6 +345,7 @@ class WalletController extends Controller
                 'crypto_name_purchased' => 'nullable|string',
                 'custom_data1' => 'nullable|string',
                 'custom_data2' => 'nullable|string',
+                'fee_included' => 'nullable|integer',
             ]);
 
 
@@ -351,14 +353,13 @@ class WalletController extends Controller
                 return response()->json(['error' => $validator->errors()], 422);
             }
 
-
-
             $system = SystemConf::first();
             if (isset($system)) {
                 if ($system->all == 0 || $system->all == 1 && $system->api == 0) {
                     return response()->json(['error' => "System disabled"], 422);
                 }
             }
+
             if (isset($requestFormated['price_crypto'])) {
                 if (strpos($requestFormated['price_crypto'], ',') !== false) {
                     $price_crypto = str_replace(",", "", $requestFormated['price_crypto']);
@@ -369,8 +370,6 @@ class WalletController extends Controller
             if (strpos($requestFormated['price'], ',') !== false) {
                 $price_ = str_replace(",", "", $requestFormated['price']);
             }
-
-            // return ($request);
 
             // crypto
             if (isset($requestFormated["login"])) {
@@ -489,6 +488,25 @@ class WalletController extends Controller
                                 = $requestFormated['crypto_name_purchased'];
                         }
 
+                        if (isset($requestFormated['fee_included']) && $requestFormated['fee_included'] == 0) {
+                            $extra_price = $this->calculateExtraValue($price_, $requestFormated['coin'], $userAprov->id);
+                            $order->extra_price = $extra_price;
+
+                            $taxCrypto = [
+                                "BITCOIN" => number_format($extra_price / $btc, 5),
+                                "BTC" => number_format($extra_price / $btc, 6),
+                                "ETH" => number_format($extra_price / $eth, 5),
+                                "USDT_ERC20" => number_format($extra_price / $erc20, 2),
+                                "TRX" => number_format($extra_price / $trx, 2),
+                                "USDT_TRC20" => number_format($extra_price / $trc20, 2),
+                                "SOL" => number_format($extra_price / $sol, 3),
+                                "BNB" => number_format($extra_price / $bnb, 4),
+                            ];
+
+                            $order->extra_crypto = $taxCrypto[$coinRequest];
+
+                        }
+
                         // return json_encode($order);
                         $postNode = $controller->genUrlCrypto($requestFormated['coin'], $order);
                         // return $postNode;
@@ -547,6 +565,24 @@ class WalletController extends Controller
             return response()->json(['error' => "Error in create transaction" . $th->getMessage()], 422);
         }
     }
+
+    public function calculateExtraValue($amount_to_receive, $coin, $user_id)
+    {
+        $user = User::find($user_id);
+        $tax = TaxCrypto::where('user_id', $user->id)->where('coin', $coin)->first();
+
+        $taxa_fixa = $tax->tx_bin ?? 4; // Taxa fixa (valor padrão de 4 se não encontrado no banco)
+        $taxa_percentual = $tax->tx_gas ?? 1; // Taxa percentual (valor padrão de 1% se não encontrado)
+
+        // Aplica a taxa percentual primeiro
+        $valor_com_taxa_percentual = $amount_to_receive * (1 + $taxa_percentual / 100);
+
+        // Agora, adiciona a taxa fixa
+        $extra_value = $valor_com_taxa_percentual + $taxa_fixa - $amount_to_receive;
+
+        return $extra_value;
+    }
+
 
     public function returnWallet($coin, $user_id)
     {

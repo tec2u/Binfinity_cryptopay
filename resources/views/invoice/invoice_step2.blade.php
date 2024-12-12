@@ -156,14 +156,14 @@
       <label for="password">VALUE CRYPTO</label>
       <div class="sec-2">
         <ion-icon name="lock-closed-outline"></ion-icon>
-        {{ $order[0]['price_crypto'] }}
+        {{ $order[0]['price_crypto'] + $order[0]['extra_crypto'] }}
       </div>
     </div>
     <div class="password">
       <label for="password">VALUE DOLLARS</label>
       <div class="sec-2">
         <ion-icon name="lock-closed-outline"></ion-icon>
-        {{ $order[0]['price'] }}
+        {{ $order[0]['price'] + $order[0]['extra_price'] }}
       </div>
     </div>
 
