@@ -574,29 +574,15 @@ class WalletController extends Controller
         $tax = TaxCrypto::where('user_id', $user->id)->where('coin', $coin)->first();
 
         // Forçar a conversão para float
-        $taxa_fixa = $tax->tx_bin ?? 4; // Taxa fixa (valor padrão de 4 se não encontrado)
-        $taxa_percentual = $tax->tx_gas ?? 1; // Taxa percentual (valor padrão de 1% se não encontrado)
-        $taxa_fixa = $taxa_fixa * 1;
-        $taxa_percentual = $taxa_percentual * 1;
-        // // Aplica a taxa percentual primeiro
-        // $valor_com_taxa_percentual = $amount_to_receive * ($taxa_percentual / 100);
-
-        // // Agora, adiciona a taxa fixa
-        // $extra_value = $valor_com_taxa_percentual + $taxa_fixa;
+        $taxa_fixa = $tax->tx_gas ?? 4; // Taxa fixa (valor padrão de 4 se não encontrado)
+        $taxa_percentual = $tax->tx_bin ?? 1; // Taxa percentual (valor padrão de 1% se não encontrado)
 
 
         $amount_to_receive = $amount_to_receive * 1;
-        // $taxa_percentual = 1; // 1% de taxa
-        // $taxa_fixa = 4; // Taxa fixa
-
-        // Calculando a taxa percentual
-        $valor_com_taxa_percentual = $amount_to_receive * (($taxa_percentual * 1) / 100);  // 200 * 0.01 = 2
+        $valor_com_taxa_percentual = $amount_to_receive * (($taxa_percentual * 1) / 100);
 
         // Somando a taxa fixa
-        $extra_value = $valor_com_taxa_percentual + ($taxa_fixa * 1);  // 2 + 4 = 6
-
-        // Debug dos valores finais
-        dd($extra_value, $amount_to_receive, $taxa_percentual, $taxa_fixa, $valor_com_taxa_percentual);
+        $extra_value = $valor_com_taxa_percentual + ($taxa_fixa * 1);
 
         return $extra_value;
     }
